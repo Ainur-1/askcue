@@ -1,6 +1,6 @@
 <div id="pikabaka-concepts">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Serif:wght@400;500;600;700&display=swap');
     #pikabaka-concepts { width:100%; }
     #pikabaka-concepts .pk-stage { min-height:790px; display:grid; align-content:start; padding:4px 0 12px; }
     #pikabaka-concepts .pk-stage[hidden] { display:none!important; }
@@ -169,80 +169,112 @@
     #pikabaka-concepts .pk-selection { position:absolute; border:2px solid var(--pk-accent); background:color-mix(in srgb,var(--pk-accent) 9%,transparent); pointer-events:none; }
     #pikabaka-concepts .pk-sheet meter { width:100%; height:16px; margin-top:16px; accent-color:var(--pk-accent); }
     /* Pikabaka's own CSS, informed by Hermes Desktop's Nous theme and flat-surface conventions. */
-    #pikabaka-concepts .pk-app[data-skin="hermes"] {
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) {
       --pk-chrome:color-mix(in srgb,var(--pk-ink) 4%,var(--pk-bg));
       --pk-hairline:color-mix(in srgb,var(--pk-ink) 10%,var(--pk-bg));
       border-color:var(--pk-hairline); border-radius:10px;
       box-shadow:0 2px 5px light-dark(#1f232807,#00000024);
       line-height:1.5; letter-spacing:0;
     }
-    #pikabaka-concepts .pk-workspace[data-skin="hermes"] { grid-template-columns:196px minmax(0,1fr); }
-    #pikabaka-concepts .pk-workspace.pk-in-call[data-skin="hermes"] { grid-template-columns:minmax(0,1fr); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-rail { background:var(--pk-chrome); border-color:var(--pk-hairline); padding:22px 12px 18px; gap:26px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-brand { font-size:16px; letter-spacing:-.5px; font-weight:600; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-brand svg { color:var(--pk-ink); width:18px; height:18px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-brand span span { color:var(--pk-ink); font-weight:600; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-nav { font-size:13px!important; font-weight:400; line-height:1.4; padding:9px 10px; border-radius:5px; gap:9px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-nav[aria-current="page"] { background:color-mix(in srgb,var(--pk-accent) 9%,var(--pk-chrome)); color:var(--pk-ink)!important; font-weight:500; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-nav[aria-current="page"] svg { color:var(--pk-accent); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-topbar { min-height:54px; padding:10px 20px; gap:10px; background:var(--pk-chrome); border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-topbar h1 { font-size:14px; font-weight:500; letter-spacing:0; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-topbar .pk-row { gap:9px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button { font-size:12px; font-weight:500; line-height:1.4; padding:6px 10px; border-radius:5px; border-color:var(--pk-hairline); background:var(--pk-surface); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button:hover { background:var(--pk-soft); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-primary,
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer [data-action="send"] { background:var(--pk-primary-fill); border-color:transparent; color:var(--pk-on-accent); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-primary:hover,
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer [data-action="send"]:hover { filter:brightness(.94); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-quiet { background:transparent; border-color:transparent; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-quiet:hover { background:var(--pk-soft); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-visibility { border-color:var(--pk-hairline); border-radius:5px; padding:5px 8px; font-size:11px; background:var(--pk-bg); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-visibility span { min-width:72px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-live { font-size:11px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-live .pk-dot { background:light-dark(#1f8a65,#3fb950); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-live .pk-dot-paused { background:var(--pk-muted); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-duration { font-size:11px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-model { font-size:11px; max-width:150px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-body { padding:22px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-eyebrow { font-size:11px; font-weight:500; letter-spacing:.7px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] h2 { font-size:18px; font-weight:500; letter-spacing:-.3px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] h3 { font-size:13px; font-weight:500; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-chip { font-size:11px; border-radius:4px; padding:3px 6px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-answer-content { margin:18px 0; min-height:220px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-answer-lead { font-size:calc(var(--pk-font) * 1.4); font-weight:500; letter-spacing:-.25px; line-height:1.55; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-answer-content ul { font-size:var(--pk-font); gap:10px; line-height:1.65; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-transcript { border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-transcript-head { margin-bottom:20px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-quote { font-size:13px; line-height:1.65; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer { border-radius:8px; border-color:var(--pk-hairline); background:var(--pk-surface); padding:13px; box-shadow:0 1px 2px light-dark(#1f232808,#0000001a); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer textarea { font-size:13px; min-height:52px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-tools { border-radius:6px; padding:9px; background:var(--pk-chrome); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-segmented { gap:12px; border-bottom:1px solid var(--pk-hairline); margin-bottom:22px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-segmented button { padding:9px 4px; font-size:12px; border-radius:0; border-bottom:2px solid transparent; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-segmented button[aria-selected="true"] { background:transparent; border-bottom-color:var(--pk-accent); color:var(--pk-ink); font-weight:500; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-search { margin:0 0 22px; border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-search input { font-size:13px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-meeting { padding:18px 10px; border-color:var(--pk-hairline); border-radius:5px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-meeting:hover { background:var(--pk-soft); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-meeting .pk-meeting-icon { width:30px; height:30px; background:transparent; border-radius:0; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-sheet { padding:18px 0; border:0; border-radius:0; background:transparent; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-editor-item { background:transparent; border-radius:0; padding:16px 0; border-top:1px solid var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-editor-section { border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-settings-row { padding:17px 0; border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-settings-row strong { font-size:13px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-field { border-color:var(--pk-hairline); border-radius:5px; font-size:13px; background:var(--pk-surface); box-shadow:inset 0 1px 1px light-dark(#1f232806,#00000018); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] input { accent-color:var(--pk-accent); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-chat article { background:var(--pk-soft); border-radius:6px; }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-details { border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-preparation { max-width:650px; margin-top:8px; }
-    #pikabaka-concepts .pk-focus[data-skin="hermes"] { max-width:700px; }
-    #pikabaka-concepts .pk-focus[data-skin="hermes"] .pk-question { padding-top:5px; border-color:var(--pk-hairline); }
-    #pikabaka-concepts .pk-focus[data-skin="hermes"] .pk-answer-lead { font-size:calc(var(--pk-font) * 1.55); }
-    #pikabaka-concepts .pk-focus[data-skin="hermes"] .pk-answer-content li { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-workspace:is([data-skin="hermes"],[data-skin="ukiyo"]) { grid-template-columns:196px minmax(0,1fr); }
+    #pikabaka-concepts .pk-workspace.pk-in-call:is([data-skin="hermes"],[data-skin="ukiyo"]) { grid-template-columns:minmax(0,1fr); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-rail { background:var(--pk-chrome); border-color:var(--pk-hairline); padding:22px 12px 18px; gap:26px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-brand { font-size:16px; letter-spacing:-.5px; font-weight:600; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-brand svg { color:var(--pk-ink); width:18px; height:18px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-brand span span { color:var(--pk-ink); font-weight:600; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-nav { font-size:13px!important; font-weight:400; line-height:1.4; padding:9px 10px; border-radius:5px; gap:9px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-nav[aria-current="page"] { background:color-mix(in srgb,var(--pk-accent) 9%,var(--pk-chrome)); color:var(--pk-ink)!important; font-weight:500; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-nav[aria-current="page"] svg { color:var(--pk-accent); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-topbar { min-height:54px; padding:10px 20px; gap:10px; background:var(--pk-chrome); border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-topbar h1 { font-size:14px; font-weight:500; letter-spacing:0; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-topbar .pk-row { gap:9px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-button { font-size:12px; font-weight:500; line-height:1.4; padding:6px 10px; border-radius:5px; border-color:var(--pk-hairline); background:var(--pk-surface); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-button:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-button-primary,
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-composer [data-action="send"] { background:var(--pk-primary-fill); border-color:transparent; color:var(--pk-on-accent); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-button-primary:hover,
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-composer [data-action="send"]:hover { filter:brightness(.94); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-button-quiet { background:transparent; border-color:transparent; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-button-quiet:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-visibility { border-color:var(--pk-hairline); border-radius:5px; padding:5px 8px; font-size:11px; background:var(--pk-bg); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-visibility span { min-width:72px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-live { font-size:11px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-live .pk-dot { background:light-dark(#1f8a65,#3fb950); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-live .pk-dot-paused { background:var(--pk-muted); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-duration { font-size:11px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-model { font-size:11px; max-width:150px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-body { padding:22px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-eyebrow { font-size:11px; font-weight:500; letter-spacing:.7px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) h2 { font-size:18px; font-weight:500; letter-spacing:-.3px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) h3 { font-size:13px; font-weight:500; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-chip { font-size:11px; border-radius:4px; padding:3px 6px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-answer-content { margin:18px 0; min-height:220px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-answer-lead { font-size:calc(var(--pk-font) * 1.4); font-weight:500; letter-spacing:-.25px; line-height:1.55; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-answer-content ul { font-size:var(--pk-font); gap:10px; line-height:1.65; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-transcript { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-transcript-head { margin-bottom:20px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-quote { font-size:13px; line-height:1.65; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-composer { border-radius:8px; border-color:var(--pk-hairline); background:var(--pk-surface); padding:13px; box-shadow:0 1px 2px light-dark(#1f232808,#0000001a); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-composer textarea { font-size:13px; min-height:52px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-tools { border-radius:6px; padding:9px; background:var(--pk-chrome); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-segmented { gap:12px; border-bottom:1px solid var(--pk-hairline); margin-bottom:22px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-segmented button { padding:9px 4px; font-size:12px; border-radius:0; border-bottom:2px solid transparent; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-segmented button[aria-selected="true"] { background:transparent; border-bottom-color:var(--pk-accent); color:var(--pk-ink); font-weight:500; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-search { margin:0 0 22px; border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-search input { font-size:13px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-meeting { padding:18px 10px; border-color:var(--pk-hairline); border-radius:5px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-meeting:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-meeting .pk-meeting-icon { width:30px; height:30px; background:transparent; border-radius:0; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-sheet { padding:18px 0; border:0; border-radius:0; background:transparent; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-editor-item { background:transparent; border-radius:0; padding:16px 0; border-top:1px solid var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-editor-section { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-settings-row { padding:17px 0; border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-settings-row strong { font-size:13px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-field { border-color:var(--pk-hairline); border-radius:5px; font-size:13px; background:var(--pk-surface); box-shadow:inset 0 1px 1px light-dark(#1f232806,#00000018); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) input { accent-color:var(--pk-accent); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-chat article { background:var(--pk-soft); border-radius:6px; }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-details { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-preparation { max-width:650px; margin-top:8px; }
+    #pikabaka-concepts .pk-focus:is([data-skin="hermes"],[data-skin="ukiyo"]) { max-width:700px; }
+    #pikabaka-concepts .pk-focus:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-question { padding-top:5px; border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-focus:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-answer-lead { font-size:calc(var(--pk-font) * 1.55); }
+    #pikabaka-concepts .pk-focus:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-answer-content li { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] {
+      --pk-seal:light-dark(#993f32,#d18a72);
+      --pk-chrome:color-mix(in srgb,var(--pk-ink) 3%,var(--pk-bg));
+      --pk-hairline:color-mix(in srgb,var(--pk-ink) 23%,var(--pk-bg));
+      border-radius:2px; border-color:var(--pk-hairline);
+      box-shadow:0 3px 10px light-dark(#4b351211,#00000032); line-height:1.65;
+    }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-rail,
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-topbar {
+      background-color:var(--pk-chrome);
+      background-image:repeating-linear-gradient(108deg,color-mix(in srgb,var(--pk-ink) 2%,transparent) 0px,color-mix(in srgb,var(--pk-ink) 2%,transparent) .6px,transparent .6px,transparent 9px),repeating-linear-gradient(8deg,transparent 0px,transparent 16px,color-mix(in srgb,var(--pk-ink) 2%,transparent) 16px,color-mix(in srgb,var(--pk-ink) 2%,transparent) 16.6px,transparent 16.6px,transparent 31px);
+    }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-brand { font-family:'Noto Serif',Georgia,serif; font-weight:600; font-size:17px; letter-spacing:-.6px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-brand svg { color:var(--pk-seal); border:1px solid var(--pk-seal); padding:3px; width:25px; height:27px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-topbar h1 { font-family:'Noto Serif',Georgia,serif; font-size:14px; font-weight:500; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-eyebrow { color:var(--pk-seal); font-size:11px; letter-spacing:1px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-button { border-radius:2px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-button-primary { box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pk-on-accent) 16%,transparent); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-visibility { background:var(--pk-bg); border-radius:2px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-nav { border-radius:0; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-nav[aria-current="page"] { background:color-mix(in srgb,var(--pk-accent) 8%,var(--pk-bg)); box-shadow:inset 2px 0 var(--pk-seal); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-nav[aria-current="page"] svg { color:var(--pk-seal); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-answer-lead { font-family:'Noto Serif',Georgia,serif; font-weight:500; line-height:1.7; letter-spacing:-.5px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-answer-content ul { font-size:13px; line-height:1.8; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-composer { border-radius:2px; background:var(--pk-bg); border-color:var(--pk-hairline); box-shadow:inset 0 0 0 3px var(--pk-bg),inset 0 0 0 4px color-mix(in srgb,var(--pk-ink) 6%,var(--pk-bg)); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-composer [data-action="send"] { border-radius:2px; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-chip { border-radius:1px; background:color-mix(in srgb,var(--pk-ink) 6%,var(--pk-bg)); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-segmented button[aria-selected="true"] { border-bottom-color:var(--pk-seal); }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-field { background:var(--pk-bg); border-radius:1px; box-shadow:none; }
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-tools,
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] .pk-chat article,
+    #pikabaka-concepts .pk-app[data-skin="ukiyo"] pre { border-radius:1px; }
     @media (max-width:760px) {
-      #pikabaka-concepts .pk-workspace[data-skin="hermes"] { grid-template-columns:minmax(0,1fr); }
-      #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-rail { padding:15px 12px; gap:14px; }
-      #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-body { padding:18px; }
+      #pikabaka-concepts .pk-workspace:is([data-skin="hermes"],[data-skin="ukiyo"]) { grid-template-columns:minmax(0,1fr); }
+      #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-rail { padding:15px 12px; gap:14px; }
+      #pikabaka-concepts .pk-app:is([data-skin="hermes"],[data-skin="ukiyo"]) .pk-body { padding:18px; }
       #pikabaka-concepts .pk-stage { min-height:1080px; }
       #pikabaka-concepts .pk-stage-focus { padding:20px 0; }
       #pikabaka-concepts .pk-workspace { grid-template-columns:minmax(0,1fr); }
@@ -333,11 +365,12 @@
       let revision=Number.isSafeInteger(saved.revision)?saved.revision:0;
       const apps=[{el:root.querySelector('#pk-workspace'),compact:false,screen:saved.workspaceScreen||'session'},{el:root.querySelector('#pk-focus'),compact:true,screen:saved.focusScreen||'session'}];
       const designSkins={
-        hermes:{skin:'hermes',family:'Segoe UI',font:14,spacing:22,radius:6,accent:'#0053fd',bgLight:'#fcfcfc',bgDark:'#0d1117',inkLight:'#1f2328',inkDark:'#e6edf3'},
+        ukiyo:{skin:'ukiyo',family:'Noto Serif',font:14,spacing:24,radius:2,accent:'#2f6554',bgLight:'#f3ead6',bgDark:'#1b1d19',inkLight:'#2e332b',inkDark:'#e8ddc3'},
+        hermes:{skin:'hermes',family:'Segoe UI',font:14,spacing:22,radius:6,accent:'#047857',bgLight:'#fcfcfc',bgDark:'#0d1117',inkLight:'#1f2328',inkDark:'#e6edf3'},
         classic:{skin:'classic',family:'Segoe UI',font:14,spacing:24,radius:12,accent:'#267867',bgLight:'#fafaf8',bgDark:'#151716',inkLight:'#202923',inkDark:'#e7ede8'}
       };
       const screens=['session','history','materials','settings','record','profile-edit','job-edit','document','import','prep','negotiation','company','providers','provider-edit','instructions','translation','shortcut','audio-test','capture','voice','export','email','calendar','confirm','copy','diagnostics','about','appearance'];
-      for(const app of apps){Object.assign(app,{active:false,listening:false,startedAt:null,endedAt:null,tool:'answer',answerOverride:null,transcript:!app.compact,translation:false,tools:false,nav:false,settings:'general',material:'profile',model:data.settings.answerModel,record:1,job:1,document:1,provider:1,search:'',prompt:'',attachment:null,messages:[],draft:null,returnTo:null,error:'',toast:'',savedNotes:false,view:'summary',category:'Все',negotiationPhase:0,voiceText:'',audioState:'receiving',...designSkins.hermes,theme:'system'});if(!screens.includes(app.screen))app.screen='session';if(['profile-edit','job-edit','provider-edit','document','import','confirm','shortcut','instructions','translation','capture','voice','export','email','copy'].includes(app.screen))app.screen='session';}
+      for(const app of apps){Object.assign(app,{active:false,listening:false,startedAt:null,endedAt:null,tool:'answer',answerOverride:null,transcript:!app.compact,translation:false,tools:false,nav:false,settings:'general',material:'profile',model:data.settings.answerModel,record:1,job:1,document:1,provider:1,search:'',prompt:'',attachment:null,messages:[],draft:null,returnTo:null,error:'',toast:'',savedNotes:false,view:'summary',category:'Все',negotiationPhase:0,voiceText:'',audioState:'receiving',...designSkins.ukiyo,theme:'system'});if(!screens.includes(app.screen))app.screen='session';if(['profile-edit','job-edit','provider-edit','document','import','confirm','shortcut','instructions','translation','capture','voice','export','email','copy'].includes(app.screen))app.screen='session';}
       const persist=()=>{revision++;globalThis.openai?.setWidgetState?.({modelContent:{workspaceScreen:apps[0].screen,focusScreen:apps[1].screen,revision},privateContent:null}).catch(()=>{});};
       globalThis.addEventListener('openai:set_globals',event=>{const state=event.detail?.globals?.widgetState?.modelContent;if(!state||(state.revision||0)<revision)return;revision=state.revision||0;apps.forEach((app,i)=>{const screen=state[i?'focusScreen':'workspaceScreen'];if(screens.includes(screen)&&screen!==app.screen&&!screen.endsWith('-edit')){app.screen=screen;render(app);}});});
       const elapsed=app=>app.startedAt===null?0:Math.max(0,Math.floor(((app.endedAt??Date.now())-app.startedAt)/1000));
@@ -430,7 +463,7 @@
       function audioTestScreen(app){const status=audioStatus({...app,active:true,listening:true});return `${back()}<div class="pk-settings-row"><strong>Системный звук</strong><span class="pk-small">${esc(data.settings.systemAudio)}</span></div><div class="pk-settings-row"><strong>Микрофон</strong><span class="pk-small">${esc(data.settings.microphone)}</span></div><label class="pk-form-field"><span>Сценарий сигнала</span><select class="pk-field" data-audio-scenario>${[['receiving','Есть транскрипт'],['waiting','Звук есть, текста пока нет'],['silent','Нет системного звука'],['disconnected','Соединение потеряно']].map(([key,label])=>`<option value="${key}" ${app.audioState===key?'selected':''}>${label}</option>`).join('')}</select></label><section class="pk-sheet" role="status"><h3>${status}</h3><meter min="0" max="100" value="${app.audioState==='receiving'?65:app.audioState==='waiting'?40:0}" aria-label="Пример уровня сигнала"></meter><p class="pk-small">${app.audioState==='silent'?'Проверьте источник системного звука и воспроизведение в приложении звонка.':app.audioState==='disconnected'?'Проверьте подключение, прокси и ключ провайдера распознавания.':'Показано ожидаемое состояние интерфейса.'}</p></section><p class="pk-small pk-muted">Это проверка состояний макета, без обращения к аудиоустройствам.</p>${toolbar(button('audio-settings','Настройки аудио','sliders-horizontal'))}`;}
       function appearanceScreen(app){
         const color=(label,key)=>`<label class="pk-form-field"><span>${label}</span><div class="pk-row"><input type="color" class="pk-field pk-color" data-appearance="${key}" value="${app[key]}" aria-label="${label}"><code>${app[key]}</code></div></label>`;
-        return `<section class="pk-editor">${back()}<label class="pk-form-field"><span>Стиль интерфейса</span><select class="pk-field" data-appearance="skin"><option value="hermes" ${app.skin==='hermes'?'selected':''}>Hermes · Nous</option><option value="classic" ${app.skin==='classic'?'selected':''}>Исходный макет</option></select></label><div class="pk-form-grid"><label class="pk-form-field"><span>Шрифт</span><select class="pk-field" data-appearance="family">${['Segoe UI','Inter','Manrope','IBM Plex Sans'].map(family=>`<option ${app.family===family?'selected':''}>${family}</option>`).join('')}</select></label><label class="pk-form-field"><span>Тема</span><select class="pk-field" data-appearance="theme">${[['system','Как в системе'],['light','Светлая'],['dark','Тёмная']].map(([value,label])=>`<option value="${value}" ${app.theme===value?'selected':''}>${label}</option>`).join('')}</select></label></div><label class="pk-form-field"><span>Размер текста · ${app.font} px</span><input type="range" min="13" max="17" value="${app.font}" data-appearance="font" aria-label="Размер текста"></label><div class="pk-form-grid">${color('Фон · светлая тема','bgLight')}${color('Текст · светлая тема','inkLight')}${color('Фон · тёмная тема','bgDark')}${color('Текст · тёмная тема','inkDark')}${color('Акцент','accent')}</div><section class="pk-sheet"><h3>Предпросмотр</h3><p style="color:var(--pk-ink);font:inherit;margin-top:12px">Текущий разговор · История встреч · Материалы</p><p class="pk-answer-lead" style="margin-top:16px">Я бы вынес счётчик в общее хранилище.</p><div class="pk-row"><span class="pk-chip">Мой опыт</span><span class="pk-live"><span class="pk-dot"></span>Слушаю</span></div></section>${toolbar(button('reset-appearance','Сбросить настройки стиля','rotate-ccw'))}</section>`;
+        return `<section class="pk-editor">${back()}<label class="pk-form-field"><span>Стиль интерфейса</span><select class="pk-field" data-appearance="skin"><option value="ukiyo" ${app.skin==='ukiyo'?'selected':''}>Японская гравюра</option><option value="hermes" ${app.skin==='hermes'?'selected':''}>Hermes · Изумруд</option><option value="classic" ${app.skin==='classic'?'selected':''}>Исходный макет</option></select></label><div class="pk-form-grid"><label class="pk-form-field"><span>Шрифт</span><select class="pk-field" data-appearance="family">${['Segoe UI','Inter','Manrope','IBM Plex Sans','Noto Serif'].map(family=>`<option ${app.family===family?'selected':''}>${family}</option>`).join('')}</select></label><label class="pk-form-field"><span>Тема</span><select class="pk-field" data-appearance="theme">${[['system','Как в системе'],['light','Светлая'],['dark','Тёмная']].map(([value,label])=>`<option value="${value}" ${app.theme===value?'selected':''}>${label}</option>`).join('')}</select></label></div><label class="pk-form-field"><span>Размер текста · ${app.font} px</span><input type="range" min="13" max="17" value="${app.font}" data-appearance="font" aria-label="Размер текста"></label><div class="pk-form-grid">${color('Фон · светлая тема','bgLight')}${color('Текст · светлая тема','inkLight')}${color('Фон · тёмная тема','bgDark')}${color('Текст · тёмная тема','inkDark')}${color('Акцент','accent')}</div><section class="pk-sheet"><h3>Предпросмотр</h3><p style="color:var(--pk-ink);font:inherit;margin-top:12px">Текущий разговор · История встреч · Материалы</p><p class="pk-answer-lead" style="margin-top:16px">Я бы вынес счётчик в общее хранилище.</p><div class="pk-row"><span class="pk-chip">Мой опыт</span><span class="pk-live"><span class="pk-dot"></span>Слушаю</span></div></section>${toolbar(button('reset-appearance','Сбросить настройки стиля','rotate-ccw'))}</section>`;
       }
       function diagnosticsScreen(app){return `${back()}<div class="pk-editor"><div class="pk-settings-row"><strong>Системный прокси</strong><span>${data.settings.proxy?'Использовать':'Не использовать'}</span></div><div class="pk-settings-row"><strong>Распознавание</strong><span>${esc(data.settings.stt)}</span></div><div class="pk-settings-row"><strong>Google Calendar</strong><span>OAuth не настроен</span></div><div class="pk-settings-row"><strong>Подробные логи</strong><span>${data.settings.logs?'Включены':'Выключены'}</span></div><pre data-diagnostics>UI prototype · no network requests\nAudio state: ${esc(app.audioState)}\nSystem proxy preference: ${data.settings.proxy}\nActive conversation: ${app.active}</pre>${toolbar(button('copy-diagnostics','Копировать диагностику','copy'))}</div>`;}
       function render(app){
@@ -453,8 +486,13 @@
         } else app.el.style.removeProperty('--pk-on-accent');
         if(app.accent!=='#267867'){app.el.style.setProperty('--pk-accent',app.accent);app.el.style.setProperty('--pk-accent-soft',`color-mix(in srgb, ${app.accent} 13%, var(--pk-surface))`);}else{app.el.style.removeProperty('--pk-accent');app.el.style.removeProperty('--pk-accent-soft');}
         app.el.style.setProperty('--pk-primary-fill',app.accent);
-        if(app.skin==='hermes'&&app.accent==='#0053fd'){
-          app.el.style.setProperty('--pk-accent','light-dark(#0053fd,#4a84fe)');
+        if(app.skin==='ukiyo'&&app.accent==='#2f6554'){
+          app.el.style.setProperty('--pk-accent','light-dark(#2f6554,#9fc4aa)');
+          app.el.style.setProperty('--pk-on-accent','#fff8e8');
+          app.el.style.setProperty('--pk-accent-soft','color-mix(in srgb, var(--pk-accent) 9%, var(--pk-bg))');
+        }
+        if(app.skin==='hermes'&&app.accent==='#047857'){
+          app.el.style.setProperty('--pk-accent','light-dark(#047857,#34d399)');
           app.el.style.setProperty('--pk-on-accent','#ffffff');
           app.el.style.setProperty('--pk-accent-soft','color-mix(in srgb, var(--pk-accent) 10%, var(--pk-surface))');
         }

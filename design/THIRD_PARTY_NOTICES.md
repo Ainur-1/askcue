@@ -1,6 +1,6 @@
 # Design references
 
-The Hermes-inspired style uses Nous Research's Hermes Desktop as a visual reference, including the Nous blue accent seeds and flat-surface conventions. Pikabaka's mockup CSS and interactions are implemented locally; no Hermes application code, logo, or font binaries are bundled.
+The Hermes-inspired style uses Nous Research's Hermes Desktop as a visual reference, including its compact controls and flat-surface conventions; the emerald palette is a Pikabaka adaptation. Pikabaka's mockup CSS and interactions are implemented locally; no Hermes application code, logo, or font binaries are bundled.
 
 Reference repository: https://github.com/NousResearch/hermes-agent
 
