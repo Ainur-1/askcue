@@ -9,7 +9,6 @@ interface MeetingHistorySectionProps {
     onOpenMeeting: (meeting: Meeting) => void;
     onExportMeeting: (meeting: Meeting) => void;
     onDeleteMeeting: (meeting: Meeting) => void;
-    onStartMeeting: () => void;
     activeMenuId: string | null;
     onMenuToggle: (meetingId: string | null) => void;
     menuEntered: boolean;
@@ -94,7 +93,6 @@ const MeetingHistorySection: React.FC<MeetingHistorySectionProps> = ({
     onOpenMeeting,
     onExportMeeting,
     onDeleteMeeting,
-    onStartMeeting,
     activeMenuId,
     onMenuToggle,
     menuEntered,
@@ -132,7 +130,7 @@ const MeetingHistorySection: React.FC<MeetingHistorySectionProps> = ({
             <SearchToolbar query={query} onQueryChange={setQuery} filter={filter} onFilterChange={setFilter} />
 
             {isInitialEmpty ? (
-                <EmptyState type="empty" onStartMeeting={onStartMeeting} />
+                <EmptyState type="empty" />
             ) : hasNoResults ? (
                 <EmptyState type="no-results" />
             ) : (

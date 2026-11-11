@@ -34,7 +34,7 @@ const TranscriptPanel: React.FC<TranscriptPanelProps> = ({
     isLightTheme,
 }) => {
     const hasTranscriptContent = transcriptSegments.length > 0 || isInterviewerSpeaking;
-    const placeholderText = 'Transcript will appear here when meeting audio is detected';
+    const placeholderText = 'Здесь появится расшифровка разговора';
 
     return (
         <div className="flex h-full flex-col overflow-y-auto custom-scrollbar">
@@ -60,7 +60,7 @@ const TranscriptPanel: React.FC<TranscriptPanelProps> = ({
                 )}
             </div>
 
-            <div className="px-4 pt-2 pb-1 no-drag" aria-live="polite" aria-atomic="true">
+            {showSttErrorDetail && <div className="px-4 pt-2 pb-1 no-drag" aria-live="polite" aria-atomic="true">
                 <div
                     className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium border border-border-subtle/70 ${subtleSurfaceClass} ${sttStatus.toneClass}`}
                     style={appearance.subtleStyle}
@@ -69,7 +69,7 @@ const TranscriptPanel: React.FC<TranscriptPanelProps> = ({
                     <span>{sttStatus.label}</span>
                     {showSttErrorDetail && <span className="opacity-80">- {nativeAudioHealth.lastError}</span>}
                 </div>
-            </div>
+            </div>}
 
             {sttNeedsTroubleshooting && (
                 <div className="mx-4 mb-2 p-2 rounded-lg border border-state-warning-border bg-state-warning-soft no-drag">

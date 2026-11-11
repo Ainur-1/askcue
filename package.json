@@ -19,6 +19,7 @@
     "dev": "vite",
     "lint": "eslint src electron test --no-inline-config",
     "test": "tap --node-arg=--import=tsx \"test/**/*.test.ts\"",
+    "test:ui": "node scripts/test-interface.cjs",
     "test:proxy": "node scripts/test-system-proxy.cjs",
     "verify": "pnpm run lint && pnpm run test",
     "build:web:raw": "pnpm run clean && tsc && vite build",

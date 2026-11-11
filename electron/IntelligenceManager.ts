@@ -219,6 +219,10 @@ export class IntelligenceManager extends EventEmitter {
      * is not wiped. (full reset() also clears the session — only use that at
      * end of meeting or explicit session teardown.)
      */
+    getSessionStartTime(): number {
+        return this.session.getSessionStartTime();
+    }
+
     resetEngine(): void {
         this.engine.reset();
     }

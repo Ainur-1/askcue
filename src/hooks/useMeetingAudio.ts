@@ -111,18 +111,18 @@ export function useMeetingAudio() {
 
   const sttStatus = useMemo(() => {
     if (!nativeAudioHealth.meetingActive) {
-      return { label: 'STT idle', toneClass: 'text-text-tertiary', dotClass: 'bg-slate-500/50' };
+      return { label: 'Распознавание не запущено', toneClass: 'text-text-tertiary', dotClass: 'bg-slate-500/50' };
     }
     if (!isConnected) {
-      return { label: 'STT disconnected', toneClass: 'text-red-400', dotClass: 'bg-red-400' };
+      return { label: 'Нет связи с аудио', toneClass: 'text-red-400', dotClass: 'bg-red-400' };
     }
     if (nativeAudioHealth.hasRecentInterviewerTranscript) {
-      return { label: 'STT receiving transcript', toneClass: 'text-emerald-400', dotClass: 'bg-emerald-400 animate-pulse' };
+      return { label: 'Распознаю речь', toneClass: 'text-emerald-400', dotClass: 'bg-emerald-400 animate-pulse' };
     }
     if (nativeAudioHealth.hasRecentSystemAudioChunk) {
-      return { label: 'STT listening (no transcript yet)', toneClass: 'text-amber-300', dotClass: 'bg-amber-300' };
+      return { label: 'Слушаю · речь пока не распознана', toneClass: 'text-amber-300', dotClass: 'bg-amber-300' };
     }
-    return { label: 'No system audio signal', toneClass: 'text-red-300', dotClass: 'bg-red-300' };
+    return { label: 'Нет системного звука', toneClass: 'text-red-300', dotClass: 'bg-red-300' };
   }, [isConnected, nativeAudioHealth]);
 
   const sttNeedsTroubleshooting = useMemo(() => {

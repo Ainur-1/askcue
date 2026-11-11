@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { AlertCircle, ArrowRight, Briefcase, Calendar, CheckCircle, DownloadCloud, Ghost, Link as LinkIcon, RefreshCw, Zap } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AlertCircle, ArrowRight, Briefcase, Calendar, CheckCircle, DownloadCloud, Link as LinkIcon, RefreshCw, Zap, History, BookOpen, Settings, MessageSquarePlus, AudioLines, Mic, FileText } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import MeetingDetails from './MeetingDetails';
 import GlobalChatOverlay from './GlobalChatOverlay';
+import SettingsOverlay from './SettingsOverlay';
+import DetectableControl from './ui/DetectableControl';
 import LauncherHeader from './launcher/LauncherHeader';
 import MeetingHistorySection from './launcher/MeetingHistorySection';
 import { generateMeetingPDF } from '../utils/pdfGenerator';
 import { analytics } from '../lib/analytics/analytics.service';
 import { useShortcuts } from '../hooks/useShortcuts';
 import { useProfileData } from '../hooks/useProfileData';
-import { useResolvedTheme } from '../hooks/useResolvedTheme';
 export interface Meeting {
     id: string; title: string; date: string; duration: string; summary: string;
     detailedSummary?: { actionItems: string[]; keyPoints: string[] };
@@ -27,15 +28,21 @@ interface LauncherProps {
 }
 const Launcher: React.FC<LauncherProps> = ({
     onStartMeeting,
-    onOpenSettings,
     onPageChange,
     ollamaPullStatus = 'idle',
     ollamaPullPercent = 0,
     ollamaPullMessage = '',
 }) => {
     const [meetings, setMeetings] = useState<Meeting[]>([]);
-    const [isDetectable, setIsDetectable] = useState(false);
+    const [page, setPage] = useState<'session' | 'history' | 'materials' | 'settings'>('session');
+    const [settingsTab, setSettingsTab] = useState('general');
+    const onOpenSettings = (tab = 'general') => { setSettingsTab(tab); setPage(tab === 'profile' ? 'materials' : 'settings'); setSelectedMeeting(null); };
     const [isMeetingActive, setIsMeetingActive] = useState(false);
+    const wasMeetingActive = useRef(false);
+    useEffect(() => {
+        if (wasMeetingActive.current && !isMeetingActive) { setPage('history'); setSelectedMeeting(null); }
+        wasMeetingActive.current = isMeetingActive;
+    }, [isMeetingActive]);
     const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
     const [forwardMeeting, setForwardMeeting] = useState<Meeting | null>(null);
     const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
@@ -49,7 +56,7 @@ const Launcher: React.FC<LauncherProps> = ({
     const [submittedGlobalQuery, setSubmittedGlobalQuery] = useState('');
     const { isShortcutPressed } = useShortcuts();
     const { data: profileData } = useProfileData();
-    const isLight = useResolvedTheme() === 'light';
+
     const fetchMeetings = () => {
         window.electronAPI?.getRecentMeetings?.().then(setMeetings).catch(err => console.error('Failed to fetch meetings:', err));
     };
@@ -78,9 +85,7 @@ const Launcher: React.FC<LauncherProps> = ({
     useEffect(() => {
         let mounted = true;
         console.log('Launcher mounted');
-        window.electronAPI?.seedDemo?.().catch(err => console.error('Failed to seed demo:', err));
-        window.electronAPI?.getUndetectable?.().then((undetectable) => { if (mounted) setIsDetectable(!undetectable); });
-        const removeUndetectableListener = window.electronAPI?.onUndetectableChanged?.((undetectable) => setIsDetectable(!undetectable));
+
         fetchMeetings();
         fetchEvents();
         window.electronAPI?.getMeetingActive?.().then((active) => { if (mounted) setIsMeetingActive(active); }).catch(() => {});
@@ -93,7 +98,6 @@ const Launcher: React.FC<LauncherProps> = ({
         return () => {
             mounted = false;
             removeMeetingsListener?.();
-            removeUndetectableListener?.();
             removeMeetingStateListener?.();
             clearInterval(interval);
         };
@@ -138,12 +142,6 @@ const Launcher: React.FC<LauncherProps> = ({
         return diff > -5 * 60000 && diff < 60 * 60000;
     });
     const showUpcomingHero = Boolean((isPrepared && preparedEvent) || nextMeeting);
-    const toggleDetectable = () => {
-        const newState = !isDetectable;
-        setIsDetectable(newState);
-        window.electronAPI?.setUndetectable(!newState);
-        analytics.trackModeSelected(newState ? 'launcher' : 'undetectable');
-    };
     const handleStartPreparedMeeting = async () => {
         if (!preparedEvent) return;
         analytics.trackCommandExecuted('start_prepared_meeting');
@@ -158,12 +156,14 @@ const Launcher: React.FC<LauncherProps> = ({
                 },
             });
             setIsPrepared(false);
+            await window.electronAPI.setWindowMode('overlay', true);
         } catch (e) {
             console.error('Failed to start prepared meeting', e);
         }
     };
     const handleOpenMeeting = async (meeting: Meeting) => {
         setForwardMeeting(null);
+        setPage('history');
         console.log('[Launcher] Opening meeting:', meeting.id);
         analytics.trackCommandExecuted('open_meeting_details');
         try {
@@ -204,14 +204,27 @@ const Launcher: React.FC<LauncherProps> = ({
         }
     };
     return (
-        <div className="flex h-full w-full flex-col overflow-hidden bg-bg-primary font-sans text-text-primary selection:bg-accent-secondary/30">
+        <div className="workbench text-text-primary">
+          <div className="workbench-row">
+            <aside className="workbench-sidebar paper-texture">
+              <div className="workbench-brand"><AudioLines size={24}/><span>Pikabaka</span></div>
+              <nav className="workbench-nav" aria-label="Разделы">
+                <button title="Новый разговор" aria-current={page === 'session' ? 'page' : undefined} onClick={() => { setPage('session'); setSelectedMeeting(null); }}><MessageSquarePlus size={18}/><span>{isMeetingActive ? 'Текущий разговор' : 'Новый разговор'}</span></button>
+                <button title="История встреч" aria-current={page === 'history' ? 'page' : undefined} onClick={() => { setPage('history'); setSelectedMeeting(null); }}><History size={18}/><span>История встреч</span></button>
+                <button title="Материалы" aria-current={page === 'materials' ? 'page' : undefined} onClick={() => onOpenSettings('profile')}><BookOpen size={18}/><span>Материалы</span></button>
+                <button title="Настройки" aria-current={page === 'settings' ? 'page' : undefined} onClick={() => onOpenSettings()}><Settings size={18}/><span>Настройки</span></button>
+              </nav>
+              {isMeetingActive && <button className="paper-primary mt-auto text-xs" onClick={() => window.electronAPI.setWindowMode('overlay', true)}>Вернуться к разговору <ArrowRight size={14}/></button>}
+            </aside>
+            <div className="workbench-body">
             <LauncherHeader
                 meetings={meetings}
                 selectedMeeting={selectedMeeting}
                 forwardMeeting={forwardMeeting}
                 onBack={handleBack}
                 onForward={handleForward}
-                onOpenSettings={() => onOpenSettings()}
+                title={selectedMeeting ? selectedMeeting.title : page === 'history' ? 'История встреч' : page === 'materials' ? 'Материалы' : page === 'settings' ? 'Настройки' : isMeetingActive ? 'Текущий разговор' : 'Новый разговор'}
+                status={<DetectableControl />}
                 onAIQuery={(query) => {
                     analytics.trackCommandExecuted('ai_query_search');
                     setSubmittedGlobalQuery(query);
@@ -231,7 +244,8 @@ const Launcher: React.FC<LauncherProps> = ({
                 }}
             />
             <div className="relative flex flex-1 flex-col overflow-hidden">
-                {!isDetectable && <div className="pointer-events-none absolute inset-1 z-modal rounded-2xl border-2 border-dashed border-border-muted" />}
+                {(page === 'settings' || page === 'materials') ? <SettingsOverlay key={`${page}-${settingsTab}`} isOpen onClose={() => setPage('session')} initialTab={settingsTab} embedded materialsOnly={page === 'materials'} /> : <>
+
                 <AnimatePresence mode="wait">
                     {selectedMeeting ? (
                         <motion.div key="details" className="flex-1 overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
@@ -239,48 +253,17 @@ const Launcher: React.FC<LauncherProps> = ({
                         </motion.div>
                     ) : (
                         <motion.div key="launcher" className="flex flex-1 flex-col overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-                            <section className={`${isLight ? 'bg-bg-primary' : 'bg-bg-elevated'} shrink-0 border-b border-border-subtle px-8 py-6`}>
-                                <div className="mx-auto max-w-4xl space-y-5">
-                                    <div className="flex items-center justify-between gap-4">
-                                        <div className="flex items-center gap-4">
-                                            <h1 className="font-celeb-light text-3xl font-medium tracking-wide text-text-primary">My Pika</h1>
-                                            <button onClick={handleRefresh} disabled={isRefreshing} className={`rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-input hover:text-text-primary ${isRefreshing ? 'animate-spin text-state-info' : ''}`} title="Refresh State" aria-label="Refresh calendar and meetings">
-                                                <RefreshCw size={18} />
-                                            </button>
-                                            <div className="flex min-w-36 items-center gap-3 rounded-full border border-border-muted bg-bg-elevated px-3 py-1.5">
-                                                <Ghost size={14} className="text-text-secondary" />
-                                                <span className="flex-1 text-xs font-medium text-text-secondary">{isDetectable ? 'Detectable' : 'Undetectable'}</span>
-                                                <button type="button" onClick={toggleDetectable} className={`relative h-4 w-8 rounded-full transition-colors ${!isDetectable ? 'bg-accent-primary' : 'bg-bg-toggle-switch'}`} aria-label={isDetectable ? 'Switch to undetectable mode' : 'Switch to detectable mode'}>
-                                                    <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-all ${!isDetectable ? 'left-4' : 'left-0.5'}`} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-1 justify-center">
-                                            <AnimatePresence>
-                                                {ollamaPullStatus !== 'idle' && (
-                                                    <motion.div initial={{ opacity: 0, scale: 0.95, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 8 }} className="flex items-center gap-2 rounded-full border border-border-subtle bg-bg-elevated/80 px-4 py-2 shadow-sm backdrop-blur-xl">
-                                                        {ollamaPullStatus === 'downloading' ? <DownloadCloud size={14} className="shrink-0 animate-pulse text-state-info" /> : ollamaPullStatus === 'complete' ? <CheckCircle size={14} className="shrink-0 text-state-success" /> : <AlertCircle size={14} className="shrink-0 text-state-danger" />}
-                                                        <div className="flex flex-col">
-                                                            <span className="whitespace-nowrap text-xs font-medium text-text-secondary">{ollamaPullStatus === 'downloading' ? `Setting up AI memory... ${ollamaPullPercent}%` : ollamaPullMessage}</span>
-                                                            {ollamaPullStatus === 'downloading' && <div className="mt-1 h-1 overflow-hidden rounded-full bg-bg-input"><div className="h-full rounded-full bg-state-info transition-all duration-300" style={{ width: `${ollamaPullPercent}%` }} /></div>}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-                                        <motion.button aria-keyshortcuts="Meta+1" onClick={() => {
-                                            if (isMeetingActive) {
-                                                window.electronAPI?.setWindowMode?.('overlay', true);
-                                                analytics.trackCommandExecuted('resume_meeting_from_launcher');
-                                            } else {
-                                                onStartMeeting();
-                                                analytics.trackCommandExecuted('start_pika_cta');
-                                            }
-                                        }} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={`flex shrink-0 items-center justify-center gap-3 rounded-full px-6 py-3 font-celeb text-xl font-medium text-white shadow-lg ${isMeetingActive ? 'bg-state-success' : 'bg-state-info'}`}>
-                                            {isMeetingActive && <span className="h-2.5 w-2.5 rounded-full bg-white shadow-sm" />}
-                                            {isMeetingActive ? 'Meeting ongoing' : 'Start Pika'}
-                                        </motion.button>
-                                    </div>
+                            {page === 'session' && <main className="custom-scrollbar flex-1 overflow-y-auto">
+                              <div className="prep-screen">
+                                <div className="prep-kicker">Подготовка к разговору</div>
+                                <div className="prep-row"><FileText/><div><strong>Профиль кандидата</strong><small>{profileData?.rawText || profileData?.identity?.name ? 'Резюме и опыт добавлены' : 'Добавьте резюме и опыт для персональных подсказок'}</small></div><button onClick={() => onOpenSettings('profile')}>Открыть</button></div>
+                                <div className="prep-row"><Briefcase/><div><strong>{profileData?.activeJD?.title || 'Вакансия'}</strong><small>{profileData?.activeJD?.company || 'Выберите вакансию в материалах'}</small></div><button onClick={() => onOpenSettings('profile')}>Выбрать</button></div>
+                                <div className="prep-row"><Mic/><div><strong>Звук и распознавание</strong><small>Микрофон, системный звук и сервис расшифровки</small></div><button onClick={() => onOpenSettings('audio')}>Настроить</button></div>
+                                <div className="flex items-center gap-4 mt-8 mb-8 flex-wrap">
+                                  <button className="paper-primary" onClick={() => { if (isMeetingActive) void window.electronAPI.setWindowMode('overlay', true); else onStartMeeting(); }}>{isMeetingActive ? 'Вернуться к разговору' : 'Начать разговор'} <ArrowRight size={16}/></button>
+                                  <button className="text-xs text-text-secondary p-2" onClick={() => onOpenSettings('ai-providers')}>Модели и подключения</button>
+                                </div>
+                                {ollamaPullStatus !== 'idle' && <div className="text-xs text-text-secondary mb-4 flex items-center gap-2">{ollamaPullStatus === 'downloading' ? <DownloadCloud size={14}/> : ollamaPullStatus === 'complete' ? <CheckCircle size={14}/> : <AlertCircle size={14}/>} {ollamaPullStatus === 'downloading' ? `Подготовка AI-памяти… ${ollamaPullPercent}%` : ollamaPullMessage}</div>}
                                     {showUpcomingHero && (
                                         <div className="rounded-2xl border border-border-subtle bg-bg-elevated p-5 shadow-sm">
                                             {isPrepared && preparedEvent ? (
@@ -310,25 +293,20 @@ const Launcher: React.FC<LauncherProps> = ({
                                             ) : null}
                                         </div>
                                     )}
-                                </div>
-                            </section>
-                            {profileData?.hasActiveJD && profileData.activeJD && (
-                                <div className="border-t border-border-subtle bg-bg-primary/50 px-8 py-3">
-                                    <div className="mx-auto flex max-w-4xl items-center justify-between">
-                                        <div className="flex items-center gap-3"><div className="flex h-7 w-7 items-center justify-center rounded-lg border border-accent-primary/20 bg-accent-primary/10"><Briefcase size={13} className="text-accent-primary" /></div><div><div className="flex items-center gap-2"><span className="text-xs font-semibold text-text-primary">{profileData.activeJD.title}</span><span className="rounded border border-accent-primary/20 bg-accent-primary/10 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-accent-primary">Active</span></div><span className="text-xs text-text-secondary">{profileData.activeJD.company}</span></div></div>
-                                        <button onClick={() => onOpenSettings?.('profile')} className="rounded-full px-2.5 py-1 text-xs font-medium text-text-tertiary transition-colors hover:bg-bg-input hover:text-text-primary">Change</button>
-                                    </div>
-                                </div>
-                            )}
-                            <main className="custom-scrollbar flex-1 overflow-y-auto bg-bg-primary">
+                              </div>
+                            </main>}
+                            {page === 'history' && <main className="custom-scrollbar flex-1 overflow-y-auto bg-bg-primary">
+                                <div className="flex justify-end px-8 pt-4"><button onClick={handleRefresh} disabled={isRefreshing} className="text-xs text-text-secondary flex gap-2 items-center"><RefreshCw size={13} className={isRefreshing ? 'animate-spin' : ''}/>Обновить</button></div>
                                 <section className="min-h-full px-8 py-8">
-                                    <MeetingHistorySection meetings={meetings} onOpenMeeting={handleOpenMeeting} onExportMeeting={handleExportMeeting} onDeleteMeeting={handleDeleteMeeting} onStartMeeting={onStartMeeting} activeMenuId={activeMenuId} onMenuToggle={setActiveMenuId} menuEntered={menuEntered} onMenuEnteredChange={setMenuEntered} />
+                                    <MeetingHistorySection meetings={meetings} onOpenMeeting={handleOpenMeeting} onExportMeeting={handleExportMeeting} onDeleteMeeting={handleDeleteMeeting} activeMenuId={activeMenuId} onMenuToggle={setActiveMenuId} menuEntered={menuEntered} onMenuEnteredChange={setMenuEntered} />
                                 </section>
-                            </main>
+                            </main>}
                         </motion.div>
                     )}
-                </AnimatePresence>
+                </AnimatePresence></>}
             </div>
+            </div>
+          </div>
             <AnimatePresence>
                 {showNotification && (
                     <motion.div initial={{ x: 300, opacity: 0, scale: 0.95 }} animate={{ x: 0, opacity: 1, scale: 1 }} exit={{ x: 300, opacity: 0, scale: 0.95 }} className="fixed bottom-10 right-10 z-modal flex items-center gap-4 rounded-2xl border border-border-subtle bg-bg-elevated/90 py-3 pl-4 pr-6 shadow-xl backdrop-blur-xl">

@@ -252,13 +252,13 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
             {/* Search Pill Container */}
             <div
                 ref={containerRef}
-                className="absolute left-1/2 -translate-x-1/2 top-[7px] no-drag z-40"
+                className="workbench-search no-drag z-40"
             >
                 <div className="relative">
                     <motion.div
                         initial={false}
                         animate={{
-                            width: isExpanded ? 480 : 340,
+                            width: isExpanded ? Math.min(480, window.innerWidth - 240) : 180,
                         }}
                         transition={{
                             type: "spring",
@@ -272,7 +272,7 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
                             <div
                                 className={`
                                     relative overflow-hidden
-                                    ${isLight ? 'bg-[#F2F2F7]/90' : 'bg-[#161618]/90'}
+                                    bg-bg-input border border-border-subtle
                                     backdrop-blur-xl backdrop-saturate-150
                                     rounded-2xl
                                     shadow-sm
@@ -300,7 +300,7 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
                                         focus:outline-none
                                         ${state === 'idle' ? 'cursor-default' : 'cursor-text'}
                                     `}
-                                        placeholder="Search or ask anything..."
+                                        placeholder="Поиск или вопрос…"
                                     />
                                 </div>
 

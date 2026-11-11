@@ -406,8 +406,12 @@ export class AppState {
     this._isQuitting = value;
   }
 
+  public getMeetingState(): { isActive: boolean; startedAt: number | null } {
+    return { isActive: this.isMeetingActive, startedAt: this.isMeetingActive ? this.intelligenceManager.getSessionStartTime() : null };
+  }
+
   private broadcastMeetingState(): void {
-    this.broadcast('meeting-state-changed', { isActive: this.isMeetingActive });
+    this.broadcast('meeting-state-changed', this.getMeetingState());
   }
 
   private async bootstrapOllamaEmbeddings() {
@@ -815,6 +819,7 @@ export class AppState {
   }
 
   public async startMeeting(metadata?: any): Promise<void> {
+    if (this.isMeetingActive) return;
     console.log('[Main] Starting Meeting...', metadata);
 
     if (!(await ensureMacMicrophoneAccess('meeting start'))) {
@@ -823,6 +828,7 @@ export class AppState {
       throw new Error(message);
     }
 
+    this.intelligenceManager.reset();
     this.isMeetingActive = true;
     this.resetBufferedTranscriptTurns();
     this.lastSystemAudioChunkAt = null;

@@ -294,7 +294,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       return (
         <div className={`rounded-lg p-3 my-1 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
           <div className="flex items-center gap-2 mb-2 text-state-success font-medium text-[11px] tracking-[0.02em]">
-            <span>Say this</span>
+            <span>Вариант ответа</span>
           </div>
           <div className="text-[14px] leading-relaxed overlay-text-primary">
             {parts.map((part, i) => {
@@ -390,7 +390,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="meeting-chat flex flex-col h-full">
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto px-4 py-3.5 space-y-2.5 no-drag"
@@ -402,8 +402,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               ${msg.role === 'user' ? 'max-w-[72.25%] px-[13.6px] py-[10.2px]' : 'max-w-[85%] px-4 py-2.5'} text-[14px] leading-6 relative group whitespace-pre-wrap
               ${msg.role === 'user'
                 ? (isLightTheme
-                  ? 'bg-blue-500/12 border border-blue-500/25 text-blue-950 rounded-[20px] rounded-tr-[4px] shadow-sm font-medium'
-                  : 'bg-blue-500/18 border border-blue-400/30 text-blue-50 rounded-[20px] rounded-tr-[4px] shadow-sm font-medium')
+                  ? 'bg-bg-item-active border border-border-muted text-text-primary rounded-[20px] rounded-tr-[4px] shadow-sm font-medium'
+                  : 'bg-bg-item-active border border-blue-400/30 text-blue-50 rounded-[20px] rounded-tr-[4px] shadow-sm font-medium')
                 : ''
               }
               ${msg.role === 'system' ? 'overlay-text-primary font-normal' : ''}
@@ -514,36 +514,36 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex flex-nowrap justify-center items-center gap-1.5 px-4 pb-3 overflow-x-auto no-scrollbar pt-3.5 no-drag">
+      <div className="meeting-quick-actions flex flex-wrap items-center gap-2 px-4 pb-3 pt-3.5 no-drag">
         <button onClick={handleWhatToSay} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
-          <Pencil className="w-3 h-3 opacity-65" /> Guide me
+          <Pencil className="w-3 h-3 opacity-65" /> Подсказать
         </button>
         <button onClick={handleClarify} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
-          <MessageSquare className="w-3 h-3 opacity-65" /> Clarify
+          <MessageSquare className="w-3 h-3 opacity-65" /> Уточнить
         </button>
         <button onClick={actionButtonMode === 'brainstorm' ? handleBrainstorm : handleRecap} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
           {actionButtonMode === 'brainstorm'
-            ? <><Lightbulb className="w-3 h-3 opacity-65" /> Ideas</>
-            : <><RefreshCw className="w-3 h-3 opacity-65" /> Recap</>
+            ? <><Lightbulb className="w-3 h-3 opacity-65" /> Идеи</>
+            : <><RefreshCw className="w-3 h-3 opacity-65" /> Итоги</>
           }
         </button>
         <button onClick={handleFollowUpQuestions} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
-          <HelpCircle className="w-3 h-3 opacity-65" /> Follow-up
+          <HelpCircle className="w-3 h-3 opacity-65" /> Вопросы
         </button>
         <button
           onClick={handleAnswerNow}
           className={`flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10.5px] font-semibold transition-colors active:scale-95 duration-200 interaction-base interaction-press min-w-[84px] whitespace-nowrap shrink-0 ${isManualRecording
             ? 'bg-state-danger-soft text-state-danger ring-1 ring-state-danger-border'
-            : 'bg-[#007AFF] text-white shadow-[0_4px_14px_rgba(0,122,255,0.18)] hover:bg-[#0071E3]'
+            : 'bg-accent-primary text-white hover:opacity-90'
           }`}
         >
           {isManualRecording ? (
             <>
               <div className="w-1.5 h-1.5 rounded-full bg-state-danger animate-pulse" />
-              Stop
+              Стоп
             </>
           ) : (
-            <><Zap className="w-3 h-3 opacity-75" /> Answer</>
+            <><Zap className="w-3 h-3 opacity-75" /> Голос</>
           )}
         </button>
       </div>
@@ -582,7 +582,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
               ))}
             </div>
-            <span className="text-[10px] overlay-text-muted">Ask a question or click Answer</span>
+            <span className="text-[10px] overlay-text-muted">Спросить по разговору или экрану…</span>
           </div>
         )}
 
@@ -590,6 +590,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           <input
             ref={textInputRef}
             type="text"
+            aria-label="Вопрос по разговору"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
@@ -599,7 +600,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
           {!inputValue && (
             <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none text-[12px] overlay-text-muted/90 max-w-[calc(100%-56px)] overflow-hidden whitespace-nowrap text-ellipsis">
-              <span>Ask anything on screen or conversation, or</span>
+              <span>Спросить по разговору или экрану…</span>
               <div className="flex items-center gap-1 opacity-80">
                 {(shortcuts.selectiveScreenshot || ['⌘', 'Shift', 'H']).map((key, i) => (
                   <React.Fragment key={i}>
@@ -608,7 +609,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   </React.Fragment>
                 ))}
               </div>
-              <span>for selective screenshot</span>
+              <span></span>
             </div>
           )}
 
@@ -619,6 +620,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           )}
         </div>
 
+        <div className="flex items-center gap-2 mt-2 mb-1 flex-wrap">
+          <button className="meeting-toolbar-action" onClick={() => { void window.electronAPI.takeScreenshot().catch(error => setMessages(prev => [...prev, {id: Date.now().toString(), role:'system', text: String(error)}])); }}><Image size={14}/>Экран</button>
+          <button className="meeting-toolbar-action" onClick={() => { void window.electronAPI.takeSelectiveScreenshot().catch(error => setMessages(prev => [...prev, {id: Date.now().toString(), role:'system', text: String(error)}])); }}><Image size={14}/>Область экрана</button>
+        </div>
         <div className="flex items-center justify-between mt-3 px-0.5">
           <div className="flex items-center gap-1.5">
             <button
@@ -716,16 +721,17 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
           <button
             onClick={handleManualSubmit}
-            disabled={!inputValue.trim()}
+            aria-label="Отправить вопрос"
+            disabled={!inputValue.trim() && attachedContext.length === 0}
             className={`
               w-7 h-7 rounded-full flex items-center justify-center
               interaction-base interaction-press
-              ${inputValue.trim()
-                ? 'bg-[#007AFF] text-white shadow-lg shadow-blue-500/20 hover:bg-[#0071E3]'
+              ${inputValue.trim() || attachedContext.length > 0
+                ? 'bg-accent-primary text-white hover:opacity-90'
                 : 'overlay-icon-surface overlay-text-muted cursor-not-allowed'
               }
             `}
-            style={inputValue.trim() ? undefined : appearance.iconStyle}
+            style={inputValue.trim() || attachedContext.length > 0 ? undefined : appearance.iconStyle}
           >
             <ArrowRight className="w-3.5 h-3.5" />
           </button>

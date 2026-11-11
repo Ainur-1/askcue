@@ -206,6 +206,8 @@ export function registerCoreHandlers(appState: AppState): void {
     appState.getWindowHelper().hideOverlay();
   })
 
+  safeHandle("get-meeting-state", async () => appState.getMeetingState());
+
   safeHandle("get-meeting-active", async () => {
     return appState.getIsMeetingActive();
   })

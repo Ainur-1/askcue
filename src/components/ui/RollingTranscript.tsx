@@ -158,7 +158,7 @@ const TranscriptNotes: React.FC<TranscriptNotesProps> = ({
                                                 ) : (
                                                     <Languages className="h-3 w-3" aria-hidden="true" />
                                                 )}
-                                                <span>{hasTranslation ? 'Retranslate' : 'Translate'}</span>
+                                                <span>{hasTranslation ? 'Повторить перевод' : 'Перевод'}</span>
                                             </button>
                                         )}
                                     </div>

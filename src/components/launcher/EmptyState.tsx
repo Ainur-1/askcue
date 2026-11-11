@@ -22,12 +22,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({ type, onStartMeeting }) => {
                 <Icon size={isInitialEmpty ? 44 : 28} strokeWidth={1.7} />
             </div>
             <h3 className="text-lg font-semibold text-text-primary">
-                {isInitialEmpty ? 'Start your first meeting' : 'No meetings match your search'}
+                {isInitialEmpty ? 'История пока пуста' : 'Ничего не найдено'}
             </h3>
             <p className="mt-2 max-w-md text-sm leading-relaxed text-text-secondary">
                 {isInitialEmpty
-                    ? 'When you finish a meeting, Pika will save summaries, transcripts, and recordings here.'
-                    : 'Try a different keyword or widen the time range.'}
+                    ? 'Завершённые разговоры появятся здесь.'
+                    : 'Измените запрос или период.'}
             </p>
             {isInitialEmpty && onStartMeeting && (
                 <button

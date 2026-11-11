@@ -11,10 +11,10 @@ interface SearchToolbarProps {
 }
 
 const FILTERS: Array<{ value: TimeFilter; label: string }> = [
-    { value: 'all', label: 'All' },
-    { value: 'today', label: 'Today' },
-    { value: 'week', label: 'This Week' },
-    { value: 'month', label: 'This Month' },
+    { value: 'all', label: 'Все' },
+    { value: 'today', label: 'Сегодня' },
+    { value: 'week', label: 'Неделя' },
+    { value: 'month', label: 'Месяц' },
 ];
 
 const SearchToolbar: React.FC<SearchToolbarProps> = ({ query, onQueryChange, filter, onFilterChange }) => {
@@ -26,7 +26,7 @@ const SearchToolbar: React.FC<SearchToolbarProps> = ({ query, onQueryChange, fil
                     type="search"
                     value={query}
                     onChange={(event) => onQueryChange(event.target.value)}
-                    placeholder="Search meetings, summaries, transcripts..."
+                    placeholder="Поиск по разговорам…"
                     className="h-10 w-full rounded-xl border border-border-subtle bg-bg-input py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-colors hover:bg-bg-elevated focus:border-accent-primary/50 focus:ring-2 focus:ring-accent-primary/20"
                 />
             </label>

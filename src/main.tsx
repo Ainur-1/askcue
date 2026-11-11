@@ -2,6 +2,8 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import App from "./App"
 import "./index.css"
+import "./styles/japanese.css"
+import { applyAppearance } from "./components/settings/AppearanceSettings"
 
 const LEGACY_LOCALSTORAGE_KEYS: [string, string][] = [
   ["natively_resolved_theme", "pika_resolved_theme"],
@@ -32,6 +34,8 @@ function migrateLegacyLocalStorage(): void {
 }
 
 migrateLegacyLocalStorage();
+applyAppearance();
+window.addEventListener("storage", applyAppearance);
 
 const THEME_CACHE_KEY = "pika_resolved_theme";
 

@@ -211,11 +211,11 @@ export class WindowHelper {
     }
 
     const primaryDisplay = screen.getPrimaryDisplay()
-    const overlayDefaultWidth = Math.min(600, Math.floor(primaryDisplay.workAreaSize.width * 0.9))
+    const overlayDefaultWidth = Math.min(1100, Math.floor(primaryDisplay.workAreaSize.width * 0.9))
 
     const overlaySettings: Electron.BrowserWindowConstructorOptions = {
       width: overlayDefaultWidth,
-      height: Math.min(640, Math.floor(primaryDisplay.workAreaSize.height * 0.7)),
+      height: Math.min(800, Math.floor(primaryDisplay.workAreaSize.height * 0.85)),
       minWidth: 380,
       minHeight: 420,
       webPreferences: {
@@ -466,7 +466,7 @@ export class WindowHelper {
       // left the overlay looking crushed on first open.
       const minOverlayHeight = Math.min(560, Math.floor(workArea.height * 0.55));
       const targetHeight = Math.max(currentBounds.height, minOverlayHeight);
-      const overlayWidth = Math.min(720, Math.floor(screen.getPrimaryDisplay().workAreaSize.width * 0.9));
+      const overlayWidth = Math.min(currentBounds.width, Math.floor(workArea.width * 0.9));
       const overlayX = Math.floor(workArea.x + (workArea.width - overlayWidth) / 2)
       const overlayY = Math.floor(workArea.y + (workArea.height - targetHeight) / 2)
       this.overlayWindow.setBounds({ x: overlayX, y: overlayY, width: overlayWidth, height: targetHeight });

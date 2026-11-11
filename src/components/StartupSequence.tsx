@@ -17,7 +17,7 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
     }, [onComplete]);
 
     return (
-        <div className="fixed inset-0 z-overlay bg-[#000000] flex flex-col items-center justify-center overflow-hidden">
+        <div className="fixed inset-0 z-overlay bg-bg-primary flex flex-col items-center justify-center overflow-hidden">
             {/* Volumetric Backlight - Adds depth/atmosphere */}
             <motion.div
                 className="absolute w-96 h-96 bg-white/10 rounded-full blur-[120px]"
@@ -58,7 +58,7 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
                     animationDuration: 'calc(var(--motion-slow) + var(--motion-base))',
                 }}
             >
-                Hear. Think. Speak — with an AI in the loop.
+                Pikabaka
             </p>
         </div>
     );

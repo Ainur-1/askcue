@@ -18,9 +18,10 @@ export function windowChannels() {
     hideWindow: () => ipcRenderer.invoke("hide-window"),
     showOverlay: () => ipcRenderer.invoke("show-overlay"),
     hideOverlay: () => ipcRenderer.invoke("hide-overlay"),
+    getMeetingState: () => ipcRenderer.invoke("get-meeting-state"),
     getMeetingActive: () => ipcRenderer.invoke("get-meeting-active"),
-    onMeetingStateChanged: (callback: (data: { isActive: boolean }) => void) => {
-      const subscription = (_: any, data: { isActive: boolean }) => callback(data);
+    onMeetingStateChanged: (callback: (data: { isActive: boolean; startedAt?: number | null }) => void) => {
+      const subscription = (_: any, data: { isActive: boolean; startedAt?: number | null }) => callback(data);
       ipcRenderer.on('meeting-state-changed', subscription);
       return () => { ipcRenderer.removeListener('meeting-state-changed', subscription); };
     },
