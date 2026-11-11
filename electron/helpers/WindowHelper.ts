@@ -3,6 +3,7 @@ import { BrowserWindow, screen, app, Menu } from "electron"
 import { AppState } from "../main"
 import { KeybindManager } from "../services/KeybindManager"
 import path from "node:path"
+import { fitWindowBounds, initialWindowBounds, type WorkspaceWindow } from "./windowGeometry"
 
 const isEnvDev = process.env.NODE_ENV === "development"
 const isPackaged = app.isPackaged;
@@ -53,70 +54,57 @@ export class WindowHelper {
     const activeWindow = this.getMainWindow(); // Gets currently focused/relevant window
     if (!activeWindow || activeWindow.isDestroyed()) return
 
-    const [currentX, currentY] = activeWindow.getPosition()
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const workArea = primaryDisplay.workAreaSize
-    const maxAllowedWidth = Math.floor(workArea.width * 0.9)
-    const newWidth = Math.min(width, maxAllowedWidth)
-    const newHeight = Math.ceil(height)
-    const maxX = workArea.width - newWidth
-    const newX = Math.min(Math.max(currentX, 0), maxX)
-
-    activeWindow.setBounds({
-      x: newX,
-      y: currentY,
-      width: newWidth,
-      height: newHeight
-    })
-
+    const current = activeWindow.getBounds();
+    const area = screen.getDisplayMatching(current).workArea;
+    activeWindow.setBounds(fitWindowBounds({ ...current, width, height: Math.ceil(height) }, area));
   }
 
-  // Dedicated method for overlay window resizing - decoupled from launcher
   public setOverlayDimensions(width: number, height: number): void {
-    if (!this.overlayWindow || this.overlayWindow.isDestroyed()) return
-    console.log('[WindowHelper] setOverlayDimensions:', width, height);
+    if (!this.overlayWindow || this.overlayWindow.isDestroyed()) return;
+    const current = this.overlayWindow.getBounds();
+    const area = screen.getDisplayMatching(current).workArea;
+    this.overlayWindow.setBounds(fitWindowBounds({ ...current, width, height }, area));
+  }
 
-    const [currentX, currentY] = this.overlayWindow.getPosition()
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const workArea = primaryDisplay.workAreaSize
-    const maxAllowedWidth = Math.floor(workArea.width * 0.9)
-    const maxAllowedHeight = Math.floor(workArea.height * 0.9)
-    const newWidth = Math.min(Math.max(width, 300), maxAllowedWidth) // min 300, max 90%
-    const newHeight = Math.min(Math.max(height, 1), maxAllowedHeight) // min 1, max 90%
-    const maxX = workArea.width - newWidth
-    const maxY = workArea.height - newHeight
-    const newX = Math.min(Math.max(currentX, 0), maxX)
-    const newY = Math.min(Math.max(currentY, 0), maxY)
+  private fitToDisplay(win: BrowserWindow, kind: WorkspaceWindow): void {
+    if (win.isDestroyed() || win.isMaximized() || win.isFullScreen() || win.isMinimized()) return;
+    const current = win.getBounds();
+    const area = screen.getDisplayMatching(current).workArea;
+    win.setMinimumSize(Math.min(kind === 'launcher' ? 600 : 380, area.width - 32), Math.min(400, area.height - 32));
+    const next = fitWindowBounds(current, area);
+    if (next.x !== current.x || next.y !== current.y || next.width !== current.width || next.height !== current.height) win.setBounds(next);
+  }
 
-    this.overlayWindow.setContentSize(newWidth, newHeight)
-    this.overlayWindow.setPosition(newX, newY)
+  private watchWindowBounds(win: BrowserWindow, kind: WorkspaceWindow): void {
+    let pending: NodeJS.Timeout | undefined;
+    const fit = () => this.fitToDisplay(win, kind);
+    const schedule = () => { clearTimeout(pending); pending = setTimeout(fit, 160); };
+    win.on('moved', fit);
+    win.on('resize', schedule);
+    win.on('unmaximize', schedule);
+    screen.on('display-metrics-changed', schedule);
+    screen.on('display-removed', schedule);
+    win.once('closed', () => {
+      clearTimeout(pending);
+      screen.removeListener('display-metrics-changed', schedule);
+      screen.removeListener('display-removed', schedule);
+    });
   }
 
   public createWindow(): void {
     if (this.launcherWindow !== null) return // Already created
 
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const workArea = primaryDisplay.workArea
-    // Fixed dimensions per user request
-    const width = 1200;
-    const height = 800;
-
-    // Calculate centered X, and top-centered Y (5% from top)
-    const x = Math.round(workArea.x + (workArea.width - width) / 2);
-    // Ensure y is at least workArea.y (don't go offscreen top)
-    const topMargin = Math.round(workArea.height * 0.05);
-    const y = Math.round(workArea.x + topMargin);
+    const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+    const workArea = display.workArea;
+    const bounds = initialWindowBounds(workArea, 'launcher');
 
     // --- 1. Create Launcher Window ---
     const isMac = process.platform === "darwin";
 
     const launcherSettings: Electron.BrowserWindowConstructorOptions = {
-      width: width,
-      height: height,
-      x: x,
-      y: y,
-      minWidth: 600,
-      minHeight: 400,
+      ...bounds,
+      minWidth: Math.min(600, workArea.width - 32),
+      minHeight: Math.min(400, workArea.height - 32),
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -136,7 +124,7 @@ export class WindowHelper {
       focusable: true,
       resizable: true,
       movable: true,
-      center: true,
+
       icon: (() => {
         const isMac = process.platform === "darwin";
         const isWin = process.platform === "win32";
@@ -181,6 +169,7 @@ export class WindowHelper {
       return;
     }
 
+    this.watchWindowBounds(this.launcherWindow, 'launcher');
     this.launcherWindow.setContentProtection(this.contentProtection)
 
     this.launcherWindow.loadURL(`${startUrl}?window=launcher`)
@@ -210,14 +199,14 @@ export class WindowHelper {
       return this.overlayWindow
     }
 
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const overlayDefaultWidth = Math.min(1100, Math.floor(primaryDisplay.workAreaSize.width * 0.9))
-
+    const display = this.launcherWindow && !this.launcherWindow.isDestroyed()
+      ? screen.getDisplayMatching(this.launcherWindow.getBounds())
+      : screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+    const workArea = display.workArea;
     const overlaySettings: Electron.BrowserWindowConstructorOptions = {
-      width: overlayDefaultWidth,
-      height: Math.min(800, Math.floor(primaryDisplay.workAreaSize.height * 0.85)),
-      minWidth: 380,
-      minHeight: 420,
+      ...initialWindowBounds(workArea, 'overlay'),
+      minWidth: Math.min(380, workArea.width - 32),
+      minHeight: Math.min(400, workArea.height - 32),
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -237,6 +226,7 @@ export class WindowHelper {
     }
 
     this.overlayWindow = new BrowserWindow(overlaySettings)
+    this.watchWindowBounds(this.overlayWindow, 'overlay');
     this.overlayWindow.setContentProtection(this.contentProtection)
 
     if (process.platform === "darwin") {
@@ -440,7 +430,7 @@ export class WindowHelper {
       this.switchToOverlay(); // explicit user action, so we want to grant focus
     } else {
       this.switchToLauncher();
-      this.launcherWindow?.center();
+      if (this.launcherWindow) { this.launcherWindow.center(); this.fitToDisplay(this.launcherWindow, 'launcher'); }
     }
   }
 
@@ -457,19 +447,12 @@ export class WindowHelper {
 
     // Show Overlay FIRST
     if (this.overlayWindow && !this.overlayWindow.isDestroyed()) {
-      // Reset overlay position to center or last known? 
-      // For now, center it nicely
-      const primaryDisplay = screen.getPrimaryDisplay()
-      const workArea = primaryDisplay.workArea;
-      const currentBounds = this.overlayWindow.getBounds();
-      // Meeting UI needs real vertical space (transcript + chat). Old floor of 216px
-      // left the overlay looking crushed on first open.
-      const minOverlayHeight = Math.min(560, Math.floor(workArea.height * 0.55));
-      const targetHeight = Math.max(currentBounds.height, minOverlayHeight);
-      const overlayWidth = Math.min(currentBounds.width, Math.floor(workArea.width * 0.9));
-      const overlayX = Math.floor(workArea.x + (workArea.width - overlayWidth) / 2)
-      const overlayY = Math.floor(workArea.y + (workArea.height - targetHeight) / 2)
-      this.overlayWindow.setBounds({ x: overlayX, y: overlayY, width: overlayWidth, height: targetHeight });
+      const current = this.overlayWindow.getBounds();
+      const area = screen.getDisplayMatching(current).workArea;
+      // Restore usable transcript/chat space after the compact renderer resized it.
+      const height = Math.max(current.height, Math.min(560, Math.floor(area.height * .88)));
+      this.overlayWindow.setBounds(fitWindowBounds({ ...current, height }, area));
+      this.fitToDisplay(this.overlayWindow, 'overlay');
 
       if (process.platform === 'win32' && this.contentProtection) {
         // Opacity Shield: Show at 0 opacity first to prevent frame leak
@@ -511,6 +494,7 @@ export class WindowHelper {
 
     // Show Launcher FIRST
     if (this.launcherWindow && !this.launcherWindow.isDestroyed()) {
+      this.fitToDisplay(this.launcherWindow, 'launcher');
       if (process.platform === 'win32' && this.contentProtection) {
         // Opacity Shield: Show at 0 opacity first
         this.launcherWindow.setOpacity(0);

@@ -135,8 +135,10 @@ html[data-theme] .border-r.border-border-subtle { border-right-color: var(--bord
 .meeting-quick-actions button:first-child { background: var(--accent-fill) !important; color: #fff8e8; font-family: var(--font-display); }
 .embedded-settings { position: relative !important; flex: 1; min-height: 0; padding: 0 !important; background: transparent !important; backdrop-filter: none !important; z-index: auto !important; }
 html[data-theme] .embedded-settings #settings-panel-wrapper { max-width: none; height: 100%; border: 0; border-radius: 0; }
-.embedded-settings #settings-panel > div:first-child { width: 170px; }
+.embedded-settings #settings-panel > div:first-child { width: 170px; flex-shrink: 0; min-height: 0; overflow-y: auto; }
+.embedded-settings #settings-panel > div:last-child { min-width: 0; min-height: 0; overscroll-behavior: contain; }
 .embedded-settings #settings-panel > div:first-child > div:first-child { padding: 20px 12px; }
+.embedded-settings nav button svg { flex-shrink: 0; }
 .embedded-settings.materials-only #settings-panel > div:first-child { display: none; }
 .appearance-settings { border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; }
 .appearance-settings h3 { font-size: 18px; margin-bottom: 14px; }
@@ -145,4 +147,5 @@ html[data-theme] .embedded-settings #settings-panel-wrapper { max-width: none; h
 .appearance-options select { display: block; width: 100%; margin-top: 7px; padding: 8px; border: 1px solid var(--border-muted); color: var(--text-primary); background: var(--bg-input); }
 @media(max-width: 850px) { .workbench-sidebar { width: 166px; padding: 20px 8px; } .workbench-brand { font-size: 17px; padding-left: 4px; } .prep-screen { padding: 24px; } .workbench-header { gap: 8px; } }
 @media(max-width: 1000px) { .workbench-search:not(:focus-within) > div > div { width: 36px !important; } .workbench-search input { text-overflow: clip; } .workbench-header > div:first-child { min-width: 0; } .workbench-title { max-width: 190px; } }
+@media(max-width: 850px) { .embedded-settings nav button { padding: 9px 8px; gap: 8px; font-size: 12px; } }
 @media(max-width: 620px) { .workbench-sidebar { width: 55px; padding: 20px 5px; } .workbench-sidebar span { display: none; } .workbench-brand { padding: 0 5px 22px; } .workbench-nav button { padding: 12px 8px; } .workbench-header .workbench-title { font-size: 14px; } .workbench-header { padding-left: 10px; } .workbench-header .detectable-control { padding: 5px; } .detectable-control .switch-track { display: none; } .embedded-settings #settings-panel > div:first-child { width: 140px; } }

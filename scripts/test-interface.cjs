@@ -35,6 +35,16 @@ async function main(){
   await run(`(()=>{const el=document.querySelector('[aria-label="Тема оформления"]');el.value='light';el.dispatchEvent(new Event('change',{bubbles:true}))})()`);await wait(100);
   assert.equal(await run(`document.documentElement.dataset.theme`),'light');
   await shot('japanese-app-settings');
+  for (const [width,height] of [[1200,718],[960,600],[600,500]]) {
+    win.setContentSize(width,height);await wait(180);
+    const box=await run(`(()=>{const header=document.querySelector('.workbench-header').getBoundingClientRect();const content=document.querySelector('#settings-panel > div:last-child');const proxy=content.querySelector('[role="switch"]');const rect=proxy.getBoundingClientRect();return {headerBottom:header.bottom,contentTop:content.getBoundingClientRect().top,right:rect.right,viewport:innerWidth,contentBottom:content.getBoundingClientRect().bottom,height:innerHeight,scrollHeight:content.scrollHeight,clientHeight:content.clientHeight}})()`);
+    assert.ok(box.contentTop>=box.headerBottom-1,JSON.stringify(box));
+    assert.ok(box.right<=box.viewport,JSON.stringify(box));
+    assert.ok(box.contentBottom<=box.height+1,JSON.stringify(box));
+    assert.ok(box.scrollHeight>box.clientHeight,'settings scroll within the window');
+  }
+  await shot('japanese-app-small-settings');
+  win.setContentSize(1200,860);await wait(180);
   await click('Новый разговор');await click('Начать разговор');
   assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='startMeeting')`));
   assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='setWindowMode'&&c.args[0]==='overlay')`));
