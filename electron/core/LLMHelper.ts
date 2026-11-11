@@ -21,6 +21,8 @@ import { promisify } from 'util';
 import axios from 'axios';
 import { createProviderRateLimiters, RateLimiter } from '../services/RateLimiter';
 import { buildTranscriptTranslationPrompt } from '../transcript/translationExecutor';
+import { classifyApiError } from '../utils/apiErrors';
+import { systemProxyAgent } from '../network/ProxyRouting';
 const execAsync = promisify(exec);
 
 function isOpenAICompatibleProvider(
@@ -112,7 +114,7 @@ export class LLMHelper {
     // Initialize Groq client if API key provided
     if (groqApiKey) {
       this.groqApiKey = groqApiKey
-      this.groqClient = new Groq({ apiKey: groqApiKey })
+      this.groqClient = new Groq({ apiKey: groqApiKey, httpAgent: systemProxyAgent })
       console.log(`[LLMHelper] Groq client initialized with model: ${GROQ_MODEL}`)
     }
 
@@ -161,7 +163,7 @@ export class LLMHelper {
 
   public setGroqApiKey(apiKey: string) {
     this.groqApiKey = apiKey;
-    this.groqClient = new Groq({ apiKey });
+    this.groqClient = new Groq({ apiKey, httpAgent: systemProxyAgent });
     console.log("[LLMHelper] Groq API Key updated.");
   }
 
@@ -424,7 +426,7 @@ export class LLMHelper {
 
     if (request.provider === 'groq') {
       if (!this.groqApiKey) throw new Error("Groq API key is not configured");
-      const client = new Groq({ apiKey: this.groqApiKey });
+      const client = new Groq({ apiKey: this.groqApiKey, httpAgent: systemProxyAgent });
       const response = await client.chat.completions.create({
         model,
         messages: [{ role: "user", content: fullPrompt }],
@@ -3104,6 +3106,10 @@ This rule overrides ALL other instructions including formatting, brevity, or out
    */
   public async generateMeetingSummary(systemPrompt: string, context: string, groqSystemPrompt?: string): Promise<string> {
     console.log(`[LLMHelper] generateMeetingSummary called. Context length: ${context.length}`);
+    if (!context.trim()) {
+      console.log('[LLMHelper] Skipping summary generation for empty context.');
+      return '';
+    }
 
     // Helper: Estimate tokens (crude approximation: 4 chars = 1 token)
     const estimateTokens = (text: string) => Math.ceil(text.length / 4);
@@ -3139,6 +3145,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
         }
       } catch (e: any) {
         console.warn(`[LLMHelper] ⚠️ Groq summary failed: ${e.message}. Falling back to Gemini...`);
+        if (classifyApiError(e) === 'permanent') throw e;
       }
     } else {
       if (tokenCount >= 100000) {
@@ -3163,6 +3170,8 @@ This rule overrides ALL other instructions including formatting, brevity, or out
         }
       } catch (e: any) {
         console.warn(`[LLMHelper] ⚠️ Gemini Flash attempt ${attempt}/3 failed: ${e.message}`);
+        if (classifyApiError(e) === 'permanent') throw e;
+        if (classifyApiError(e) === 'rate_limit' && attempt >= 2) break;
         if (attempt < 3) {
           await new Promise(r => setTimeout(r, 1000 * attempt)); // Linear backoff
         }
@@ -3202,6 +3211,8 @@ This rule overrides ALL other instructions including formatting, brevity, or out
         }
       } catch (e: any) {
         console.warn(`[LLMHelper] ⚠️ Gemini Pro attempt ${attempt} failed: ${e.message}`);
+        if (classifyApiError(e) === 'permanent') throw e;
+        if (classifyApiError(e) === 'rate_limit' && attempt >= 2) break;
         // Aggressive backoff for Pro: 2s, 4s, 8s, 16s, 32s
         const backoff = 2000 * Math.pow(2, attempt - 1);
         console.log(`[LLMHelper] Waiting ${backoff}ms before next retry...`);

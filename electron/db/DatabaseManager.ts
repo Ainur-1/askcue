@@ -640,6 +640,8 @@ export class DatabaseManager {
             INSERT INTO ai_interactions (meeting_id, type, timestamp, user_query, ai_response, metadata_json)
             VALUES (?, ?, ?, ?, ?, ?)
         `);
+        const deleteTranscript = this.db.prepare('DELETE FROM transcripts WHERE meeting_id = ?');
+        const deleteInteractions = this.db.prepare('DELETE FROM ai_interactions WHERE meeting_id = ?');
 
         const summaryJson = JSON.stringify({
             legacySummary: meeting.summary,
@@ -647,6 +649,10 @@ export class DatabaseManager {
         });
 
         const runTransaction = this.db.transaction(() => {
+            // Recovery can save the same meeting more than once. Replace its
+            // dependent rows so a retry never duplicates transcript turns.
+            deleteTranscript.run(meeting.id);
+            deleteInteractions.run(meeting.id);
             // 1. Insert Meeting
             insertMeeting.run(
                 meeting.id,

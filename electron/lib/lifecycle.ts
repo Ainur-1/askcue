@@ -4,30 +4,27 @@ import { KeybindManager } from "../services/KeybindManager"
 import { SettingsManager } from "../services/SettingsManager"
 import { OllamaManager } from "../services/OllamaManager"
 import { AppState } from "../main"
+import { initializeSystemProxy } from "../services/SystemProxyManager"
 
 export async function initializeApp() {
-  // 1. Enforce single instance — prevent duplicate dock icons from leftover processes.
-  // In development mode with hot-reload this is still safe because electron is restarted
-  // by the build step, not re-launched by concurrently while the old process is alive.
-  const gotLock = app.requestSingleInstanceLock();
-  if (!gotLock) {
-    console.log('[Main] Another instance is already running. Quitting this instance.');
-    app.quit();
-    return;
-  }
-
-  // When a second instance is launched, focus the existing window instead of doing nothing.
+  // A normal close hides Pika to the tray. A later launch must explicitly show
+  // that hidden window; focus() alone is a no-op for an invisible BrowserWindow.
   app.on('second-instance', () => {
     const appState = AppState.getInstance();
     const mainWin = appState.getMainWindow();
-    if (mainWin) {
-      if (mainWin.isMinimized()) mainWin.restore();
-      mainWin.focus();
+    if (!mainWin || mainWin.isDestroyed()) {
+      appState.createWindow();
+      return;
     }
+    if (mainWin.isMinimized()) mainWin.restore();
+    appState.centerAndShowWindow();
+    mainWin.show();
+    mainWin.focus();
   });
 
   // 2. Wait for app to be ready
   await app.whenReady()
+  await initializeSystemProxy()
 
   // 2b. PRE-EMPTIVE dock hide: must happen before ANY operation that causes macOS to
   // register a dock entry (app.setName, BrowserWindow creation, etc.).
@@ -59,9 +56,6 @@ export async function initializeApp() {
   // Apply the full disguise payload (names, dock icon, AUMID) early
   appState.applyInitialDisguise();
 
-  // Start the Ollama lifecycle manager
-  OllamaManager.getInstance().init().catch(console.error);
-
   // NOTE: CredentialsManager.init() and loadStoredCredentials() are already called
   // above before this block — do NOT call them again here to avoid double key-load.
 
@@ -92,45 +86,29 @@ export async function initializeApp() {
   // Register global shortcuts using KeybindManager
   KeybindManager.getInstance().registerGlobalShortcuts()
 
-  // Pre-create settings window in background for faster first open
-  appState.settingsWindowHelper.preloadWindow()
+  const initializeAfterFirstPaint = () => {
+    setTimeout(() => {
+      appState.initializeDeferredSubsystems().catch(console.error)
 
-  // Diagnostic: log all BrowserWindows to debug duplicate dock icons
-  const allWindows = BrowserWindow.getAllWindows();
-  console.log(`[Diagnostic] Total BrowserWindows after init: ${allWindows.length}`);
-  allWindows.forEach((win, i) => {
-    console.log(`[Diagnostic]   Window ${i}: id=${win.id} title="${win.getTitle()}" visible=${win.isVisible()} skipTaskbar=${(win as any).skipTaskbar ?? 'unknown'}`);
-  });
+      try {
+        const { CalendarManager } = require('../services/CalendarManager');
+        const calMgr = CalendarManager.getInstance();
+        calMgr.init();
+        calMgr.on('start-meeting-requested', (event: any) => {
+          appState.centerAndShowWindow();
+          appState.startMeeting({ title: event.title, calendarEventId: event.id, source: 'calendar' });
+        });
+        calMgr.on('open-requested', () => appState.centerAndShowWindow());
+      } catch (e) {
+        console.error('[Main] Failed to initialize CalendarManager:', e);
+      }
 
-  // Initialize CalendarManager
-  try {
-    const { CalendarManager } = require('../services/CalendarManager');
-    const calMgr = CalendarManager.getInstance();
-    calMgr.init();
-
-    calMgr.on('start-meeting-requested', (event: any) => {
-      console.log('[Main] Start meeting requested from calendar notification', event);
-      appState.centerAndShowWindow();
-      appState.startMeeting({
-        title: event.title,
-        calendarEventId: event.id,
-        source: 'calendar'
+      appState.getIntelligenceManager().recoverUnprocessedMeetings().catch(err => {
+        console.error('[Main] Failed to recover unprocessed meetings:', err);
       });
-    });
-
-    calMgr.on('open-requested', () => {
-      appState.centerAndShowWindow();
-    });
-
-    console.log('[Main] CalendarManager initialized');
-  } catch (e) {
-    console.error('[Main] Failed to initialize CalendarManager:', e);
+    }, 500)
   }
-
-  // Recover unprocessed meetings (persistence check)
-  appState.getIntelligenceManager().recoverUnprocessedMeetings().catch(err => {
-    console.error('[Main] Failed to recover unprocessed meetings:', err);
-  });
+  appState.getWindowHelper().getLauncherWindow()?.once('ready-to-show', initializeAfterFirstPaint)
 
   // Note: We do NOT force dock show here anymore, respecting stealth mode.
 

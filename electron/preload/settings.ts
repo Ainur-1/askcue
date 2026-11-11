@@ -2,6 +2,8 @@ import { ipcRenderer } from "electron"
 
 export function settingsChannels() {
   return {
+    getSystemProxyEnabled: () => ipcRenderer.invoke('network:get-system-proxy'),
+    setSystemProxyEnabled: (enabled: boolean) => ipcRenderer.invoke('network:set-system-proxy', enabled),
     setOpenAtLogin: (open: boolean) => ipcRenderer.invoke("set-open-at-login", open),
     getOpenAtLogin: () => ipcRenderer.invoke("get-open-at-login"),
     getThemeMode: () => ipcRenderer.invoke('theme:get-mode'),

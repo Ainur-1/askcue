@@ -107,6 +107,9 @@ impl SystemAudioCapture {
                 }
             };
 
+            // macOS: stream() returns Result (SCK may fail → CoreAudio fallback).
+            // Windows: stream() returns SpeakerStream directly.
+            #[cfg(target_os = "macos")]
             let mut stream = match input.stream() {
                 Ok(s) => s,
                 Err(e) => {
@@ -126,6 +129,8 @@ impl SystemAudioCapture {
                     }
                 }
             };
+            #[cfg(target_os = "windows")]
+            let mut stream = input.stream();
             let mut consumer = match stream.take_consumer() {
                 Some(c) => c,
                 None => {

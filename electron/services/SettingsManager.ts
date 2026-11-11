@@ -8,6 +8,7 @@ export interface AppSettings {
     isUndetectable?: boolean;
     disguiseMode?: 'terminal' | 'settings' | 'activity' | 'none';
     verboseLogging?: boolean;
+    useSystemProxy?: boolean;
     actionButtonMode?: 'recap' | 'brainstorm';
     transcriptAssemblerProfile?: 'sentence_bias' | 'low_latency' | 'coherent';
 }
@@ -43,7 +44,7 @@ export class SettingsManager {
             if (fs.existsSync(this.settingsPath)) {
                 const data = fs.readFileSync(this.settingsPath, 'utf8');
                 try {
-                    const parsed = JSON.parse(data);
+                    const parsed = JSON.parse(data.replace(/^\uFEFF/, ''));
                     // Minimal validation to ensure it's an object before assigning
                     if (typeof parsed === 'object' && parsed !== null) {
                         this.settings = parsed;

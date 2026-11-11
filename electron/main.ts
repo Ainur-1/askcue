@@ -183,6 +183,8 @@ export class AppState {
     DEBUG_SUCCESS: "debug-success",
     DEBUG_ERROR: "debug-error"
   } as const
+  private deferredSubsystemsInitialized = false
+  private deferredSubsystemsPromise: Promise<void> | null = null
 
   constructor() {
     // 1. Load boot-critical settings first (used by WindowHelpers)
@@ -211,10 +213,6 @@ export class AppState {
     this.settingsWindowHelper.setContentProtection(this.isUndetectable);
     this.modelSelectorWindowHelper.setContentProtection(this.isUndetectable);
     this.cropperWindowHelper.setContentProtection(this.isUndetectable);
-
-    if (process.platform === 'win32' || process.platform === 'darwin') {
-      this.cropperWindowHelper.preload();
-    }
 
     // Initialize KeybindManager
     const keybindManager = KeybindManager.getInstance();
@@ -353,27 +351,39 @@ export class AppState {
     // Initialize ThemeManager
     this.themeManager = ThemeManager.getInstance()
 
-    // Initialize RAGManager (requires database to be ready)
-    this.initializeRAGManager()
-    
-    // Check and prep Ollama embedding model
-    this.bootstrapOllamaEmbeddings()
-
-
     this.setupIntelligenceEvents()
-
-    // Pre-warm the zero-shot intent classifier in background
-    warmupIntentClassifier();
-
-    // Setup Ollama IPC
-    this.setupOllamaIpcHandlers()
 
     // --- NEW SYSTEM AUDIO PIPELINE (SOX + NODE GOOGLE STT) ---
     // LAZY INIT: Do not setup pipeline here to prevent launch volume surge.
     // this.setupSystemAudioPipeline()
 
-    // Initialize Auto-Updater
-    this.setupAutoUpdater()
+  }
+
+  /**
+   * Starts services that are not needed to paint the launcher. This is
+   * idempotent because it is also safe to call from an on-demand feature.
+   */
+  public initializeDeferredSubsystems(): Promise<void> {
+    if (this.deferredSubsystemsPromise) return this.deferredSubsystemsPromise
+
+    this.deferredSubsystemsPromise = Promise.resolve().then(() => {
+      if (this.deferredSubsystemsInitialized) return
+      this.deferredSubsystemsInitialized = true
+      this.initializeRAGManager()
+      // Do not spawn or download Ollama at every launch. Explicit Ollama sessions
+      // continue to initialize it through the existing switch/start paths.
+      if (process.env.USE_OLLAMA === 'true') {
+        this.bootstrapOllamaEmbeddings()
+      }
+      warmupIntentClassifier()
+      this.setupOllamaIpcHandlers()
+      this.setupAutoUpdater()
+      // Screenshot selection is uncommon at launch; defer its extra renderer.
+      if (process.platform === 'win32' || process.platform === 'darwin') {
+        this.cropperWindowHelper.preload()
+      }
+    })
+    return this.deferredSubsystemsPromise
   }
 
   public broadcast(channel: string, ...args: any[]): void {

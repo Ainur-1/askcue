@@ -14,6 +14,7 @@
 
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import { systemProxyAgent } from '../network/ProxyRouting';
 import axios from 'axios';
 import FormData from 'form-data';
 import { RECOGNITION_LANGUAGES } from '../config/languages';
@@ -247,6 +248,7 @@ export class OpenAIStreamingSTT extends EventEmitter {
         console.log(`[OpenAIStreaming] Connecting WebSocket (model=${model}, attempt=${this.reconnectAttempts + 1})...`);
 
         this.ws = new WebSocket(REALTIME_WS_URL, {
+            agent: systemProxyAgent,
             headers: {
                 Authorization:   `Bearer ${this.apiKey}`,
                 'OpenAI-Beta':   'realtime=v1',

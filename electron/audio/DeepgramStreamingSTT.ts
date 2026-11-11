@@ -11,6 +11,7 @@
 
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import { systemProxyAgent } from '../network/ProxyRouting';
 import { RECOGNITION_LANGUAGES } from '../config/languages';
 
 const RECONNECT_BASE_DELAY_MS = 1000;
@@ -171,6 +172,7 @@ export class DeepgramStreamingSTT extends EventEmitter {
         console.log(`[DeepgramStreaming] Connecting (rate=${this.sampleRate}, ch=${this.numChannels})...`);
 
         this.ws = new WebSocket(url, {
+            agent: systemProxyAgent,
             headers: {
                 Authorization: `Token ${this.apiKey}`,
             },

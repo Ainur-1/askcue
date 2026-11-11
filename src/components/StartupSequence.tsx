@@ -10,7 +10,9 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             onComplete();
-        }, 2200);
+        // The launcher is already loaded behind this animation. Keep the brand
+        // transition short so it does not add a fixed delay to every launch.
+        }, 250);
         return () => clearTimeout(timer);
     }, [onComplete]);
 

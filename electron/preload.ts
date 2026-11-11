@@ -299,6 +299,8 @@ interface ElectronAPI {
   // Verbose / Debug Logging
   getVerboseLogging: () => Promise<boolean>;
   setVerboseLogging: (enabled: boolean) => Promise<{ success: boolean }>;
+  getSystemProxyEnabled: () => Promise<boolean>;
+  setSystemProxyEnabled: (enabled: boolean) => Promise<{ success: boolean; error?: string; warning?: string }>;
   
   // Arch
   getArch: () => Promise<string>;
@@ -1127,6 +1129,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // Verbose / Debug Logging
   getVerboseLogging: () => ipcRenderer.invoke('get-verbose-logging'),
   setVerboseLogging: (enabled: boolean) => ipcRenderer.invoke('set-verbose-logging', enabled),
+  getSystemProxyEnabled: () => ipcRenderer.invoke('network:get-system-proxy'),
+  setSystemProxyEnabled: (enabled: boolean) => ipcRenderer.invoke('network:set-system-proxy', enabled),
   
   // Arch
   getArch: () => ipcRenderer.invoke('get-arch'),

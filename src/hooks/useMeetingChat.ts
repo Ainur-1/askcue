@@ -542,13 +542,23 @@ export function useMeetingChat() {
 
   const handleWhatToSay = useCallback(async () => {
     analytics.trackCommandExecuted('what_to_say');
-    await submitPrompt({
-      userText: attachedContext.length > 0
-        ? 'What should I say about this?'
-        : 'What should I say in response to the latest interviewer context?',
-      placeholderIntent: 'what_to_answer',
-    });
-  }, [submitPrompt, attachedContext.length]);
+    const imagePaths = attachedContext.map((s) => s.path);
+    if (imagePaths.length > 0) setAttachedContext([]);
+    setSystemMessages((prev) => [
+      ...prev,
+      { id: Date.now().toString(), role: 'system', text: '', intent: 'what_to_answer', isStreaming: true },
+    ]);
+    setIsProcessing(true);
+    try {
+      await window.electronAPI.generateWhatToSay(
+        undefined,
+        imagePaths.length > 0 ? imagePaths : undefined,
+      );
+    } catch (err) {
+      pushSystemError(err);
+      setIsProcessing(false);
+    }
+  }, [attachedContext, pushSystemError, setAttachedContext, setIsProcessing, setSystemMessages]);
 
   const handleFollowUp = useCallback(async (intent: string = 'rephrase') => {
     setIsProcessing(true);
@@ -611,23 +621,36 @@ export function useMeetingChat() {
   const handleFollowUpQuestions = useCallback(async () => {
     setIsProcessing(true);
     try {
-      await window.electronAPI.generateFollowUpQuestions();
-    } catch (err) {
-      pushSystemError(err);
-      setIsProcessing(false);
-    }
-  }, [pushSystemError]);
-
-  const handleRecap = useCallback(async () => {
-    setIsProcessing(true);
-    try {
-      await window.electronAPI.generateRecap();
+      const result = await window.electronAPI.generateFollowUpQuestions();
+      if (!result?.questions) {
+        setSystemMessages((prev) => [
+          ...prev,
+          { id: Date.now().toString(), role: 'system', text: 'Нет контекста интервью — дождись реплики интервьюера.' },
+        ]);
+      }
     } catch (err) {
       pushSystemError(err);
     } finally {
       setIsProcessing(false);
     }
-  }, [pushSystemError]);
+  }, [pushSystemError, setIsProcessing, setSystemMessages]);
+
+  const handleRecap = useCallback(async () => {
+    setIsProcessing(true);
+    try {
+      const result = await window.electronAPI.generateRecap();
+      if (!result?.summary) {
+        setSystemMessages((prev) => [
+          ...prev,
+          { id: Date.now().toString(), role: 'system', text: 'Пока нечего суммировать: нет транскрипта интервью.' },
+        ]);
+      }
+    } catch (err) {
+      pushSystemError(err);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [pushSystemError, setIsProcessing, setSystemMessages]);
 
   const handleBrainstorm = useCallback(async () => {
     setIsProcessing(true);

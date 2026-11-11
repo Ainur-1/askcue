@@ -18,6 +18,7 @@
 
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import { systemProxyAgent } from '../network/ProxyRouting';
 import { RECOGNITION_LANGUAGES } from '../config/languages';
 import { normalizeLanguageToIso639 } from '../transcript/translationExecutor';
 
@@ -176,7 +177,7 @@ export class SonioxStreamingSTT extends EventEmitter {
 
         this.configSent = false;
         this.pendingFinalText = '';
-        this.ws = new WebSocket(SONIOX_WEBSOCKET_URL);
+        this.ws = new WebSocket(SONIOX_WEBSOCKET_URL, { agent: systemProxyAgent });
 
         this.ws.on('open', () => {
             this.isActive = true;

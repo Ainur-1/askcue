@@ -132,7 +132,7 @@ export class WindowHelper {
       ...(isMac ? { vibrancy: 'under-window' as const, visualEffectState: 'followWindow' as const } : {}),
       transparent: isMac,
       hasShadow: true,
-      backgroundColor: isMac ? "#00000000" : "#000000",
+      backgroundColor: isMac ? "#00000000" : "#1a1a1a",
       focusable: true,
       resizable: true,
       movable: true,
@@ -192,17 +192,32 @@ export class WindowHelper {
     });
 
     // if (isDev) {
-    //   this.launcherWindow.webContents.openDevTools({ mode: 'detach' }); // DEBUG: Open DevTools
+    //   this.launcherWindow.webContents.openDevTools({ mode: 'detach' });
     // }
 
-    // --- 2. Create Overlay Window (Hidden initially) ---
+    // The overlay is created when a meeting starts. Loading a second renderer during
+    // boot competes with the launcher and delays first paint.
+    this.launcherWindow.once('ready-to-show', () => {
+      this.switchToLauncher()
+      this.isWindowVisible = true
+    })
+
+    this.setupWindowListeners()
+  }
+
+  private createOverlayWindow(): BrowserWindow | null {
+    if (this.overlayWindow && !this.overlayWindow.isDestroyed()) {
+      return this.overlayWindow
+    }
+
+    const primaryDisplay = screen.getPrimaryDisplay()
     const overlayDefaultWidth = Math.min(600, Math.floor(primaryDisplay.workAreaSize.width * 0.9))
 
     const overlaySettings: Electron.BrowserWindowConstructorOptions = {
       width: overlayDefaultWidth,
-      height: 1,
+      height: Math.min(640, Math.floor(primaryDisplay.workAreaSize.height * 0.7)),
       minWidth: 380,
-      minHeight: 1,
+      minHeight: 420,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -233,14 +248,28 @@ export class WindowHelper {
     this.overlayWindow.loadURL(`${startUrl}?window=overlay`).catch(e => {
         console.error('[WindowHelper] Failed to load Overlay URL:', e);
     })
+    this.setupOverlayWindowListeners()
+    return this.overlayWindow
+  }
 
-    // --- 3. Startup Sequence ---
-    this.launcherWindow.once('ready-to-show', () => {
-      this.switchToLauncher()
-      this.isWindowVisible = true
+  private setupOverlayWindowListeners(): void {
+    if (!this.overlayWindow) return
+    this.overlayWindow.on('system-context-menu', (e, point) => {
+      e.preventDefault();
+      if (!this.appState.getUndetectable()) {
+        this.showContextMenu(this.overlayWindow!, point);
+      }
+    });
+    this.overlayWindow.on('close', (e) => {
+      if (this.overlayWindow?.isVisible()) {
+        e.preventDefault();
+        if (this.appState.getIsMeetingActive()) {
+          this.hideOverlay();
+        } else {
+          this.switchToLauncher();
+        }
+      }
     })
-
-    this.setupWindowListeners()
   }
 
   private setupWindowListeners(): void {
@@ -298,29 +327,6 @@ export class WindowHelper {
       this.isWindowVisible = false
     })
 
-    // Listen for overlay close (e.g. Cmd+W). Never truly destroy it — either
-    // hide it (during a meeting) or switch back to launcher (between meetings).
-    if (this.overlayWindow) {
-      this.overlayWindow.on('system-context-menu', (e, point) => {
-        e.preventDefault();
-        if (!this.appState.getUndetectable()) {
-          this.showContextMenu(this.overlayWindow!, point);
-        }
-      });
-
-      this.overlayWindow.on('close', (e) => {
-        if (this.overlayWindow?.isVisible()) {
-          e.preventDefault();
-          if (this.appState.getIsMeetingActive()) {
-            // Meeting running — just hide the overlay; user can resume from the
-            // launcher's "Meeting ongoing" button which calls setWindowMode('overlay').
-            this.hideOverlay();
-          } else {
-            this.switchToLauncher();
-          }
-        }
-      })
-    }
   }
 
   // Helper to get whichever window should be treated as "Main" for IPC
@@ -442,6 +448,7 @@ export class WindowHelper {
 
   public switchToOverlay(inactive?: boolean): void {
     console.log(`[WindowHelper] Switching to OVERLAY (inactive: ${!!inactive})`);
+    this.createOverlayWindow();
     this.currentWindowMode = 'overlay';
     KeybindManager.getInstance().setMode('overlay'); // Adapted from public PR #123 — verify premium interaction
 
@@ -455,8 +462,11 @@ export class WindowHelper {
       const primaryDisplay = screen.getPrimaryDisplay()
       const workArea = primaryDisplay.workArea;
       const currentBounds = this.overlayWindow.getBounds();
-      const targetHeight = Math.max(currentBounds.height, 216);
-      const overlayWidth = Math.min(600, Math.floor(screen.getPrimaryDisplay().workAreaSize.width * 0.9));
+      // Meeting UI needs real vertical space (transcript + chat). Old floor of 216px
+      // left the overlay looking crushed on first open.
+      const minOverlayHeight = Math.min(560, Math.floor(workArea.height * 0.55));
+      const targetHeight = Math.max(currentBounds.height, minOverlayHeight);
+      const overlayWidth = Math.min(720, Math.floor(screen.getPrimaryDisplay().workAreaSize.width * 0.9));
       const overlayX = Math.floor(workArea.x + (workArea.width - overlayWidth) / 2)
       const overlayY = Math.floor(workArea.y + (workArea.height - targetHeight) / 2)
       this.overlayWindow.setBounds({ x: overlayX, y: overlayY, width: overlayWidth, height: targetHeight });

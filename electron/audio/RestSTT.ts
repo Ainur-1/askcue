@@ -16,6 +16,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 import { RECOGNITION_LANGUAGES } from '../config/languages';
 import { normalizeLanguageToIso639 } from '../transcript/translationExecutor';
+import { isPermanentApiError } from '../utils/apiErrors';
 
 export type RestSttProvider = 'groq' | 'openai' | 'elevenlabs' | 'azure' | 'ibmwatson';
 
@@ -165,6 +166,7 @@ export class RestSTT extends EventEmitter {
     private isActive = false;
     private isUploading = false;
     private flushPending = false;  // Bug #2 fix: queue flush when upload in progress
+    private authFailed = false;
 
     // Audio config (must match SystemAudioCapture output)
     private sampleRate = 16000;
@@ -189,6 +191,7 @@ export class RestSTT extends EventEmitter {
     public setApiKey(apiKey: string): void {
         this.apiKey = apiKey;
         this.config = PROVIDER_CONFIGS[this.provider](apiKey, this.region);
+        this.authFailed = false;
         console.log(`[RestSTT] API key updated for ${this.provider}`);
     }
 
@@ -233,6 +236,7 @@ export class RestSTT extends EventEmitter {
 
         console.log(`[RestSTT] Starting (${this.provider})...`);
         this.isActive = true;
+        this.authFailed = false;
         this.chunks = [];
         this.totalBufferedBytes = 0;
 
@@ -288,7 +292,7 @@ export class RestSTT extends EventEmitter {
      */
     private async flushAndUpload(): Promise<void> {
         // Skip if no data
-        if (this.chunks.length === 0 || this.totalBufferedBytes < MIN_BUFFER_BYTES) return;
+        if (this.authFailed || this.chunks.length === 0 || this.totalBufferedBytes < MIN_BUFFER_BYTES) return;
 
         // Bug #2 fix: if currently uploading, queue a flush for when it completes
         if (this.isUploading) {
@@ -340,6 +344,17 @@ export class RestSTT extends EventEmitter {
             }
         } catch (err) {
             console.error(`[RestSTT] Upload error:`, err);
+            if (isPermanentApiError(err)) {
+                this.authFailed = true;
+                this.isActive = false;
+                this.chunks = [];
+                this.totalBufferedBytes = 0;
+                if (this.safetyNetTimer) {
+                    clearInterval(this.safetyNetTimer);
+                    this.safetyNetTimer = null;
+                }
+                console.error(`[RestSTT] Stopping ${this.provider} after a permanent API error. Update the key or provider to resume.`);
+            }
             this.emit('error', err instanceof Error ? err : new Error(String(err)));
         } finally {
             this.isUploading = false;

@@ -4,6 +4,7 @@ import { AudioDevices } from "../audio/AudioDevices"
 import { DEFAULT_TRANSCRIPT_ASSEMBLER_PROFILE, isTranscriptAssemblerProfile } from "../lib/transcript-assembler"
 import { SettingsManager } from "../services/SettingsManager"
 import { safeHandle } from "./safeHandle"
+import { systemProxyAgent } from '../network/ProxyRouting';
 
 export function registerSttHandlers(appState: AppState): void {
   // ==========================================
@@ -53,6 +54,9 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setGroqSttApiKey(apiKey);
+      // Recreate STT instances — otherwise a Google fallback from before the key
+      // was saved keeps running and fails with "default credentials".
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving Groq STT API key:", error);
@@ -64,6 +68,7 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setOpenAiSttApiKey(apiKey);
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving OpenAI STT API key:", error);
@@ -75,6 +80,7 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setDeepgramApiKey(apiKey);
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving Deepgram API key:", error);
@@ -101,6 +107,7 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setElevenLabsApiKey(apiKey);
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving ElevenLabs API key:", error);
@@ -112,6 +119,7 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setAzureApiKey(apiKey);
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving Azure API key:", error);
@@ -138,6 +146,7 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setIbmWatsonApiKey(apiKey);
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving IBM Watson API key:", error);
@@ -149,6 +158,7 @@ export function registerSttHandlers(appState: AppState): void {
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');
       CredentialsManager.getInstance().setSonioxApiKey(apiKey);
+      await appState.reconfigureSttProvider();
       return { success: true };
     } catch (error: any) {
       console.error("Error saving Soniox API key:", error);
@@ -194,6 +204,7 @@ export function registerSttHandlers(appState: AppState): void {
         return await new Promise<{ success: boolean; error?: string }>((resolve) => {
           const url = 'wss://api.deepgram.com/v1/listen?model=nova-3&encoding=linear16&sample_rate=16000&channels=1';
           const ws = new WebSocket(url, {
+            agent: systemProxyAgent,
             headers: { Authorization: `Token ${apiKey} ` },
           });
 
@@ -220,7 +231,7 @@ export function registerSttHandlers(appState: AppState): void {
         // Test Soniox via WebSocket connection
         const WebSocket = require('ws');
         return await new Promise<{ success: boolean; error?: string }>((resolve) => {
-          const ws = new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');
+          const ws = new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket', { agent: systemProxyAgent });
 
           const timeout = setTimeout(() => {
             ws.close();

@@ -59,7 +59,43 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting, overlayOpac
     useEffect(() => { const timer = setTimeout(updateContentDimensions, 600); return () => clearTimeout(timer); }, [updateContentDimensions]);
     useEffect(() => { if (isExpanded) messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chat.messages, isExpanded, chat.isProcessing]);
 
-    const handleAnswerNow = useCallback(() => chat.handleWhatToSay(), [chat.handleWhatToSay]);
+    const handleAnswerNow = useCallback(async () => {
+        if (!audio.isManualRecording) {
+            audio.setVoiceInput('');
+            audio.setManualTranscript('');
+            audio.voiceInputRef.current = '';
+            audio.manualTranscriptRef.current = '';
+            audio.setIsManualRecording(true);
+            return;
+        }
+
+        audio.setIsManualRecording(false);
+        await window.electronAPI.finalizeMicSTT();
+        const question = `${audio.voiceInputRef.current} ${audio.manualTranscriptRef.current}`.trim();
+        audio.setVoiceInput('');
+        audio.setManualTranscript('');
+        audio.voiceInputRef.current = '';
+        audio.manualTranscriptRef.current = '';
+
+        if (!question) {
+            chat.setSystemMessages((prev) => [
+                ...prev,
+                { id: Date.now().toString(), role: 'system', text: 'Не удалось распознать вопрос. Нажми Answer, скажи вопрос и нажми Stop.' },
+            ]);
+            return;
+        }
+
+        chat.setIsProcessing(true);
+        try {
+            await window.electronAPI.submitManualQuestion(question);
+        } catch (error) {
+            chat.setIsProcessing(false);
+            chat.setSystemMessages((prev) => [
+                ...prev,
+                { id: Date.now().toString(), role: 'system', text: `❌ Error: ${error}` },
+            ]);
+        }
+    }, [audio, chat]);
 
     const handlersRef = useRef<CommandHandlers>(null!);
     handlersRef.current = { handleWhatToSay: chat.handleWhatToSay, handleFollowUp: chat.handleFollowUp, handleFollowUpQuestions: chat.handleFollowUpQuestions, handleRecap: chat.handleRecap, handleAnswerNow, handleClarify: chat.handleClarify, handleCodeHint: chat.handleCodeHint, handleBrainstorm: chat.handleBrainstorm };

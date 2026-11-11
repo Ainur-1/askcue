@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import { systemProxyAgent } from '../network/ProxyRouting';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -212,6 +213,7 @@ export class ElevenLabsStreamingSTT extends EventEmitter {
         console.log(`[ElevenLabsStreaming] Connecting with URL: ${url.replace(this.apiKey, '***')}`);
 
         this.ws = new WebSocket(url, {
+            agent: systemProxyAgent,
             headers: {
                 'xi-api-key': this.apiKey,
             }

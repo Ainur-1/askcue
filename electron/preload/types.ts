@@ -280,6 +280,8 @@ export interface ElectronAPI {
   // Verbose / Debug Logging
   getVerboseLogging: () => Promise<boolean>;
   setVerboseLogging: (enabled: boolean) => Promise<{ success: boolean }>;
+  getSystemProxyEnabled: () => Promise<boolean>;
+  setSystemProxyEnabled: (enabled: boolean) => Promise<{ success: boolean; error?: string; warning?: string }>;
 
   // Arch
   getArch: () => Promise<string>;

@@ -107,8 +107,12 @@ export class MeetingPersistence {
         }
 
         try {
+            // Small or empty recordings do not contain enough context to justify
+            // expensive title/summary retries during startup recovery.
+            const hasMeaningfulTranscript = data.transcript.length > 2 && data.context.trim().length > 0;
+
             // Generate Title (only if not set by calendar)
-            if (!metadata || !metadata.title) {
+            if (hasMeaningfulTranscript && (!metadata || !metadata.title)) {
                 const titlePrompt = `Generate a concise 3-6 word title for this meeting context. Output ONLY the title text. Do not use quotes or conversational filler.`;
                 const groqTitlePrompt = GROQ_TITLE_PROMPT;
 
@@ -117,7 +121,7 @@ export class MeetingPersistence {
             }
 
             // Generate Structured Summary
-            if (data.transcript.length > 2) {
+            if (hasMeaningfulTranscript) {
                 const summaryPrompt = `You are a silent meeting summarizer. Convert this conversation into concise internal meeting notes.
     
     RULES:

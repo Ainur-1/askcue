@@ -12,6 +12,7 @@ import {
 import { analytics } from '../lib/analytics/analytics.service';
 import { AboutSection } from './AboutSection';
 import { AIProvidersSettings } from './settings/AIProvidersSettings';
+import { SystemProxySettings } from './settings/SystemProxySettings';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShortcuts } from '../hooks/useShortcuts';
 import { useResolvedTheme } from '../hooks/useResolvedTheme';
@@ -1450,6 +1451,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                         <div className="flex-1 overflow-y-auto bg-bg-main p-8">
                             {activeTab === 'general' && (
                                 <div className="space-y-6 animated fadeIn">
+                                    <SystemProxySettings />
                                     <div className="space-y-3.5">
                                         {/* UndetectableToggle */}
                                         <div className={`${isLight ? 'bg-bg-card' : 'bg-bg-item-surface'} rounded-xl p-5 border border-border-subtle flex items-center justify-between transition-all ${isUndetectable ? 'shadow-lg shadow-blue-500/10' : ''}`}>

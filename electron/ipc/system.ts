@@ -1,8 +1,32 @@
 import { systemPreferences, shell } from "electron"
 import { AppState } from "../main"
 import { safeHandle } from "./safeHandle"
+import { getSystemProxyEnabled, setSystemProxyEnabled } from "../services/SystemProxyManager"
 
 export function registerSystemHandlers(appState: AppState): void {
+  let proxyChange: Promise<unknown> = Promise.resolve();
+  safeHandle('network:get-system-proxy', () => getSystemProxyEnabled());
+  safeHandle('network:set-system-proxy', (_, enabled: boolean) => {
+    const change = proxyChange.catch(() => {}).then(async () => {
+      const previous = getSystemProxyEnabled();
+      try {
+        await setSystemProxyEnabled(enabled);
+      } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Cannot apply proxy settings' };
+      }
+      // WebSockets and gRPC streams need a new handshake on the new route.
+      if (previous !== enabled && appState.getIsMeetingActive()) {
+        try {
+          await appState.reconfigureSttProvider();
+        } catch {
+          return { success: true, warning: 'Proxy settings applied. Restart the meeting to reconnect speech recognition.' };
+        }
+      }
+      return { success: true };
+    });
+    proxyChange = change;
+    return change;
+  });
   // ==========================================
   // Theme System Handlers
   // ==========================================
