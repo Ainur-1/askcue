@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { AlertCircle, ArrowRight, Briefcase, Calendar, CheckCircle, DownloadCloud, Link as LinkIcon, RefreshCw, Zap, History, BookOpen, Settings, MessageSquarePlus, AudioLines, Mic, FileText } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -135,7 +136,7 @@ const Launcher: React.FC<LauncherProps> = ({
         onPageChange?.(!selectedMeeting && !isGlobalChatOpen);
     }, [selectedMeeting, isGlobalChatOpen, onPageChange]);
     if (!window.electronAPI) {
-        return <div className="p-10 text-white">Error: Electron API not initialized. Check preload script.</div>;
+        return <div className="p-10 text-white">{t("Error: Electron API not initialized. Check preload script.")}</div>;
     }
     const nextMeeting = upcomingEvents.find(e => {
         const diff = new Date(e.startTime).getTime() - Date.now();
@@ -208,13 +209,13 @@ const Launcher: React.FC<LauncherProps> = ({
           <div className="workbench-row">
             <aside className="workbench-sidebar paper-texture">
               <div className="workbench-brand"><AudioLines size={24}/><span>Pikabaka</span></div>
-              <nav className="workbench-nav" aria-label="Разделы">
-                <button title="Новый разговор" aria-current={page === 'session' ? 'page' : undefined} onClick={() => { setPage('session'); setSelectedMeeting(null); }}><MessageSquarePlus size={18}/><span>{isMeetingActive ? 'Текущий разговор' : 'Новый разговор'}</span></button>
-                <button title="История встреч" aria-current={page === 'history' ? 'page' : undefined} onClick={() => { setPage('history'); setSelectedMeeting(null); }}><History size={18}/><span>История встреч</span></button>
-                <button title="Материалы" aria-current={page === 'materials' ? 'page' : undefined} onClick={() => onOpenSettings('profile')}><BookOpen size={18}/><span>Материалы</span></button>
-                <button title="Настройки" aria-current={page === 'settings' ? 'page' : undefined} onClick={() => onOpenSettings()}><Settings size={18}/><span>Настройки</span></button>
+              <nav className="workbench-nav" aria-label={t("Разделы")}>
+                <button title={t("Новый разговор")} aria-current={page === 'session' ? 'page' : undefined} onClick={() => { setPage('session'); setSelectedMeeting(null); }}><MessageSquarePlus size={18}/><span>{isMeetingActive ? t("Текущий разговор") : t("Новый разговор")}</span></button>
+                <button title={t("История встреч")} aria-current={page === 'history' ? 'page' : undefined} onClick={() => { setPage('history'); setSelectedMeeting(null); }}><History size={18}/><span>{t("История встреч")}</span></button>
+                <button title={t("Материалы")} aria-current={page === 'materials' ? 'page' : undefined} onClick={() => onOpenSettings('profile')}><BookOpen size={18}/><span>{t("Материалы")}</span></button>
+                <button title={t("Настройки")} aria-current={page === 'settings' ? 'page' : undefined} onClick={() => onOpenSettings()}><Settings size={18}/><span>{t("Настройки")}</span></button>
               </nav>
-              {isMeetingActive && <button className="paper-primary mt-auto text-xs" onClick={() => window.electronAPI.setWindowMode('overlay', true)}>Вернуться к разговору <ArrowRight size={14}/></button>}
+              {isMeetingActive && <button className="paper-primary mt-auto text-xs" onClick={() => window.electronAPI.setWindowMode('overlay', true)}>{t("Вернуться к разговору")} <ArrowRight size={14}/></button>}
             </aside>
             <div className="workbench-body">
             <LauncherHeader
@@ -223,7 +224,7 @@ const Launcher: React.FC<LauncherProps> = ({
                 forwardMeeting={forwardMeeting}
                 onBack={handleBack}
                 onForward={handleForward}
-                title={selectedMeeting ? selectedMeeting.title : page === 'history' ? 'История встреч' : page === 'materials' ? 'Материалы' : page === 'settings' ? 'Настройки' : isMeetingActive ? 'Текущий разговор' : 'Новый разговор'}
+                title={selectedMeeting ? selectedMeeting.title : page === 'history' ? t("История встреч") : page === 'materials' ? t("Материалы") : page === 'settings' ? t("Настройки") : isMeetingActive ? t("Текущий разговор") : t("Новый разговор")}
                 status={<DetectableControl />}
                 onAIQuery={(query) => {
                     analytics.trackCommandExecuted('ai_query_search');
@@ -255,13 +256,13 @@ const Launcher: React.FC<LauncherProps> = ({
                         <motion.div key="launcher" className="flex flex-1 flex-col overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                             {page === 'session' && <main className="custom-scrollbar flex-1 overflow-y-auto">
                               <div className="prep-screen">
-                                <div className="prep-kicker">Подготовка к разговору</div>
-                                <div className="prep-row"><FileText/><div><strong>Профиль кандидата</strong><small>{profileData?.rawText || profileData?.identity?.name ? 'Резюме и опыт добавлены' : 'Добавьте резюме и опыт для персональных подсказок'}</small></div><button onClick={() => onOpenSettings('profile')}>Открыть</button></div>
-                                <div className="prep-row"><Briefcase/><div><strong>{profileData?.activeJD?.title || 'Вакансия'}</strong><small>{profileData?.activeJD?.company || 'Выберите вакансию в материалах'}</small></div><button onClick={() => onOpenSettings('profile')}>Выбрать</button></div>
-                                <div className="prep-row"><Mic/><div><strong>Звук и распознавание</strong><small>Микрофон, системный звук и сервис расшифровки</small></div><button onClick={() => onOpenSettings('audio')}>Настроить</button></div>
+                                <div className="prep-kicker">{t("Подготовка к разговору")}</div>
+                                <div className="prep-row"><FileText/><div><strong>{t("Профиль кандидата")}</strong><small>{profileData?.rawText || profileData?.identity?.name ? t("Резюме и опыт добавлены") : t("Добавьте резюме и опыт для персональных подсказок")}</small></div><button onClick={() => onOpenSettings('profile')}>{t("Открыть")}</button></div>
+                                <div className="prep-row"><Briefcase/><div><strong>{profileData?.activeJD?.title || 'Вакансия'}</strong><small>{profileData?.activeJD?.company || 'Выберите вакансию в материалах'}</small></div><button onClick={() => onOpenSettings('profile')}>{t("Выбрать")}</button></div>
+                                <div className="prep-row"><Mic/><div><strong>{t("Звук и распознавание")}</strong><small>{t("Микрофон, системный звук и сервис расшифровки")}</small></div><button onClick={() => onOpenSettings('audio')}>{t("Настроить")}</button></div>
                                 <div className="flex items-center gap-4 mt-8 mb-8 flex-wrap">
-                                  <button className="paper-primary" onClick={() => { if (isMeetingActive) void window.electronAPI.setWindowMode('overlay', true); else onStartMeeting(); }}>{isMeetingActive ? 'Вернуться к разговору' : 'Начать разговор'} <ArrowRight size={16}/></button>
-                                  <button className="text-xs text-text-secondary p-2" onClick={() => onOpenSettings('ai-providers')}>Модели и подключения</button>
+                                  <button className="paper-primary" onClick={() => { if (isMeetingActive) void window.electronAPI.setWindowMode('overlay', true); else onStartMeeting(); }}>{isMeetingActive ? t("Вернуться к разговору") : t("Начать разговор")} <ArrowRight size={16}/></button>
+                                  <button className="text-xs text-text-secondary p-2" onClick={() => onOpenSettings('ai-providers')}>{t("Модели и подключения")}</button>
                                 </div>
                                 {ollamaPullStatus !== 'idle' && <div className="text-xs text-text-secondary mb-4 flex items-center gap-2">{ollamaPullStatus === 'downloading' ? <DownloadCloud size={14}/> : ollamaPullStatus === 'complete' ? <CheckCircle size={14}/> : <AlertCircle size={14}/>} {ollamaPullStatus === 'downloading' ? `Подготовка AI-памяти… ${ollamaPullPercent}%` : ollamaPullMessage}</div>}
                                     {showUpcomingHero && (
@@ -269,25 +270,25 @@ const Launcher: React.FC<LauncherProps> = ({
                                             {isPrepared && preparedEvent ? (
                                                 <div className="flex items-center justify-between gap-4">
                                                     <div>
-                                                        <span className="mb-2 inline-flex rounded-full border border-state-success/30 bg-state-success-soft px-3 py-1 text-xs font-bold text-state-success">READY TO JOIN</span>
+                                                        <span className="mb-2 inline-flex rounded-full border border-state-success/30 bg-state-success-soft px-3 py-1 text-xs font-bold text-state-success">{t("READY TO JOIN")}</span>
                                                         <h2 className="text-2xl font-bold text-text-primary">{preparedEvent.title}</h2>
                                                         <p className="mt-2 flex items-center gap-2 text-xs text-text-secondary"><Calendar size={12} />{new Date(preparedEvent.startTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} - {new Date(preparedEvent.endTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}{preparedEvent.link && ' • Link Ready'}</p>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <button type="button" onClick={handleStartPreparedMeeting} className="flex items-center gap-2 rounded-xl bg-state-success px-5 py-3 text-sm font-semibold text-white transition-transform active:scale-95">Start Meeting <ArrowRight size={16} /></button>
-                                                        <button type="button" onClick={() => setIsPrepared(false)} className="rounded-xl px-4 py-3 text-xs font-medium text-text-tertiary transition-colors hover:text-text-primary">Cancel</button>
+                                                        <button type="button" onClick={handleStartPreparedMeeting} className="flex items-center gap-2 rounded-xl bg-state-success px-5 py-3 text-sm font-semibold text-white transition-transform active:scale-95">{t("Start Meeting")} <ArrowRight size={16} /></button>
+                                                        <button type="button" onClick={() => setIsPrepared(false)} className="rounded-xl px-4 py-3 text-xs font-medium text-text-tertiary transition-colors hover:text-text-primary">{t("Cancel")}</button>
                                                     </div>
                                                 </div>
                                             ) : nextMeeting ? (
                                                 <div className="space-y-4">
                                                     <div>
-                                                        <div className="mb-2 flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-state-success" /><span className="text-xs font-bold uppercase tracking-wide text-state-success">Up Next</span><span className="text-xs text-text-tertiary">Starts in {Math.max(0, Math.ceil((new Date(nextMeeting.startTime).getTime() - Date.now()) / 60000))} min</span></div>
+                                                        <div className="mb-2 flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-state-success" /><span className="text-xs font-bold uppercase tracking-wide text-state-success">{t("Up Next")}</span><span className="text-xs text-text-tertiary">{t("Starts in")} {Math.max(0, Math.ceil((new Date(nextMeeting.startTime).getTime() - Date.now()) / 60000))} {t("min")}</span></div>
                                                         <h2 className="line-clamp-2 text-xl font-bold text-text-primary">{nextMeeting.title}</h2>
-                                                        <div className="mt-2 flex items-center gap-2 text-xs text-text-secondary"><Calendar size={12} /><span>{new Date(nextMeeting.startTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} - {new Date(nextMeeting.endTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>{nextMeeting.link && <><span className="opacity-50">|</span><LinkIcon size={12} /><span>Meeting Link Found</span></>}</div>
+                                                        <div className="mt-2 flex items-center gap-2 text-xs text-text-secondary"><Calendar size={12} /><span>{new Date(nextMeeting.startTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} - {new Date(nextMeeting.endTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>{nextMeeting.link && <><span className="opacity-50">|</span><LinkIcon size={12} /><span>{t("Meeting Link Found")}</span></>}</div>
                                                     </div>
                                                     <div className="flex items-center gap-3 border-t border-border-subtle pt-4">
-                                                        <button type="button" onClick={() => { setPreparedEvent(nextMeeting); setIsPrepared(true); }} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border-muted bg-bg-item-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-item-active"><Zap size={13} className="text-state-warning" />Prepare</button>
-                                                        <button type="button" onClick={onStartMeeting} className="rounded-lg px-4 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-input hover:text-text-primary">Start now</button>
+                                                        <button type="button" onClick={() => { setPreparedEvent(nextMeeting); setIsPrepared(true); }} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border-muted bg-bg-item-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-item-active"><Zap size={13} className="text-state-warning" />{t("Prepare")}</button>
+                                                        <button type="button" onClick={onStartMeeting} className="rounded-lg px-4 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-input hover:text-text-primary">{t("Start now")}</button>
                                                     </div>
                                                 </div>
                                             ) : null}
@@ -296,7 +297,7 @@ const Launcher: React.FC<LauncherProps> = ({
                               </div>
                             </main>}
                             {page === 'history' && <main className="custom-scrollbar flex-1 overflow-y-auto bg-bg-primary">
-                                <div className="flex justify-end px-8 pt-4"><button onClick={handleRefresh} disabled={isRefreshing} className="text-xs text-text-secondary flex gap-2 items-center"><RefreshCw size={13} className={isRefreshing ? 'animate-spin' : ''}/>Обновить</button></div>
+                                <div className="flex justify-end px-8 pt-4"><button onClick={handleRefresh} disabled={isRefreshing} className="text-xs text-text-secondary flex gap-2 items-center"><RefreshCw size={13} className={isRefreshing ? 'animate-spin' : ''}/>{t("Обновить")}</button></div>
                                 <section className="min-h-full px-8 py-8">
                                     <MeetingHistorySection meetings={meetings} onOpenMeeting={handleOpenMeeting} onExportMeeting={handleExportMeeting} onDeleteMeeting={handleDeleteMeeting} activeMenuId={activeMenuId} onMenuToggle={setActiveMenuId} menuEntered={menuEntered} onMenuEnteredChange={setMenuEntered} />
                                 </section>
@@ -311,7 +312,7 @@ const Launcher: React.FC<LauncherProps> = ({
                 {showNotification && (
                     <motion.div initial={{ x: 300, opacity: 0, scale: 0.95 }} animate={{ x: 0, opacity: 1, scale: 1 }} exit={{ x: 300, opacity: 0, scale: 0.95 }} className="fixed bottom-10 right-10 z-modal flex items-center gap-4 rounded-2xl border border-border-subtle bg-bg-elevated/90 py-3 pl-4 pr-6 shadow-xl backdrop-blur-xl">
                         <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border-subtle bg-state-info-soft"><RefreshCw size={15} className="animate-spin text-state-info" /></div>
-                        <div className="flex flex-col gap-1"><span className="text-sm font-semibold text-text-primary">Refreshed</span><span className="text-xs text-text-tertiary">Synced with calendar</span></div>
+                        <div className="flex flex-col gap-1"><span className="text-sm font-semibold text-text-primary">{t("Refreshed")}</span><span className="text-xs text-text-tertiary">{t("Synced with calendar")}</span></div>
                     </motion.div>
                 )}
             </AnimatePresence>

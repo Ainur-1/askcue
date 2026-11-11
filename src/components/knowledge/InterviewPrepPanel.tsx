@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useState, useEffect } from 'react';
 import { X, Target, ChevronDown, ChevronUp, AlertTriangle, Sparkles, Zap, BookOpen } from 'lucide-react';
 import { useGeneratePrep } from '../../hooks/useInterviewPrep';
@@ -70,9 +71,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
         <div className="p-5 border-b border-border-subtle flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
-              <Target size={16} className="text-accent-primary" />
-              Interview Prep
-            </h2>
+              <Target size={16} className="text-accent-primary" />{t("Interview Prep")}</h2>
             <p className="text-xs text-text-secondary mt-0.5">
               {jdTitle} {jdCompany ? `at ${jdCompany}` : ''}
             </p>
@@ -91,19 +90,17 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                 <div className="h-32 bg-bg-input rounded-xl mt-3" />
                 <div className="h-32 bg-bg-input rounded-xl mt-3" />
               </div>
-              <p className="text-xs text-text-secondary text-center">Preparing tailored guidance...</p>
+              <p className="text-xs text-text-secondary text-center">{t("Preparing tailored guidance...")}</p>
             </div>
           ) : prepError ? (
             <div className="bg-state-danger-soft border border-state-danger-border rounded-xl p-4 text-center">
               <AlertTriangle size={20} className="mx-auto text-state-danger mb-2" />
-              <p className="text-sm text-state-danger font-medium">Couldn’t generate prep</p>
+              <p className="text-sm text-state-danger font-medium">{t("Couldn’t generate prep")}</p>
               <p className="text-xs text-text-secondary mt-1">{(prepErrorObj as Error | undefined)?.message}</p>
               <button
                 onClick={() => generatePrepAsync(jdId).then((d) => setPrepData(d)).catch(() => {})}
                 className="mt-3 px-4 py-1.5 rounded-full text-xs font-medium bg-state-danger-soft text-state-danger hover:bg-state-danger-soft transition-colors"
-              >
-                Retry
-              </button>
+              >{t("Retry")}</button>
             </div>
           ) : prepData ? (
             <>
@@ -128,7 +125,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide mb-1">Match Score</div>
+                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide mb-1">{t("Match Score")}</div>
                     <p className="text-xs text-text-secondary">
                       {prepData.matchScore >= 70 ? 'Strong alignment — focus on depth, outcomes, and credibility.' :
                        prepData.matchScore >= 40 ? 'Good baseline — highlight transferable experience and relevant wins.' :
@@ -141,7 +138,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                   <div className="mt-4 pt-4 border-t border-border-subtle">
                     <div className="flex items-center gap-1.5 mb-2">
                       <Sparkles size={12} className="text-accent-primary" />
-                      <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">Opening Pitch</div>
+                      <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">{t("Opening Pitch")}</div>
                     </div>
                     <p className="text-xs text-text-secondary leading-relaxed bg-bg-input rounded-lg p-3 italic">
                       "{prepData.openingPitch}"
@@ -154,7 +151,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                 <div className="bg-bg-item-surface rounded-xl border border-border-subtle p-4">
                   <div className="flex items-center gap-1.5 mb-2">
                     <Zap size={12} className="text-state-warning" />
-                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">Key Terms to Weave In</div>
+                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">{t("Key Terms to Weave In")}</div>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {prepData.mustMentionKeywords.map((kw, i) => (
@@ -170,7 +167,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                 <div className="bg-bg-item-surface rounded-xl border border-border-subtle p-4">
                   <div className="flex items-center gap-1.5 mb-3">
                     <AlertTriangle size={12} className="text-state-danger" />
-                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">What to Strengthen</div>
+                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">{t("What to Strengthen")}</div>
                     <span className="text-[9px] text-text-tertiary ml-1">({prepData.knowledgeGaps.length})</span>
                   </div>
                   <div className="space-y-2">
@@ -197,8 +194,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                 <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
                   <div className="flex items-center gap-1.5">
                     <BookOpen size={12} className="text-accent-primary" />
-                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">
-                      Questions to Practice ({filteredQuestions.length})
+                    <div className="text-[10px] font-bold text-text-primary uppercase tracking-wide">{t("Questions to Practice (")}{filteredQuestions.length})
                     </div>
                   </div>
 
@@ -208,9 +204,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                       className={`text-[9px] font-medium px-2 py-0.5 rounded-full transition-colors ${
                         !activeCategory ? 'bg-accent-primary/10 text-accent-primary border border-accent-primary/20' : 'text-text-tertiary hover:text-text-secondary'
                       }`}
-                    >
-                      All
-                    </button>
+                    >{t("All")}</button>
                     {categories.map((cat) => (
                       <button
                         key={cat}
@@ -244,7 +238,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                           <div className="flex-1 min-w-0">
                             <p className="text-sm text-text-primary font-medium">{q.question}</p>
                             {q.relatedJDRequirement && (
-                              <p className="text-[10px] text-text-tertiary mt-1">Focus: {q.relatedJDRequirement}</p>
+                              <p className="text-[10px] text-text-tertiary mt-1">{t("Focus:")} {q.relatedJDRequirement}</p>
                             )}
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
@@ -260,13 +254,13 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                             <div className="pt-3 space-y-2">
                               {q.suggestedAnswer.opening && (
                                 <div>
-                                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-wide mb-1">Opening</div>
+                                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-wide mb-1">{t("Opening")}</div>
                                   <p className="text-xs text-text-primary italic bg-bg-input rounded-lg px-3 py-2">"{q.suggestedAnswer.opening}"</p>
                                 </div>
                               )}
                               {q.suggestedAnswer.keyPoints?.length > 0 && (
                                 <div>
-                                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-wide mb-1">Key Points</div>
+                                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-wide mb-1">{t("Key Points")}</div>
                                   <ul className="space-y-1">
                                     {q.suggestedAnswer.keyPoints.map((point, pi) => (
                                       <li key={pi} className="text-xs text-text-secondary flex items-start gap-2">
@@ -278,7 +272,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
                               )}
                               {q.suggestedAnswer.evidence && (
                                 <div>
-                                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-wide mb-1">Relevant Background</div>
+                                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-wide mb-1">{t("Relevant Background")}</div>
                                   <p className="text-[11px] text-accent-primary bg-accent-primary/5 rounded-lg px-3 py-2 border border-accent-primary/10">
                                     {q.suggestedAnswer.evidence}
                                   </p>
@@ -298,9 +292,7 @@ export const InterviewPrepPanel: React.FC<InterviewPrepPanelProps> = ({
 
         {prepData && (
           <div className="p-4 border-t border-border-subtle shrink-0 flex items-center justify-end gap-3">
-            <button onClick={onClose} className="px-4 py-2 rounded-full text-xs font-medium text-text-tertiary hover:text-text-primary hover:bg-bg-input transition-colors">
-              Close
-            </button>
+            <button onClick={onClose} className="px-4 py-2 rounded-full text-xs font-medium text-text-tertiary hover:text-text-primary hover:bg-bg-input transition-colors">{t("Close")}</button>
           </div>
         )}
       </div>

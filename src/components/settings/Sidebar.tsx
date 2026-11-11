@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useCallback, useRef } from 'react';
 import { Monitor, Cpu, Info } from 'lucide-react';
 
@@ -57,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onClo
     return (
         <div className="w-64 bg-bg-sidebar flex flex-col border-r border-border-subtle h-full">
             <div className="p-6">
-                <h2 className="font-semibold text-gray-400 text-xs uppercase tracking-wider mb-4">Advanced Settings</h2>
+                <h2 className="font-semibold text-gray-400 text-xs uppercase tracking-wider mb-4">{t("Advanced Settings")}</h2>
                 <nav
                     className="space-y-1"
                     role="tablist"
@@ -74,8 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onClo
                         onClick={() => setActiveTab('general')}
                         className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-3 ${activeTab === 'general' ? 'bg-bg-item-active text-text-primary' : 'text-text-secondary hover:text-text-primary hover:bg-bg-item-active/50'}`}
                     >
-                        <Monitor size={16} /> General
-                    </button>
+                        <Monitor size={16} />{t("General")}</button>
                     <button
                         ref={(element) => { tabRefs.current[1] = element; }}
                         id="settings-tab-ai-providers"
@@ -85,8 +85,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onClo
                         onClick={() => setActiveTab('ai-providers')}
                         className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-3 ${activeTab === 'ai-providers' ? 'bg-bg-item-active text-text-primary' : 'text-text-secondary hover:text-text-primary hover:bg-bg-item-active/50'}`}
                     >
-                        <Cpu size={16} /> AI Providers
-                    </button>
+                        <Cpu size={16} />{t("AI Providers")}</button>
                     <button
                         ref={(element) => { tabRefs.current[2] = element; }}
                         id="settings-tab-about"
@@ -96,19 +95,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onClo
                         onClick={() => setActiveTab('about')}
                         className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-3 ${activeTab === 'about' ? 'bg-bg-item-active text-text-primary' : 'text-text-secondary hover:text-text-primary hover:bg-bg-item-active/50'}`}
                     >
-                        <Info size={16} /> About
-                    </button>
+                        <Info size={16} />{t("About")}</button>
                 </nav>
             </div>
 
             <div className="mt-auto p-6 border-t border-border-subtle">
                 <button
                     onClick={onClose}
-                    aria-label="Close settings"
+                    aria-label={t("Close settings")}
                     className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-bg-item-active/50 transition-colors flex items-center gap-3"
-                >
-                    Close
-                </button>
+                >{t("Close")}</button>
             </div>
         </div>
     );

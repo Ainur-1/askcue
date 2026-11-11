@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { Heart, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -71,10 +72,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                         v{packageJson.version}
                     </span>
                 </div>
-                <p className="text-sm text-text-secondary leading-relaxed mt-3 max-w-[52ch]">
-                    Interview copilot and meeting assistant. Transcription, answer
-                    suggestions, and screen analysis — running locally on your device.
-                </p>
+                <p className="text-sm text-text-secondary leading-relaxed mt-3 max-w-[52ch]">{t("Interview copilot and meeting assistant. Transcription, answer suggestions, and screen analysis — running locally on your device.")}</p>
             </motion.div>
 
             {/* Divider */}
@@ -119,12 +117,8 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                            <h5 className="text-[13px] font-semibold text-text-primary leading-tight">
-                                Support this project
-                            </h5>
-                            <p className="text-xs text-text-tertiary mt-1.5 leading-relaxed max-w-[40ch]">
-                                Pika is built and maintained independently. If it helps your workflow, a coffee goes a long way.
-                            </p>
+                            <h5 className="text-[13px] font-semibold text-text-primary leading-tight">{t("Support this project")}</h5>
+                            <p className="text-xs text-text-tertiary mt-1.5 leading-relaxed max-w-[40ch]">{t("Pika is built and maintained independently. If it helps your workflow, a coffee goes a long way.")}</p>
 
                             <motion.button
                                 onClick={(e) => handleOpenLink(e, BMC_URL)}
@@ -132,9 +126,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                                 whileHover={{ y: -1 }}
                                 whileTap={{ scale: 0.97 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                            >
-                                Buy Me a Coffee
-                                <ExternalLink size={11} className="opacity-50" />
+                            >{t("Buy Me a Coffee")}<ExternalLink size={11} className="opacity-50" />
                             </motion.button>
                         </div>
                     </div>

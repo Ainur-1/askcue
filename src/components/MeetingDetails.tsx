@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useResolvedTheme } from '../hooks/useResolvedTheme';
 import { ArrowUp, Copy, Check, Languages, Loader2, Globe } from 'lucide-react';
@@ -283,7 +284,7 @@ ${meeting.detailedSummary.keyPoints?.map(item => `- ${item}`).join('\n') || 'Non
                                     className="flex items-center gap-2 text-xs font-medium text-text-secondary hover:text-text-primary transition-colors disabled:opacity-50"
                                 >
                                     {isTranslatingAll ? <Loader2 size={14} className="animate-spin" /> : <Languages size={14} />}
-                                    {isTranslatingAll ? 'Translating...' : allTranslated ? 'All translated' : 'Translate all'}
+                                    {isTranslatingAll ? t("Translating...") : allTranslated ? 'All translated' : 'Translate all'}
                                 </button>
                             )}
                             {/* Copy Button - Inline with Tabs (Always visible) */}
@@ -292,7 +293,7 @@ ${meeting.detailedSummary.keyPoints?.map(item => `- ${item}`).join('\n') || 'Non
                                 className="flex items-center gap-2 text-xs font-medium text-text-secondary hover:text-text-primary transition-colors"
                             >
                                 {isCopied ? <Check size={14} className="text-state-success" /> : <Copy size={14} />}
-                                {isCopied ? 'Copied' : activeTab === 'summary' ? 'Copy full summary' : activeTab === 'transcript' ? 'Copy full transcript' : 'Copy usage'}
+                                {isCopied ? t("Copied") : activeTab === 'summary' ? 'Copy full summary' : activeTab === 'transcript' ? 'Copy full transcript' : 'Copy usage'}
                             </button>
                         </div>
                     </div>
@@ -419,7 +420,7 @@ ${meeting.detailedSummary.keyPoints?.map(item => `- ${item}`).join('\n') || 'Non
                             <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 <div className="space-y-6">
                                     {filteredTranscript.length === 0 ? (
-                                        <p className="text-text-tertiary">No transcript available.</p>
+                                        <p className="text-text-tertiary">{t("No transcript available.")}</p>
                                     ) : filteredTranscript.map((entry, i) => {
                                             const translation = translations[i];
                                             const isPending = translation?.state === 'pending';
@@ -439,19 +440,19 @@ ${meeting.detailedSummary.keyPoints?.map(item => `- ${item}`).join('\n') || 'Non
                                                             className="opacity-0 group-hover:opacity-100 flex items-center gap-1 text-xs text-text-tertiary hover:text-text-secondary transition-all disabled:opacity-50"
                                                         >
                                                             {isPending ? <Loader2 size={12} className="animate-spin" /> : <Languages size={12} />}
-                                                            {hasTranslation ? 'Retranslate' : 'Translate'}
+                                                            {hasTranslation ? t("Retranslate") : t("Translate")}
                                                         </button>
                                                     </div>
                                                     <p className="text-text-primary text-[15px] leading-relaxed select-text cursor-text">{entry.text}</p>
                                                     {isPending && (
                                                         <div className="flex items-center gap-1.5 mt-1.5 text-text-tertiary">
                                                             <Loader2 size={12} className="animate-spin" />
-                                                            <span className="text-xs">Translating...</span>
+                                                            <span className="text-xs">{t("Translating...")}</span>
                                                         </div>
                                                     )}
                                                     {translation?.state === 'error' && (
                                                         <div className="flex items-center gap-1.5 mt-1.5 text-state-danger">
-                                                            <span className="text-xs">Translation failed</span>
+                                                            <span className="text-xs">{t("Translation failed")}</span>
                                                         </div>
                                                     )}
                                                     {hasTranslation && (
@@ -552,7 +553,7 @@ ${meeting.detailedSummary.keyPoints?.map(item => `- ${item}`).join('\n') || 'Non
                                         )}
                                     </div>
                                 ))}
-                                {!meeting.usage?.length && <p className="text-text-tertiary">No usage history.</p>}
+                                {!meeting.usage?.length && <p className="text-text-tertiary">{t("No usage history.")}</p>}
                             </motion.section>
                         )}
                     </div>

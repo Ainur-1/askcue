@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, Sparkles, FileText } from 'lucide-react';
@@ -300,7 +301,7 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
                                         focus:outline-none
                                         ${state === 'idle' ? 'cursor-default' : 'cursor-text'}
                                     `}
-                                        placeholder="Поиск или вопрос…"
+                                        placeholder={t("Поиск или вопрос…")}
                                     />
                                 </div>
 
@@ -323,9 +324,7 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
                                                 <div className="border-t border-border-muted py-2">
                                                     {/* Explore Section */}
                                                     <div className="px-3 py-1">
-                                                        <div className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider mb-1">
-                                                            Explore
-                                                        </div>
+                                                        <div className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider mb-1">{t("Explore")}</div>
 
                                                         {/* AI Query Option */}
                                                         <motion.button
@@ -370,8 +369,7 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
                                                             <div className="w-6 h-6 rounded-md bg-bg-item-surface flex items-center justify-center shrink-0">
                                                                 <Search size={12} className="text-text-secondary" />
                                                             </div>
-                                                            <span className="text-[13px] text-text-secondary">
-                                                                Search for <span className="text-text-primary">"{query}"</span>
+                                                            <span className="text-[13px] text-text-secondary">{t("Search for")}<span className="text-text-primary">"{query}"</span>
                                                             </span>
                                                         </motion.button>
                                                     </div>
@@ -379,9 +377,7 @@ const TopSearchPill: React.FC<TopSearchPillProps> = ({
                                                     {/* Sessions Section */}
                                                     {sessionResults.length > 0 && (
                                                         <div className="px-3 py-1 mt-1">
-                                                            <div className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider mb-1">
-                                                                Sessions
-                                                            </div>
+                                                            <div className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider mb-1">{t("Sessions")}</div>
 
                                                             <AnimatePresence initial={false} mode="popLayout">
                                                                 {sessionResults.map((result, index) => (

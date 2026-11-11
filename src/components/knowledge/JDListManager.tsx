@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useState } from 'react';
 import { Briefcase, Check, Trash2, Plus, Upload, RefreshCw } from 'lucide-react';
 import { useJDList, useActivateJD, useDeleteJD, useUploadNewJD } from '../../hooks/useJDList';
@@ -55,8 +56,8 @@ export const JDListManager: React.FC<JDListManagerProps> = ({ onSelectFile }) =>
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-bold text-text-primary">Roles You're Targeting</h4>
-          <p className="text-xs text-text-secondary mt-0.5">Keep the opportunities you're preparing for together in one place.</p>
+          <h4 className="text-sm font-bold text-text-primary">{t("Roles You're Targeting")}</h4>
+          <p className="text-xs text-text-secondary mt-0.5">{t("Keep the opportunities you're preparing for together in one place.")}</p>
         </div>
         <button
           onClick={handleUpload}
@@ -64,9 +65,9 @@ export const JDListManager: React.FC<JDListManagerProps> = ({ onSelectFile }) =>
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-text-primary text-bg-main hover:opacity-90 transition-all shadow-sm disabled:opacity-50"
         >
           {isUploading ? (
-            <><RefreshCw size={12} className="animate-spin" /> Adding role...</>
+            <><RefreshCw size={12} className="animate-spin" /> {t("Adding role...")}</>
           ) : (
-            <><Plus size={12} /> Add Role</>
+            <><Plus size={12} /> {t("Add Role")}</>
           )}
         </button>
       </div>
@@ -74,16 +75,14 @@ export const JDListManager: React.FC<JDListManagerProps> = ({ onSelectFile }) =>
       {jds.length === 0 ? (
         <div className="bg-bg-item-surface rounded-xl border border-border-subtle p-8 text-center">
           <Briefcase size={24} className="mx-auto text-text-tertiary mb-3" />
-          <p className="text-sm font-medium text-text-secondary">No roles added yet</p>
-          <p className="text-xs text-text-tertiary mt-1">Add a job description to make prep more focused and tailored.</p>
+          <p className="text-sm font-medium text-text-secondary">{t("No roles added yet")}</p>
+          <p className="text-xs text-text-tertiary mt-1">{t("Add a job description to make prep more focused and tailored.")}</p>
           <button
             onClick={handleUpload}
             disabled={isUploading}
             className="mt-4 px-4 py-2 rounded-full text-xs font-medium bg-text-primary text-bg-main hover:opacity-90 transition-all"
           >
-            <Upload size={12} className="inline mr-1.5" />
-            Upload Job Description
-          </button>
+            <Upload size={12} className="inline mr-1.5" />{t("Upload Job Description")}</button>
         </div>
       ) : (
         <div className="space-y-2">
@@ -113,9 +112,7 @@ export const JDListManager: React.FC<JDListManagerProps> = ({ onSelectFile }) =>
                     <div className="flex items-center gap-2">
                       <h5 className="text-sm font-semibold text-text-primary truncate">{jd.title}</h5>
                       {jd.isActive && (
-                        <span className="text-[9px] font-bold text-accent-primary px-1.5 py-0.5 bg-accent-primary/10 rounded uppercase tracking-wide border border-accent-primary/20 shrink-0">
-                          Active
-                        </span>
+                        <span className="text-[9px] font-bold text-accent-primary px-1.5 py-0.5 bg-accent-primary/10 rounded uppercase tracking-wide border border-accent-primary/20 shrink-0">{t("Active")}</span>
                       )}
                     </div>
                     <p className="text-xs text-text-secondary mt-0.5">{jd.company}</p>
@@ -143,24 +140,18 @@ export const JDListManager: React.FC<JDListManagerProps> = ({ onSelectFile }) =>
                         setPrepJD({ id: jd.id, title: jd.title, company: jd.company });
                       }}
                       className="text-[11px] font-medium text-accent-primary hover:bg-accent-primary/10 px-2 py-1 rounded-md transition-colors"
-                    >
-                      View Prep
-                    </button>
+                    >{t("View Prep")}</button>
                   )}
                   {deleteConfirmId === jd.id ? (
                     <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleDelete(jd.id)}
                         className="text-[11px] font-medium text-state-danger hover:bg-state-danger-soft px-2 py-1 rounded-md transition-colors"
-                      >
-                        Confirm
-                      </button>
+                      >{t("Confirm")}</button>
                       <button
                         onClick={() => setDeleteConfirmId(null)}
                         className="text-[11px] font-medium text-text-tertiary hover:text-text-secondary px-2 py-1 rounded-md transition-colors"
-                      >
-                        Cancel
-                      </button>
+                      >{t("Cancel")}</button>
                     </div>
                   ) : (
                     <button

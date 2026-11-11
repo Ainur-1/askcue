@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStreamBuffer } from '../hooks/useStreamBuffer';
 import { X, Copy, Check, ArrowUp } from 'lucide-react';
@@ -98,7 +99,7 @@ const AssistantMessage: React.FC<{ content: string; isStreaming?: boolean }> = (
                     className="flex items-center gap-2 mt-3 text-[13px] text-text-tertiary hover:text-text-secondary transition-colors"
                 >
                     {copied ? <Check size={14} className="text-state-success" /> : <Copy size={14} />}
-                    {copied ? 'Copied' : 'Copy message'}
+                    {copied ? t("Copied") : 'Copy message'}
                 </button>
             )}
         </motion.div>
@@ -340,7 +341,7 @@ const GlobalChatOverlay: React.FC<GlobalChatOverlayProps> = ({
                         <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle shrink-0">
                             <div className="flex items-center gap-2 text-text-tertiary">
                                 <img src={pikaIcon} className="w-3.5 h-3.5 opacity-50 object-contain drop-shadow-sm" alt="logo" />
-                                <span className="text-[13px] font-medium">Search all meetings</span>
+                                <span className="text-[13px] font-medium">{t("Search all meetings")}</span>
                             </div>
                             <button
                                 onClick={onClose}

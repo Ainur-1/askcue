@@ -181,6 +181,7 @@ interface ElectronAPI {
   hideWindow: () => Promise<void>
   showOverlay: () => Promise<void>
   hideOverlay: () => Promise<void>
+  getSystemLocale: () => Promise<string>
   getMeetingState: () => Promise<{ isActive: boolean; startedAt: number | null }>
   getMeetingActive: () => Promise<boolean>
   onMeetingStateChanged: (callback: (data: { isActive: boolean; startedAt?: number | null }) => void) => () => void
@@ -478,6 +479,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   hideWindow: () => ipcRenderer.invoke("hide-window"),
   showOverlay: () => ipcRenderer.invoke("show-overlay"),
   hideOverlay: () => ipcRenderer.invoke("hide-overlay"),
+  getSystemLocale: () => ipcRenderer.invoke("get-system-locale"),
   getMeetingState: () => ipcRenderer.invoke("get-meeting-state"),
   getMeetingActive: () => ipcRenderer.invoke("get-meeting-active"),
   onMeetingStateChanged: (callback: (data: { isActive: boolean; startedAt?: number | null }) => void) => {

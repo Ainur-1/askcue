@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useRef, useState } from 'react';
 
 interface NegotiationCoachingCardProps {
@@ -65,9 +66,7 @@ export const NegotiationCoachingCard = ({
           {phase.name}
         </span>
         {phase.silence_strategy && (
-          <span className="rounded-full bg-state-warning-soft px-2 py-1 text-xs text-state-warning">
-            Silence OK
-          </span>
+          <span className="rounded-full bg-state-warning-soft px-2 py-1 text-xs text-state-warning">{t("Silence OK")}</span>
         )}
       </div>
 
@@ -82,7 +81,7 @@ export const NegotiationCoachingCard = ({
       {/* Suggested response */}
       {suggested_response && (
         <div className="rounded-lg bg-surface-3 p-3">
-          <p className="mb-1 text-xs font-medium text-state-success">Suggested Response</p>
+          <p className="mb-1 text-xs font-medium text-state-success">{t("Suggested Response")}</p>
           <p className="text-sm text-text-primary">{suggested_response}</p>
         </div>
       )}
@@ -90,7 +89,7 @@ export const NegotiationCoachingCard = ({
       {/* Alternative suggested lines */}
       {phase.suggested_lines?.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <p className="text-xs font-medium text-text-muted">Also consider:</p>
+          <p className="text-xs font-medium text-text-muted">{t("Also consider:")}</p>
           {phase.suggested_lines.map((line, i) => (
             <p key={i} className="text-sm text-text-secondary">
               • {line}
@@ -116,8 +115,7 @@ export const NegotiationCoachingCard = ({
             <svg className="h-4 w-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-sm text-text-muted">
-              Silence: <span className="font-mono text-text-secondary">{timerSeconds}s</span>
+            <span className="text-sm text-text-muted">{t("Silence:")}<span className="font-mono text-text-secondary">{timerSeconds}{t("s")}</span>
             </span>
           </div>
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-3">

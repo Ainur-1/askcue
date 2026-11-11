@@ -1,3 +1,4 @@
+import { useInterfaceLanguage } from './i18n';
 import React, { useState, useEffect } from "react" // forcing refresh
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ToastProvider, ToastViewport } from "./components/ui/toast"
@@ -6,7 +7,6 @@ import SettingsPopup from "./components/SettingsPopup" // Keeping for legacy/spe
 import Launcher from "./components/Launcher"
 import ModelSelectorWindow from "./components/ModelSelectorWindow"
 import SettingsOverlay from "./components/SettingsOverlay"
-import StartupSequence from "./components/StartupSequence"
 import { AnimatePresence, motion } from "framer-motion"
 import UpdateBanner from "./components/UpdateBanner"
 import { AlertCircle } from "lucide-react"
@@ -17,6 +17,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary"
 const queryClient = new QueryClient()
 
 const App: React.FC = () => {
+  useInterfaceLanguage();
   const isSettingsWindow = new URLSearchParams(window.location.search).get('window') === 'settings';
   const isLauncherWindow = new URLSearchParams(window.location.search).get('window') === 'launcher';
   const isOverlayWindow = new URLSearchParams(window.location.search).get('window') === 'overlay';
@@ -76,7 +77,6 @@ const App: React.FC = () => {
   }, [isLauncherWindow, isOverlayWindow, isDefault]);
 
   // State
-  const [showStartup, setShowStartup] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsInitialTab, setSettingsInitialTab] = useState('general');
 
@@ -288,27 +288,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary context="Launcher">
     <div className="h-full min-h-0 w-full relative bg-bg-primary">
-      <AnimatePresence>
-        {showStartup ? (
-          <motion.div
-            key="startup"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.1, pointerEvents: "none", transition: { duration: 0.6, ease: "easeInOut" } }}
-          >
-            <StartupSequence onComplete={() => setShowStartup(false)} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="main"
-            className="h-full w-full"
-            initial={{ opacity: 0, scale: 0.98, y: 15 }} // "Linear" style entry: slightly down and scaled down
-            animate={{ opacity: 1, scale: 1, y: 0 }}      // Slide up and snap to place
-            transition={{
-              duration: 0.8,
-              ease: [0.19, 1, 0.22, 1], // Expo-out: snappy start, smooth landing
-              delay: 0.1
-            }}
-          >
+      <div className="h-full w-full">
             <QueryClientProvider client={queryClient}>
               <ToastProvider>
                 <div id="launcher-container" className="h-full w-full relative">
@@ -333,9 +313,7 @@ const App: React.FC = () => {
                 <ToastViewport />
               </ToastProvider>
             </QueryClientProvider>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
 
 
       <AnimatePresence>

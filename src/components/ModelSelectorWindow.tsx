@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { useState, useEffect } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import { STANDARD_CLOUD_MODELS, prettifyModelId } from '../utils/modelUtils';
@@ -144,14 +145,12 @@ const ModelSelectorWindow = () => {
                 {isLoading ? (
                     <div className={`flex items-center justify-center py-4 ${isLight ? 'text-text-secondary' : 'text-text-secondary'}`}>
                         <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        <span className="text-xs">Loading models...</span>
+                        <span className="text-xs">{t("Loading models...")}</span>
                     </div>
                 ) : (
                     <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-0.5">
                         {availableModels.length === 0 ? (
-                            <div className={`px-4 py-3 text-center text-xs ${isLight ? 'text-text-secondary' : 'text-text-secondary'}`}>
-                                No models connected.<br />Check Settings.
-                            </div>
+                            <div className={`px-4 py-3 text-center text-xs ${isLight ? 'text-text-secondary' : 'text-text-secondary'}`}>{t("No models connected.")}<br />{t("Check Settings.")}</div>
                         ) : (
                             availableModels.map((model) => {
                                 const isSelected = currentModel === model.id;

@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -41,12 +42,12 @@ const CopyBlock = ({ command }: { command: string }) => {
             <button
                 onClick={handleCopy}
                 className="h-6 px-2.5 rounded-md bg-white/5 hover:bg-white/10 active:bg-white/15 flex items-center justify-center transition-colors border border-white/5 flex-shrink-0"
-                title="Copy to clipboard"
+                title={t("Copy to clipboard")}
             >
                 {copied ? (
-                    <span className="text-[10px] font-semibold text-state-success">Copied</span>
+                    <span className="text-[10px] font-semibold text-state-success">{t("Copied")}</span>
                 ) : (
-                    <span className="text-[10px] font-medium text-white/50 group-hover:text-white/80">Copy</span>
+                    <span className="text-[10px] font-medium text-white/50 group-hover:text-white/80">{t("Copy")}</span>
                 )}
             </button>
         </div>
@@ -159,34 +160,24 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                         {status === 'error' ? (
                             <div className="p-8 flex flex-col items-center justify-center h-full text-center">
                                 <div className="space-y-2 mb-6">
-                                    <h2 className="text-[17px] font-semibold text-white tracking-tight">
-                                        Update Failed
-                                    </h2>
+                                    <h2 className="text-[17px] font-semibold text-white tracking-tight">{t("Update Failed")}</h2>
                                     {errorMessage && (
                                         <p className="text-[13px] text-state-danger font-medium">
                                             {errorMessage}
                                         </p>
                                     )}
-                                    <p className="text-[13px] text-white/40">
-                                        Check your internet connection or download the update manually from GitHub.
-                                    </p>
+                                    <p className="text-[13px] text-white/40">{t("Check your internet connection or download the update manually from GitHub.")}</p>
                                 </div>
                                 <button
                                     onClick={onDismiss}
                                     className="px-5 py-[6px] bg-white/10 hover:bg-white/20 text-white text-[13px] font-medium rounded-lg transition-colors"
-                                >
-                                    Close
-                                </button>
+                                >{t("Close")}</button>
                             </div>
                         ) : status === 'instructions' ? (
                             <div className="p-8 flex flex-col h-full relative text-left w-full max-w-full">
                                 <div className="space-y-1.5 mb-5 text-center mt-2">
-                                    <h2 className="text-[17px] font-semibold text-white tracking-tight">
-                                        Manual Update Required
-                                    </h2>
-                                    <p className="text-[13px] text-white/40 font-medium leading-relaxed">
-                                        The download has started in your browser. Follow these steps to install the update:
-                                    </p>
+                                    <h2 className="text-[17px] font-semibold text-white tracking-tight">{t("Manual Update Required")}</h2>
+                                    <p className="text-[13px] text-white/40 font-medium leading-relaxed">{t("The download has started in your browser. Follow these steps to install the update:")}</p>
                                 </div>
                                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4 space-y-2 w-full">
                                     <div className="space-y-1 w-full">
@@ -205,9 +196,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                     <button
                                         onClick={onDismiss}
                                         className="px-6 py-[6px] bg-white/10 hover:bg-white/20 text-white text-[13px] font-medium rounded-lg transition-colors w-[200px]"
-                                    >
-                                        Done
-                                    </button>
+                                    >{t("Done")}</button>
                                 </div>
                             </div>
                         ) : status === 'downloading' ? (
@@ -215,9 +204,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
 
                                 {/* 1. Header Text */}
                                 <div className="space-y-1.5 mb-8">
-                                    <h2 className="text-[17px] font-semibold text-white tracking-tight">
-                                        Downloading Update...
-                                    </h2>
+                                    <h2 className="text-[17px] font-semibold text-white tracking-tight">{t("Downloading Update...")}</h2>
                                     <p className="text-[13px] text-white/40 font-medium">
                                         {downloadProgress < 100 ? 'Please wait while we prepare the update.' : 'Finalizing package...'}
                                     </p>
@@ -233,12 +220,8 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                             <span className="text-[10px] text-state-warning">!</span>
                                         </div>
                                         <div className="space-y-0.5">
-                                            <p className="text-[12px] font-medium text-white/80 leading-tight">
-                                                If macOS says "App is damaged"
-                                            </p>
-                                            <p className="text-[11px] text-white/40 leading-snug">
-                                                Move app to Applications folder, then run:
-                                            </p>
+                                            <p className="text-[12px] font-medium text-white/80 leading-tight">{t("If macOS says \"App is damaged\"")}</p>
+                                            <p className="text-[11px] text-white/40 leading-snug">{t("Move app to Applications folder, then run:")}</p>
                                         </div>
                                     </div>
 
@@ -250,12 +233,12 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                         <button
                                             onClick={handleCopyCommand}
                                             className="h-6 px-2.5 rounded-md bg-white/5 hover:bg-white/10 active:bg-white/15 flex items-center justify-center transition-colors border border-white/5"
-                                            title="Copy to clipboard"
+                                            title={t("Copy to clipboard")}
                                         >
                                             {copied ? (
-                                                <span className="text-[10px] font-semibold text-state-success">Copied</span>
+                                                <span className="text-[10px] font-semibold text-state-success">{t("Copied")}</span>
                                             ) : (
-                                                <span className="text-[10px] font-medium text-white/50 group-hover:text-white/80">Copy</span>
+                                                <span className="text-[10px] font-medium text-white/50 group-hover:text-white/80">{t("Copy")}</span>
                                             )}
                                         </button>
                                     </div>
@@ -272,27 +255,20 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                         />
                                     </div>
                                     <p className="text-[11px] font-medium text-white/30 tabular-nums">
-                                        {Math.round(downloadProgress)}% Complete
-                                    </p>
+                                        {Math.round(downloadProgress)}{t("% Complete")}</p>
                                 </div>
 
                                 <button
                                     onClick={onDismiss}
                                     className="text-[13px] font-medium text-white/30 hover:text-white/60 transition-colors mt-auto mb-1"
-                                >
-                                    Hide
-                                </button>
+                                >{t("Hide")}</button>
                             </div>
                         ) : (
                             <div className="p-7 pb-4 flex flex-col gap-2 h-full min-h-0">
                                 {/* Header Group */}
                                 <div className="flex flex-col gap-0.5 text-center relative flex-shrink-0 pt-1">
-                                    <h2 className="text-[19px] font-semibold text-white tracking-tight">
-                                        Update Available
-                                    </h2>
-                                    <p className="text-[13px] text-white/50 font-medium tracking-wide">
-                                        Version {displayVersion} is ready to install.
-                                    </p>
+                                    <h2 className="text-[19px] font-semibold text-white tracking-tight">{t("Update Available")}</h2>
+                                    <p className="text-[13px] text-white/50 font-medium tracking-wide">{t("Version")}{displayVersion}{t("is ready to install.")}</p>
                                 </div>
 
                                 {/* Minimal List - Scrollable area */}
@@ -304,9 +280,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                     className="py-2 flex-1 overflow-y-auto custom-scrollbar min-h-[120px] pr-2 -mr-2"
                                 >
                                     {showFallback ? (
-                                        <p className="text-[13px] text-white/60 text-center leading-relaxed mt-8">
-                                            Includes performance improvements and bug fixes.
-                                        </p>
+                                        <p className="text-[13px] text-white/60 text-center leading-relaxed mt-8">{t("Includes performance improvements and bug fixes.")}</p>
                                     ) : (
                                         <div className="space-y-5 px-1">
                                             {parsedNotes?.sections?.map((section, idx) => {
@@ -342,25 +316,19 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                     <button
                                         onClick={onDismiss}
                                         className="text-[13px] font-medium text-white/40 hover:text-white/70 transition-colors"
-                                    >
-                                        Not Now
-                                    </button>
+                                    >{t("Not Now")}</button>
 
                                     {/* Primary Action - Right Aligned, System Blue */}
                                     {status === 'ready' ? (
                                         <button
                                             onClick={() => window.electronAPI.restartAndInstall()}
                                             className="px-5 py-[6px] bg-[#007AFF] hover:bg-[#0062CC] text-white text-[13px] font-medium rounded-lg shadow-sm transition-colors"
-                                        >
-                                            Restart & Install
-                                        </button>
+                                        >{t("Restart & Install")}</button>
                                     ) : (
                                         <button
                                             onClick={handleUpdateClick}
                                             className="px-5 py-[6px] bg-[#007AFF] hover:bg-[#0062CC] text-white text-[13px] font-medium rounded-lg shadow-sm transition-colors"
-                                        >
-                                            Update Now
-                                        </button>
+                                        >{t("Update Now")}</button>
                                     )}
                                 </div>
                             </div>

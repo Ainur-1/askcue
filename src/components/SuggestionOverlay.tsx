@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect } from 'react';
 
 interface SuggestionOverlayProps {
@@ -97,7 +98,7 @@ export const SuggestionOverlay: React.FC<SuggestionOverlayProps> = ({ className 
             <div className="flex items-center gap-2 mb-2">
                 <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-state-success' : 'bg-state-danger'}`} />
                 <span className="text-xs text-gray-400">
-                    {isConnected ? 'Live' : 'Disconnected'}
+                    {isConnected ? t("Live") : 'Disconnected'}
                 </span>
             </div>
 
@@ -109,7 +110,7 @@ export const SuggestionOverlay: React.FC<SuggestionOverlayProps> = ({ className 
                             {currentTranscript.speaker === 'interviewer' ? '🎤 Interviewer' : '👤 You'}
                         </span>
                         {!currentTranscript.final && (
-                            <span className="text-xs text-gray-500 animate-pulse">listening...</span>
+                            <span className="text-xs text-gray-500 animate-pulse">{t("listening...")}</span>
                         )}
                     </div>
                     <p className="text-sm text-gray-200">{currentTranscript.text}</p>
@@ -120,7 +121,7 @@ export const SuggestionOverlay: React.FC<SuggestionOverlayProps> = ({ className 
             {isProcessing && (
                 <div className="processing-indicator flex items-center gap-2 p-3 rounded-lg bg-purple-900/30 border border-purple-700">
                     <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-                    <span className="text-sm text-purple-300">Generating suggestion...</span>
+                    <span className="text-sm text-purple-300">{t("Generating suggestion...")}</span>
                 </div>
             )}
 
@@ -128,10 +129,9 @@ export const SuggestionOverlay: React.FC<SuggestionOverlayProps> = ({ className 
             {suggestion && !isProcessing && (
                 <div className="suggestion-card p-4 rounded-lg bg-gradient-to-br from-indigo-900/80 to-purple-900/80 backdrop-blur-sm border border-indigo-500/50 shadow-lg shadow-indigo-500/20">
                     <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-state-info">💡 Suggested Response</span>
+                        <span className="text-xs font-medium text-state-info">{t("💡 Suggested Response")}</span>
                         <span className="text-xs text-gray-400">
-                            {Math.round(suggestion.confidence * 100)}% confidence
-                        </span>
+                            {Math.round(suggestion.confidence * 100)}{t("% confidence")}</span>
                     </div>
                     <p className="text-sm text-gray-100 leading-relaxed">{suggestion.suggestion}</p>
                     <div className="mt-2 pt-2 border-t border-indigo-700/50">
@@ -151,7 +151,7 @@ export const SuggestionOverlay: React.FC<SuggestionOverlayProps> = ({ className 
 
             {/* Instructions */}
             <div className="mt-3 text-xs text-gray-500 text-center">
-                <p>Say "rephrase that" or "make it shorter" for follow-ups</p>
+                <p>{t("Say \"rephrase that\" or \"make it shorter\" for follow-ups")}</p>
             </div>
         </div>
     );

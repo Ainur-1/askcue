@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React from 'react';
 import { CalendarPlus, SearchX } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -22,21 +23,19 @@ const EmptyState: React.FC<EmptyStateProps> = ({ type, onStartMeeting }) => {
                 <Icon size={isInitialEmpty ? 44 : 28} strokeWidth={1.7} />
             </div>
             <h3 className="text-lg font-semibold text-text-primary">
-                {isInitialEmpty ? 'История пока пуста' : 'Ничего не найдено'}
+                {isInitialEmpty ? t("История пока пуста") : t("Ничего не найдено")}
             </h3>
             <p className="mt-2 max-w-md text-sm leading-relaxed text-text-secondary">
                 {isInitialEmpty
-                    ? 'Завершённые разговоры появятся здесь.'
-                    : 'Измените запрос или период.'}
+                    ? t("Завершённые разговоры появятся здесь.")
+                    : t("Измените запрос или период.")}
             </p>
             {isInitialEmpty && onStartMeeting && (
                 <button
                     type="button"
                     onClick={onStartMeeting}
                     className="mt-6 rounded-full bg-accent-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-primary/90 focus:outline-none focus:ring-2 focus:ring-accent-primary/40"
-                >
-                    Start your first meeting
-                </button>
+                >{t("Start your first meeting")}</button>
             )}
         </motion.div>
     );

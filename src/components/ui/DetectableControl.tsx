@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -22,7 +23,7 @@ export default function DetectableControl() {
     disabled={undetectable === null || saving} onClick={() => { void toggle().catch(console.error); }} className="detectable-control no-drag"
     title="Защита окна от захвата экрана. Поддержка зависит от программы демонстрации экрана.">
     {undetectable ? <EyeOff size={14} /> : <Eye size={14} />}
-    <span>{undetectable === null ? 'Проверка…' : undetectable ? 'Undetectable' : 'Detectable'}</span>
+    <span>{undetectable === null ? t("Проверка…") : undetectable ? 'Undetectable' : 'Detectable'}</span>
     <span className="switch-track" aria-hidden="true"><span className="switch-thumb" /></span>
   </button>;
 }

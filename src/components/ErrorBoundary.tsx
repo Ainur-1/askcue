@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 // src/components/ErrorBoundary.tsx
 // Top-level React Error Boundary to catch uncaught render errors and present a
 // graceful fallback instead of a blank white screen (White Screen of Death).
@@ -86,11 +87,8 @@ export class ErrorBoundary extends Component<Props, State> {
             >
                 <AlertTriangle size={36} color="#ff4444" style={{ marginBottom: '4px' }} />
                 <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
-                    {context} crashed
-                </h2>
-                <p style={{ margin: 0, fontSize: '12px', color: '#888', maxWidth: '320px', lineHeight: 1.5 }}>
-                    An unexpected error occurred. Your data is safe — click below to recover.
-                </p>
+                    {context} {t("crashed")}</h2>
+                <p style={{ margin: 0, fontSize: '12px', color: '#888', maxWidth: '320px', lineHeight: 1.5 }}>{t("An unexpected error occurred. Your data is safe — click below to recover.")}</p>
                 {this.state.errorMessage && (
                     <code style={{
                         fontSize: '11px',
@@ -117,9 +115,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             cursor: 'default', fontWeight: 500
                         }}
                     >
-                        <RefreshCw size={13} />
-                        Try to recover
-                    </button>
+                        <RefreshCw size={13} />{t("Try to recover")}</button>
                     <button
                         onClick={this.handleHardReload}
                         style={{
@@ -129,9 +125,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             cursor: 'default', fontWeight: 500
                         }}
                     >
-                        <RefreshCw size={13} />
-                        Reload UI
-                    </button>
+                        <RefreshCw size={13} />{t("Reload UI")}</button>
                 </div>
             </div>
         );

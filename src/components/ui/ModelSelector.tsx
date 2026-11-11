@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Check, Cloud, Terminal, Monitor, Server } from 'lucide-react';
 import { STANDARD_CLOUD_MODELS, prettifyModelId } from '../../utils/modelUtils';
@@ -114,21 +115,15 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onSe
                         <button
                             onClick={() => setActiveTab('cloud')}
                             className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider transition-colors ${activeTab === 'cloud' ? 'text-accent-primary bg-bg-item-surface border-t-2 border-t-accent-primary' : 'text-text-secondary hover:text-text-primary'}`}
-                        >
-                            Cloud
-                        </button>
+                        >{t("Cloud")}</button>
                         <button
                             onClick={() => setActiveTab('custom')}
                             className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider transition-colors ${activeTab === 'custom' ? 'text-accent-primary bg-bg-item-surface border-t-2 border-t-accent-primary' : 'text-text-secondary hover:text-text-primary'}`}
-                        >
-                            Custom
-                        </button>
+                        >{t("Custom")}</button>
                         <button
                             onClick={() => setActiveTab('local')}
                             className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider transition-colors ${activeTab === 'local' ? 'text-accent-primary bg-bg-item-surface border-t-2 border-t-accent-primary' : 'text-text-secondary hover:text-text-primary'}`}
-                        >
-                            Local
-                        </button>
+                        >{t("Local")}</button>
                     </div>
 
                     {/* Content */}
@@ -139,8 +134,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onSe
                             <div className="space-y-1">
                                 {cloudModels.length === 0 ? (
                                     <div className="text-center py-6 text-text-tertiary">
-                                        <p className="text-xs mb-2">No cloud providers configured.</p>
-                                        <p className="text-[10px] opacity-70">Add API keys in Settings.</p>
+                                        <p className="text-xs mb-2">{t("No cloud providers configured.")}</p>
+                                        <p className="text-[10px] opacity-70">{t("Add API keys in Settings.")}</p>
                                     </div>
                                 ) : (
                                     cloudModels.map((m, idx) => {
@@ -170,8 +165,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onSe
                             <div className="space-y-1">
                                 {customProviders.length === 0 ? (
                                     <div className="text-center py-6 text-text-tertiary">
-                                        <p className="text-xs mb-2">No custom providers.</p>
-                                        <button className="text-[10px] text-accent-primary hover:underline">Manage in Settings</button>
+                                        <p className="text-xs mb-2">{t("No custom providers.")}</p>
+                                        <button className="text-[10px] text-accent-primary hover:underline">{t("Manage in Settings")}</button>
                                     </div>
                                 ) : (
                                     customProviders.map(provider => (
@@ -194,8 +189,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onSe
                             <div className="space-y-1">
                                 {ollamaModels.length === 0 ? (
                                     <div className="text-center py-6 text-text-tertiary">
-                                        <p className="text-xs">No Ollama models found.</p>
-                                        <p className="text-[10px] mt-1 opacity-70">Ensure Ollama is running.</p>
+                                        <p className="text-xs">{t("No Ollama models found.")}</p>
+                                        <p className="text-[10px] mt-1 opacity-70">{t("Ensure Ollama is running.")}</p>
                                     </div>
                                 ) : (
                                     ollamaModels.map(model => (

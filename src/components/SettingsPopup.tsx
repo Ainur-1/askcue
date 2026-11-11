@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { MessageSquare, Link, Camera, Zap, Heart, User } from 'lucide-react';
 import { useShortcuts } from '../hooks/useShortcuts';
@@ -223,7 +224,7 @@ const SettingsPopup = () => {
                             className={`w-4 h-4 transition-colors ${useGroqFastText ? 'text-orange-500' : iconInactiveClass}`}
                             fill={useGroqFastText ? "currentColor" : "none"}
                         />
-                        <span className={`text-[12px] font-medium transition-colors ${useGroqFastText ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>Fast responses</span>
+                        <span className={`text-[12px] font-medium transition-colors ${useGroqFastText ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>{t("Fast responses")}</span>
                     </div>
                     <button
                         onClick={() => {
@@ -244,7 +245,7 @@ const SettingsPopup = () => {
                             className={`w-3.5 h-3.5 transition-colors ${showTranscript ? 'text-state-success' : iconInactiveClass}`}
                             fill={showTranscript ? "currentColor" : "none"}
                         />
-                        <span className={`text-[12px] font-medium transition-colors ${showTranscript ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>Live transcript</span>
+                        <span className={`text-[12px] font-medium transition-colors ${showTranscript ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>{t("Live transcript")}</span>
                     </div>
                     <button
                         onClick={() => {
@@ -278,7 +279,7 @@ const SettingsPopup = () => {
                             <circle cx="6" cy="18" r="3" />
                             <path d="M18 9a9 9 0 0 1-9 9" />
                         </svg>
-                        <span className={`text-[12px] font-medium transition-colors ${actionButtonMode === 'brainstorm' ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>Interview mode</span>
+                        <span className={`text-[12px] font-medium transition-colors ${actionButtonMode === 'brainstorm' ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>{t("Interview mode")}</span>
                     </div>
                     <button
                         onClick={async () => {
@@ -303,7 +304,7 @@ const SettingsPopup = () => {
                                 className={`w-3.5 h-3.5 transition-colors ${profileMode ? 'text-accent-primary' : iconInactiveClass}`}
                                 fill={profileMode ? "currentColor" : "none"}
                             />
-                            <span className={`text-[12px] font-medium transition-colors ${profileMode ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>Profile Mode</span>
+                            <span className={`text-[12px] font-medium transition-colors ${profileMode ? (isLightTheme ? 'text-slate-950' : 'text-white') : labelInactiveClass}`}>{t("Profile Mode")}</span>
                         </div>
                         <button
                             onClick={async () => {
@@ -327,7 +328,7 @@ const SettingsPopup = () => {
                 <div className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200 group interaction-base interaction-press ${itemHoverClass}`}>
                     <div className="flex items-center gap-3">
                         <MessageSquare className={`w-3.5 h-3.5 transition-colors ${iconInactiveClass}`} />
-                        <span className={`text-[12px] transition-colors ${labelInactiveClass}`}>Show or hide Pika</span>
+                        <span className={`text-[12px] transition-colors ${labelInactiveClass}`}>{t("Show or hide Pika")}</span>
                     </div>
                     <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                         {/* Dynamic Keys for Toggle Visibility */}
@@ -343,7 +344,7 @@ const SettingsPopup = () => {
                 <div className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200 group interaction-base interaction-press ${itemHoverClass}`}>
                     <div className="flex items-center gap-3">
                         <Camera className={`w-3.5 h-3.5 transition-colors ${iconInactiveClass}`} />
-                        <span className={`text-[12px] transition-colors ${labelInactiveClass}`}>Take screenshot</span>
+                        <span className={`text-[12px] transition-colors ${labelInactiveClass}`}>{t("Take screenshot")}</span>
                     </div>
                     <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                         {/* Dynamic Keys for Take Screenshot */}
@@ -365,7 +366,7 @@ const SettingsPopup = () => {
                 >
                     <div className="flex items-center gap-3">
                         <Heart className="w-3.5 h-3.5 text-pink-400 group-hover:fill-pink-400 transition-all duration-300" />
-                        <span className={`text-[12px] transition-colors ${isLightTheme ? 'text-text-tertiary group-hover:text-pink-700' : 'text-text-secondary group-hover:text-pink-100'}`}>Donate</span>
+                        <span className={`text-[12px] transition-colors ${isLightTheme ? 'text-text-tertiary group-hover:text-pink-700' : 'text-text-secondary group-hover:text-pink-100'}`}>{t("Donate")}</span>
                     </div>
                     <div className="opacity-60 group-hover:opacity-100 transition-opacity">
                         <Link className={`w-3 h-3 group-hover:text-pink-400 ${isLightTheme ? 'text-text-tertiary' : 'text-text-secondary'}`} />

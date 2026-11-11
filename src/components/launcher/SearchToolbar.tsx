@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React from 'react';
 import { Search } from 'lucide-react';
 
@@ -26,7 +27,7 @@ const SearchToolbar: React.FC<SearchToolbarProps> = ({ query, onQueryChange, fil
                     type="search"
                     value={query}
                     onChange={(event) => onQueryChange(event.target.value)}
-                    placeholder="Поиск по разговорам…"
+                    placeholder={t("Поиск по разговорам…")}
                     className="h-10 w-full rounded-xl border border-border-subtle bg-bg-input py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-colors hover:bg-bg-elevated focus:border-accent-primary/50 focus:ring-2 focus:ring-accent-primary/20"
                 />
             </label>
@@ -43,7 +44,7 @@ const SearchToolbar: React.FC<SearchToolbarProps> = ({ query, onQueryChange, fil
                                 : 'border-border-subtle bg-bg-input text-text-secondary hover:bg-bg-elevated hover:text-text-primary'}`}
                             aria-pressed={selected}
                         >
-                            {item.label}
+                            {t(item.label)}
                         </button>
                     );
                 })}

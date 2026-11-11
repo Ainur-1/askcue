@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import TopPill from './ui/TopPill';
@@ -144,7 +145,7 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting, overlayOpac
 
     return (
         <div ref={contentRef} className={`flex flex-col items-center w-full mx-auto ${isExpanded ? 'h-screen' : 'h-fit'} min-h-0 bg-transparent meeting-frame rounded-[24px] font-sans gap-2 overlay-text-primary`}>
-            <TopPill expanded={isExpanded} onToggle={() => setIsExpanded(prev => !prev)} onQuit={() => (onEndMeeting ? onEndMeeting() : window.electronAPI.quitApp())} appearance={appearance} status={audio.sttStatus.label} onLogoClick={() => window.electronAPI.setWindowMode('launcher')} />
+            <TopPill expanded={isExpanded} onToggle={() => setIsExpanded(prev => !prev)} onQuit={() => (onEndMeeting ? onEndMeeting() : window.electronAPI.quitApp())} appearance={appearance} status={t(audio.sttStatus.label)} onLogoClick={() => window.electronAPI.setWindowMode('launcher')} />
             <AnimatePresence>
                 {isExpanded && (
                     <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} transition={{ duration: 0.3, ease: 'easeInOut' }} className="flex flex-col items-center gap-2 w-full flex-1 min-h-0">

@@ -175,6 +175,7 @@ export interface ElectronAPI {
   hideWindow: () => Promise<void>
   showOverlay: () => Promise<void>
   hideOverlay: () => Promise<void>
+  getSystemLocale: () => Promise<string>
   getMeetingState: () => Promise<{ isActive: boolean; startedAt: number | null }>
   getMeetingActive: () => Promise<boolean>
   onMeetingStateChanged: (callback: (data: { isActive: boolean; startedAt?: number | null }) => void) => () => void

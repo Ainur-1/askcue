@@ -1,12 +1,13 @@
 const listeners = new Map();
 const calls = [];
 let undetectable = false;
+let proxyEnabled = true;
 let active = location.search.includes('overlay');
 let startedAt = active ? Date.now() - 65_000 : null;
 const emit = (name, data) => (listeners.get(name) || []).forEach(fn => fn(data));
 const health = { connected: true, meetingActive: true, hasRecentSystemAudioChunk: true, hasRecentInterviewerTranscript: true, lastSystemAudioChunkAt: Date.now(), lastInterviewerTranscriptAt: Date.now(), lastError: null };
 const responses = {
-  getThemeMode: {mode:'light',resolved:'light'}, getMeetingActive: false,
+  getSystemLocale:'ru-RU', getThemeMode: {mode:'light',resolved:'light'}, getMeetingActive: false,
   getRecentMeetings: [], getUpcomingEvents: [], getCustomProviders: [], getOpenAICompatibleProviders: [],
   getAvailableOllamaModels: [], knowledgeGetAllJDs: [], knowledgeGetDocuments: [],
   profileGetProfile: null, profileGetStatus: {hasProfile:false,profileMode:false},
@@ -25,6 +26,8 @@ window.electronAPI = new Proxy({platform:'win32'}, {get(target, name) {
   if(String(name).startsWith('on')) return fn => { const list=listeners.get(name)||[]; list.push(fn); listeners.set(name,list); return ()=>listeners.set(name,(listeners.get(name)||[]).filter(item=>item!==fn)); };
   return async (...args) => {
     calls.push({name,args});
+    if(name === 'getSystemProxyEnabled') return proxyEnabled;
+    if(name === 'setSystemProxyEnabled') {proxyEnabled=args[0]; return {success:true};}
     if(name === 'getUndetectable') return undetectable;
     if(name === 'setUndetectable') { undetectable=args[0]; emit('onUndetectableChanged',undetectable); return; }
     if(name === 'getMeetingActive') return active;

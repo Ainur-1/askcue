@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useState } from 'react';
 import { Globe, Loader2 } from 'lucide-react';
 
@@ -29,27 +30,21 @@ export function SystemProxySettings() {
     };
 
     return (
-        <div className="bg-bg-card rounded-xl p-5 border border-border-subtle">
+        <div className="settings-behavior-row px-4 py-3">
             <div className="flex items-center justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2">
-                        <Globe size={18} className="text-text-secondary" />
-                        <h3 className="text-sm font-bold text-text-primary">Use system proxy</h3>
-                    </div>
-                    <p className="text-xs text-text-secondary mt-1">
-                        Use your operating system's proxy settings. When off, connect directly.
-                        Changes apply immediately; active requests may be interrupted while speech reconnects.
-                    </p>
+                <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-10 h-10 shrink-0 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary"><Globe size={20}/></div>
+                    <div><h3 className="text-sm font-bold text-text-primary">{t("Use system proxy")}</h3>
+                    <p className="text-xs text-text-secondary mt-0.5">{t("Use your operating system's proxy settings. Changes apply without restarting Pika.")}</p></div>
                 </div>
-                <button type="button" role="switch" aria-label="Use system proxy"
-                    aria-checked={enabled === true} disabled={enabled === null || saving}
-                    onClick={toggle}
-                    className={`shrink-0 w-11 h-6 rounded-full relative transition-colors disabled:opacity-50 ${enabled ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}>
+                <button type="button" role="switch" aria-label={t("Use system proxy")}
+                    aria-checked={enabled === true} disabled={enabled === null || saving} onClick={toggle}
+                    className={`settings-switch shrink-0 w-11 h-6 rounded-full relative transition-colors disabled:opacity-50 ${enabled ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}>
                     {saving ? <Loader2 size={16} className="absolute top-1 left-3.5 animate-spin text-white" />
                         : <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${enabled ? 'translate-x-5' : ''}`} />}
                 </button>
             </div>
-            {message && <p role="status" className="text-xs text-text-secondary mt-2">{message}</p>}
+            {message && <p role="status" className="text-xs text-text-secondary mt-2">{t(message)}</p>}
         </div>
     );
 }

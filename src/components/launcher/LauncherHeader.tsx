@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Meeting } from '../Launcher';
@@ -34,10 +35,10 @@ const LauncherHeader: React.FC<LauncherHeaderProps> = ({
         <div className="no-drag flex items-center gap-1">
             {isMac && <div className="w-16" />}
             <span className="workbench-title">{title}</span>
-            <button onClick={selectedMeeting ? onBack : undefined} disabled={!selectedMeeting} aria-label="Back to meetings" className={`ml-2 mt-1 flex items-center justify-center p-1 transition-colors ${selectedMeeting ? 'text-text-secondary hover:text-text-primary' : 'cursor-default text-text-tertiary opacity-50'}`}>
+            <button onClick={selectedMeeting ? onBack : undefined} disabled={!selectedMeeting} aria-label={t("Back to meetings")} className={`ml-2 mt-1 flex items-center justify-center p-1 transition-colors ${selectedMeeting ? 'text-text-secondary hover:text-text-primary' : 'cursor-default text-text-tertiary opacity-50'}`}>
                 <ArrowLeft size={16} />
             </button>
-            <button onClick={onForward} disabled={!forwardMeeting} aria-label="Forward to meeting details" className={`mt-1 flex items-center justify-center p-1 transition-colors ${forwardMeeting ? 'text-text-secondary hover:text-text-primary' : 'cursor-default text-text-tertiary opacity-0'}`}>
+            <button onClick={onForward} disabled={!forwardMeeting} aria-label={t("Forward to meeting details")} className={`mt-1 flex items-center justify-center p-1 transition-colors ${forwardMeeting ? 'text-text-secondary hover:text-text-primary' : 'cursor-default text-text-tertiary opacity-0'}`}>
                 <ArrowRight size={16} />
             </button>
         </div>

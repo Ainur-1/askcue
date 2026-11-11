@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Bell, Rocket } from 'lucide-react';
@@ -301,9 +302,7 @@ export const FeatureSpotlight: React.FC = () => {
                                                         ? 'Interested'
                                                         : (isSupport ? (
                                                             <span className="flex items-center gap-2">
-                                                                <Rocket size={14} className="text-[#1C1C1E]" strokeWidth={2.5} />
-                                                                Fund development
-                                                            </span>
+                                                                <Rocket size={14} className="text-[#1C1C1E]" strokeWidth={2.5} />{t("Fund development")}</span>
                                                         ) : (currentFeature.actionLabel || 'Mark interest'))
                                                     }
                                                 </span>

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React from 'react';
 import type { ShortcutConfig } from '../../hooks/useShortcuts';
 import {
@@ -155,7 +156,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div className={`rounded-lg p-3 my-1 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
           <div className={`flex items-center gap-2 mb-2 font-medium text-[11px] tracking-[0.02em] ${isLightTheme ? 'text-violet-600' : 'text-purple-300'}`}>
             <Code className="w-3.5 h-3.5" />
-            <span>Code Solution</span>
+            <span>{t("Code Solution")}</span>
           </div>
           <div className={`space-y-2 text-[13px] leading-relaxed ${isLightTheme ? 'text-slate-800' : 'text-text-primary'}`}>
             {parts.map((part, i) => {
@@ -230,7 +231,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div className={`rounded-lg p-3 my-1 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
           <div className={`flex items-center gap-2 mb-2 font-medium text-[11px] tracking-[0.02em] ${isLightTheme ? 'text-cyan-700' : 'text-cyan-300'}`}>
             <MessageSquare className="w-3.5 h-3.5" />
-            <span>Shortened</span>
+            <span>{t("Shortened")}</span>
           </div>
           <div className={`text-[13px] leading-relaxed markdown-content ${isLightTheme ? 'text-slate-800' : 'text-text-primary'}`}>
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={{
@@ -251,7 +252,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div className={`rounded-lg p-3 my-1 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
           <div className={`flex items-center gap-2 mb-2 font-medium text-[11px] tracking-[0.02em] ${isLightTheme ? 'text-indigo-700' : 'text-state-info'}`}>
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>Recap</span>
+            <span>{t("Recap")}</span>
           </div>
           <div className={`text-[13px] leading-relaxed markdown-content ${isLightTheme ? 'text-slate-800' : 'text-text-primary'}`}>
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={{
@@ -272,7 +273,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div className={`rounded-lg p-3 my-1 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
           <div className={`flex items-center gap-2 mb-2 font-medium text-[11px] tracking-[0.02em] ${isLightTheme ? 'text-amber-700' : 'text-[#FFD60A]'}`}>
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>Follow-Up Questions</span>
+            <span>{t("Follow-Up Questions")}</span>
           </div>
           <div className={`text-[13px] leading-relaxed markdown-content ${isLightTheme ? 'text-slate-800' : 'text-text-primary'}`}>
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={{
@@ -294,7 +295,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       return (
         <div className={`rounded-lg p-3 my-1 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
           <div className="flex items-center gap-2 mb-2 text-state-success font-medium text-[11px] tracking-[0.02em]">
-            <span>Вариант ответа</span>
+            <span>{t("Вариант ответа")}</span>
           </div>
           <div className="text-[14px] leading-relaxed overlay-text-primary">
             {parts.map((part, i) => {
@@ -410,22 +411,20 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               ${msg.role === 'interviewer' ? 'overlay-text-muted italic pl-0 text-[13px]' : ''}
             `}>
               {msg.role === 'interviewer' && (
-                <div className="flex items-center gap-1.5 mb-1 text-[10px] font-medium tracking-[0.08em] overlay-text-muted/90">
-                  Interviewer
-                  {msg.isStreaming && <span className="w-1 h-1 bg-state-success rounded-full animate-pulse" />}
+                <div className="flex items-center gap-1.5 mb-1 text-[10px] font-medium tracking-[0.08em] overlay-text-muted/90">{t("Interviewer")}{msg.isStreaming && <span className="w-1 h-1 bg-state-success rounded-full animate-pulse" />}
                 </div>
               )}
               {msg.role === 'user' && msg.hasScreenshot && (
                 <div className={`flex items-center gap-1 text-[10px] opacity-70 mb-1 border-b pb-1 ${isLightTheme ? 'border-black/10' : 'border-white/10'}`}>
                   <Image className="w-2.5 h-2.5" />
-                  <span>Screenshot attached</span>
+                  <span>{t("Screenshot attached")}</span>
                 </div>
               )}
               {msg.role === 'system' && !msg.isStreaming && (
                 <button
                   onClick={() => handleCopy(msg.text)}
                   className="absolute top-2 right-2 p-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity overlay-icon-surface overlay-icon-surface-hover overlay-text-interactive"
-                  title="Copy to clipboard"
+                  title={t("Copy to clipboard")}
                   style={appearance.iconStyle}
                 >
                   <Copy className="w-3.5 h-3.5" />
@@ -449,7 +448,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               <div className="w-2 h-2 bg-state-success rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
               <div className="w-2 h-2 bg-state-success rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
               <div className="w-2 h-2 bg-state-success rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              <span className="text-[10px] text-state-success ml-1">Listening...</span>
+              <span className="text-[10px] text-state-success ml-1">{t("Listening...")}</span>
             </div>
           </div>
         )}
@@ -467,7 +466,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         {knowledgeContext && knowledgeContext.matchedJDSignals.length > 0 && (
           <div className="mx-3 mb-2 p-3.5 rounded-2xl border border-white/12 bg-[rgba(10,14,28,0.82)] shadow-[0_10px_28px_rgba(0,0,0,0.18)]">
             <div className="flex items-center gap-1.5 mb-2">
-              <span className="text-[10px] font-semibold text-blue-100/90 tracking-[0.08em]">Role focus</span>
+              <span className="text-[10px] font-semibold text-blue-100/90 tracking-[0.08em]">{t("Role focus")}</span>
             </div>
             <div className="space-y-1.5">
               {knowledgeContext.matchedJDSignals.slice(0, 5).map((sig, i) => (
@@ -487,7 +486,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           <div className="mx-3 mb-3 p-3.5 rounded-2xl border border-white/12 bg-[rgba(10,14,28,0.88)] shadow-[0_10px_28px_rgba(0,0,0,0.2)]">
             {knowledgeContext.mustHitKeywords.length > 0 && (
               <div className="mb-3">
-                <span className="text-[10px] font-semibold text-blue-100/90 tracking-[0.08em]">Language to weave in</span>
+                <span className="text-[10px] font-semibold text-blue-100/90 tracking-[0.08em]">{t("Language to weave in")}</span>
                 <div className="flex flex-wrap gap-1.5 mt-1.5">
                   {knowledgeContext.mustHitKeywords.slice(0, 8).map((kw, i) => (
                     <span key={i} className="text-[10.5px] font-medium text-blue-50 px-2 py-1 rounded-md bg-blue-400/16 border border-blue-300/20">
@@ -499,7 +498,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
             )}
             {knowledgeContext.resumeEvidence.length > 0 && (
               <div>
-                <span className="text-[10px] font-semibold text-state-success tracking-[0.08em]">Good examples to mention</span>
+                <span className="text-[10px] font-semibold text-state-success tracking-[0.08em]">{t("Good examples to mention")}</span>
                 <div className="space-y-1.5 mt-1.5">
                   {knowledgeContext.resumeEvidence.slice(0, 3).map((ev, i) => (
                     <div key={i} className="text-[11px] leading-relaxed text-white/80">
@@ -516,20 +515,17 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
       <div className="meeting-quick-actions flex flex-wrap items-center gap-2 px-4 pb-3 pt-3.5 no-drag">
         <button onClick={handleWhatToSay} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
-          <Pencil className="w-3 h-3 opacity-65" /> Подсказать
-        </button>
+          <Pencil className="w-3 h-3 opacity-65" />{t("Подсказать")}</button>
         <button onClick={handleClarify} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
-          <MessageSquare className="w-3 h-3 opacity-65" /> Уточнить
-        </button>
+          <MessageSquare className="w-3 h-3 opacity-65" />{t("Уточнить")}</button>
         <button onClick={actionButtonMode === 'brainstorm' ? handleBrainstorm : handleRecap} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
           {actionButtonMode === 'brainstorm'
             ? <><Lightbulb className="w-3 h-3 opacity-65" /> Идеи</>
-            : <><RefreshCw className="w-3 h-3 opacity-65" /> Итоги</>
+            : <><RefreshCw className="w-3 h-3 opacity-65" /> {t("Итоги")}</>
           }
         </button>
         <button onClick={handleFollowUpQuestions} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
-          <HelpCircle className="w-3 h-3 opacity-65" /> Вопросы
-        </button>
+          <HelpCircle className="w-3 h-3 opacity-65" />{t("Вопросы")}</button>
         <button
           onClick={handleAnswerNow}
           className={`flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10.5px] font-semibold transition-colors active:scale-95 duration-200 interaction-base interaction-press min-w-[84px] whitespace-nowrap shrink-0 ${isManualRecording
@@ -539,11 +535,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         >
           {isManualRecording ? (
             <>
-              <div className="w-1.5 h-1.5 rounded-full bg-state-danger animate-pulse" />
-              Стоп
-            </>
+              <div className="w-1.5 h-1.5 rounded-full bg-state-danger animate-pulse" />{t("Стоп")}</>
           ) : (
-            <><Zap className="w-3 h-3 opacity-75" /> Голос</>
+            <><Zap className="w-3 h-3 opacity-75" /> {t("Голос")}</>
           )}
         </button>
       </div>
@@ -553,8 +547,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           <div className={`mb-2 rounded-lg p-2 transition-all duration-200 border ${subtleSurfaceClass}`} style={appearance.subtleStyle}>
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-medium overlay-text-primary">
-                {attachedContext.length} screenshot{attachedContext.length > 1 ? 's' : ''} attached
-              </span>
+                {attachedContext.length} {t("screenshot")}{attachedContext.length > 1 ? t("s") : ''}{t("attached")}</span>
               <button
                 onClick={() => setAttachedContext([])}
                 className="p-1 rounded-full transition-colors overlay-icon-surface overlay-icon-surface-hover overlay-text-interactive"
@@ -582,7 +575,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 </div>
               ))}
             </div>
-            <span className="text-[10px] overlay-text-muted">Спросить по разговору или экрану…</span>
+            <span className="text-[10px] overlay-text-muted">{t("Спросить по разговору или экрану…")}</span>
           </div>
         )}
 
@@ -590,7 +583,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           <input
             ref={textInputRef}
             type="text"
-            aria-label="Вопрос по разговору"
+            aria-label={t("Вопрос по разговору")}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
@@ -600,7 +593,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
           {!inputValue && (
             <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none text-[12px] overlay-text-muted/90 max-w-[calc(100%-56px)] overflow-hidden whitespace-nowrap text-ellipsis">
-              <span>Спросить по разговору или экрану…</span>
+              <span>{t("Спросить по разговору или экрану…")}</span>
               <div className="flex items-center gap-1 opacity-80">
                 {(shortcuts.selectiveScreenshot || ['⌘', 'Shift', 'H']).map((key, i) => (
                   <React.Fragment key={i}>
@@ -621,8 +614,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         </div>
 
         <div className="flex items-center gap-2 mt-2 mb-1 flex-wrap">
-          <button className="meeting-toolbar-action" onClick={() => { void window.electronAPI.takeScreenshot().catch(error => setMessages(prev => [...prev, {id: Date.now().toString(), role:'system', text: String(error)}])); }}><Image size={14}/>Экран</button>
-          <button className="meeting-toolbar-action" onClick={() => { void window.electronAPI.takeSelectiveScreenshot().catch(error => setMessages(prev => [...prev, {id: Date.now().toString(), role:'system', text: String(error)}])); }}><Image size={14}/>Область экрана</button>
+          <button className="meeting-toolbar-action" onClick={() => { void window.electronAPI.takeScreenshot().catch(error => setMessages(prev => [...prev, {id: Date.now().toString(), role:'system', text: String(error)}])); }}><Image size={14}/>{t("Экран")}</button>
+          <button className="meeting-toolbar-action" onClick={() => { void window.electronAPI.takeSelectiveScreenshot().catch(error => setMessages(prev => [...prev, {id: Date.now().toString(), role:'system', text: String(error)}])); }}><Image size={14}/>{t("Область экрана")}</button>
         </div>
         <div className="flex items-center justify-between mt-3 px-0.5">
           <div className="flex items-center gap-1.5">
@@ -721,7 +714,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
           <button
             onClick={handleManualSubmit}
-            aria-label="Отправить вопрос"
+            aria-label={t("Отправить вопрос")}
             disabled={!inputValue.trim() && attachedContext.length === 0}
             className={`
               w-7 h-7 rounded-full flex items-center justify-center

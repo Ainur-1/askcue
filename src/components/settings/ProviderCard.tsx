@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import { Trash2, AlertCircle, CheckCircle, ExternalLink, Loader2, ChevronDown, Check, RefreshCw } from 'lucide-react';
 
@@ -143,8 +144,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
         <div className="bg-bg-item-surface rounded-xl p-5 border border-border-subtle">
             <div className="mb-2 flex items-center justify-between">
                 <label className="flex items-center text-xs font-medium text-text-primary uppercase tracking-wide">
-                    {providerName} API Key
-                    {hasStoredKey && <span className="ml-2 text-state-success normal-case">✓ Saved</span>}
+                    {providerName}{t("API Key")}{hasStoredKey && <span className="ml-2 text-state-success normal-case">{t("✓ Saved")}</span>}
                 </label>
                 <button
                     onClick={() => {
@@ -154,7 +154,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                     className="text-xs text-text-tertiary hover:text-text-primary flex items-center gap-1 transition-colors"
                     title={`Get ${providerName} API Key`}
                 >
-                    <span className="text-[10px] uppercase tracking-wide">Get Key</span>
+                    <span className="text-[10px] uppercase tracking-wide">{t("Get Key")}</span>
                     <ExternalLink size={12} />
                 </button>
             </div>
@@ -174,7 +174,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                         : 'bg-bg-input hover:bg-bg-secondary border border-border-subtle text-text-primary disabled:opacity-50'
                         }`}
                 >
-                    {savingStatus ? 'Saving...' : savedStatus ? 'Saved!' : 'Save'}
+                    {savingStatus ? 'Saving...' : savedStatus ? t("Saved!") : t("Save")}
                 </button>
                 {hasStoredKey && (
                     <button
@@ -198,10 +198,10 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                         }`}
                     title={testError || "Test Connection"}
                 >
-                    {testStatus === 'testing' ? <><Loader2 size={12} className="animate-spin" /> Testing...</> :
-                        testStatus === 'success' ? <><CheckCircle size={12} /> Connected</> :
-                            testStatus === 'error' ? <><AlertCircle size={12} /> Error</> :
-                                <>{/* No Icon */} Test Connection</>}
+                    {testStatus === 'testing' ? <><Loader2 size={12} className="animate-spin" /> {t("Testing...")}</> :
+                        testStatus === 'success' ? <><CheckCircle size={12} /> {t("Connected")}</> :
+                            testStatus === 'error' ? <><AlertCircle size={12} /> {t("Error")}</> :
+                                <>{/* No Icon */} {t("Test Connection")}</>}
                 </button>
 
                 {/* Inline Model Dropdown */}
@@ -226,7 +226,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                                             className={`w-full text-left px-3 py-2 text-xs rounded-md flex items-center justify-between group transition-colors ${selectedModel === model.id ? 'bg-bg-input hover:bg-bg-elevated text-text-primary' : 'text-text-secondary hover:bg-bg-input hover:text-text-primary'}`}
                                             type="button"
                                         >
-                                            <span className="truncate">{model.label}</span>
+                                            <span className="truncate">{t(model.label)}</span>
                                             {selectedModel === model.id && <Check size={14} className="text-accent-primary shrink-0 ml-2" />}
                                         </button>
                                     ))}
@@ -248,9 +248,9 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                             }`}
                     >
                         {isFetching ? (
-                            <><Loader2 size={12} className="animate-spin" /> Fetching...</>
+                            <><Loader2 size={12} className="animate-spin" /> {t("Fetching...")}</>
                         ) : (
-                            <><RefreshCw size={12} /> Fetch Models</>
+                            <><RefreshCw size={12} /> {t("Fetch Models")}</>
                         )}
                     </button>
                 ) : (
@@ -261,7 +261,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
 
             {/* Error from test or fetch */}
             {testError && <p className="text-[10px] text-state-danger mt-1.5 mb-2">{testError}</p>}
-            {fetchError && <p className="text-[10px] text-state-danger mt-1.5 mb-2">Model fetch error: {fetchError}</p>}
+            {fetchError && <p className="text-[10px] text-state-danger mt-1.5 mb-2">{t("Model fetch error:")} {fetchError}</p>}
 
 
         </div>

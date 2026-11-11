@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useEffect, useState } from 'react';
 import { Columns2, Rows2, Focus } from 'lucide-react';
 import { Mic, MessageSquare } from 'lucide-react';
@@ -17,7 +18,7 @@ interface SplitterShellProps {
 const ZoneHeader: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
     <div className={`meeting-zone-heading flex items-center gap-2 select-none shrink-0 ${label === 'Ответы' ? 'meeting-zone-answer' : ''}`}>
         {icon}
-        <span>{label}</span>
+        <span>{t(label)}</span>
     </div>
 );
 
@@ -47,7 +48,7 @@ const SplitterShell: React.FC<SplitterShellProps> = ({
             className={`relative w-full flex-1 min-h-0 border rounded-[24px] overflow-hidden flex flex-col draggable-area overlay-shell-surface ${overlayPanelClass}`}
             style={appearance.shellStyle}
         >
-            <div className="flex justify-end px-3 py-1 border-b border-border-subtle no-drag"><button onClick={cycleLayout} className="meeting-toolbar-action" title="Сменить расположение панелей">{focus ? <Focus size={13}/> : columns ? <Columns2 size={13}/> : <Rows2 size={13}/>} {focus ? 'Фокус' : columns ? 'Рядом' : 'Друг под другом'}</button></div>
+            <div className="flex justify-end px-3 py-1 border-b border-border-subtle no-drag"><button onClick={cycleLayout} className="meeting-toolbar-action" title={t("Сменить расположение панелей")}>{focus ? <Focus size={13}/> : columns ? <Columns2 size={13}/> : <Rows2 size={13}/>} {focus ? t("Фокус") : columns ? t("Рядом") : t("Друг под другом")}</button></div>
             <div className={`flex-1 min-h-0 flex ${columns ? 'flex-row' : 'flex-col'}`}>
                 {!focus && <>
                 <section

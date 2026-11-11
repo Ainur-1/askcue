@@ -81,11 +81,11 @@ module.exports = {
         pageshift: 'var(--motion-pageshift)',
       },
       fontFamily: {
-        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
-        display: ["Space Grotesk", "Inter", "-apple-system", "sans-serif"],
-        mono: ["JetBrains Mono", "SFMono-Regular", "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "monospace"],
-        celeb: ["CelebMF", "sans-serif"],
-        "celeb-light": ["CelebMFLight", "sans-serif"]
+        sans: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        display: ["system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
+        celeb: ["system-ui", "Segoe UI", "sans-serif"],
+        "celeb-light": ["system-ui", "Segoe UI", "sans-serif"]
       },
       spacing: {
         '3.5': '0.9rem',

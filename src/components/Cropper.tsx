@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Crosshair } from 'lucide-react';
 
@@ -249,9 +250,7 @@ const Cropper: React.FC = () => {
                                 color: isLightTheme ? '#000000' : '#ffffff',
                                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
                             }}
-                        >
-                            Select area
-                        </span>
+                        >{t("Select area")}</span>
 
                         <div
                             className="h-4 w-px mx-1"
@@ -280,9 +279,7 @@ const Cropper: React.FC = () => {
                                         ? 'rgba(0, 0, 0, 0.4)'
                                         : 'rgba(255, 255, 255, 0.4)'
                                 }}
-                            >
-                                to cancel
-                            </span>
+                            >{t("to cancel")}</span>
                         </div>
                     </div>
                 </div>

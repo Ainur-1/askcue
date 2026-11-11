@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React from 'react';
 import { Clock, Download, FileAudio, FileText, MoreHorizontal, RefreshCw, Trash2, Users } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -150,17 +151,13 @@ const MeetingCard: React.FC<MeetingCardProps> = ({
                                     className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-text-primary transition-colors hover:bg-bg-input"
                                     onClick={() => onExport(meeting)}
                                 >
-                                    <Download size={13} />
-                                    Export
-                                </button>
+                                    <Download size={13} />{t("Export")}</button>
                                 <button
                                     type="button"
                                     className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-state-danger transition-colors hover:bg-state-danger-soft"
                                     onClick={() => onDelete(meeting)}
                                 >
-                                    <Trash2 size={13} />
-                                    Delete
-                                </button>
+                                    <Trash2 size={13} />{t("Delete")}</button>
                             </div>
                         </motion.div>
                     )}

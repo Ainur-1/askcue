@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect } from 'react';
 import { Minus, X } from 'lucide-react';
 import { isMac } from '../utils/platformUtils';
@@ -68,7 +69,7 @@ const WindowControls: React.FC = () => {
       <button
         onClick={handleClose}
         className="flex items-center justify-center w-[46px] h-full border-0 bg-transparent text-text-secondary hover:text-white hover:bg-state-danger transition-colors duration-100"
-        title="Close"
+        title={t("Close")}
         aria-label="Close window"
       >
         <X size={16} strokeWidth={1.5} />

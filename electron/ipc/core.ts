@@ -50,6 +50,8 @@ export function registerCoreHandlers(appState: AppState): void {
     return 'pika-personal-build';
   });
 
+  safeHandle("get-system-locale", async () => app.getSystemLocale());
+
   safeHandle("get-recognition-languages", async () => {
     return RECOGNITION_LANGUAGES;
   });

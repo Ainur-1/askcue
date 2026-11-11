@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect } from 'react';
 import { X, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -156,7 +157,7 @@ const FollowUpEmailModal: React.FC<FollowUpEmailModalProps> = ({ isOpen, onClose
 
                             {/* Header / Top Bar */}
                             <div className="flex px-6 py-4 justify-between items-center border-b border-white/[0.06]">
-                                <h2 className="text-sm font-medium text-[#E9E9E9] tracking-wide">Draft Follow-up</h2>
+                                <h2 className="text-sm font-medium text-[#E9E9E9] tracking-wide">{t("Draft Follow-up")}</h2>
                                 <button onClick={onClose} className="text-[#71717A] hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
                                     <X size={14} />
                                 </button>
@@ -167,7 +168,7 @@ const FollowUpEmailModal: React.FC<FollowUpEmailModalProps> = ({ isOpen, onClose
 
                                 {/* TO Field */}
                                 <div className="flex items-start gap-6 group">
-                                    <label className="text-[#71717A] text-[13px] w-[50px] font-medium pt-2">To</label>
+                                    <label className="text-[#71717A] text-[13px] w-[50px] font-medium pt-2">{t("To")}</label>
                                     <div className="flex-1 min-h-[32px] flex items-center border-b border-white/[0.06] group-focus-within:border-white/20 transition-colors pb-1">
                                         {recipientEmail ? (
                                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#27272A] border border-white/10 rounded-full text-[#E9E9E9] text-[13px] shadow-sm animate-in fade-in zoom-in duration-200">
@@ -195,7 +196,7 @@ const FollowUpEmailModal: React.FC<FollowUpEmailModalProps> = ({ isOpen, onClose
 
                                 {/* SUBJECT Field */}
                                 <div className="flex items-center gap-6 group">
-                                    <label className="text-[#71717A] text-[13px] w-[50px] font-medium">Subject</label>
+                                    <label className="text-[#71717A] text-[13px] w-[50px] font-medium">{t("Subject")}</label>
                                     <div className="flex-1 border-b border-white/[0.06] group-focus-within:border-white/20 transition-colors pb-1">
                                         <input
                                             type="text"
@@ -219,7 +220,7 @@ const FollowUpEmailModal: React.FC<FollowUpEmailModalProps> = ({ isOpen, onClose
                                                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                                                 </div>
                                             </div>
-                                            <span className="text-xs font-medium text-[#71717A] animate-pulse">Drafting perfect follow-up...</span>
+                                            <span className="text-xs font-medium text-[#71717A] animate-pulse">{t("Drafting perfect follow-up...")}</span>
                                         </div>
                                     </div>
                                 ) : (
@@ -257,7 +258,7 @@ const FollowUpEmailModal: React.FC<FollowUpEmailModalProps> = ({ isOpen, onClose
                                         title="Regenerate"
                                     >
                                         <RotateCcw size={15} className={`group-hover:rotate-180 transition-transform duration-500 ${isGenerating ? 'animate-spin' : ''}`} />
-                                        <span className="text-[13px] font-medium">Reset</span>
+                                        <span className="text-[13px] font-medium">{t("Reset")}</span>
                                     </button>
                                 </div>
                             </div>

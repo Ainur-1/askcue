@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
@@ -159,7 +160,7 @@ const AssistantMessage: React.FC<{ content: string; isStreaming?: boolean }> = (
                     className="flex items-center gap-2 mt-3 text-[13px] text-text-tertiary hover:text-text-secondary transition-colors"
                 >
                     {copied ? <Check size={14} className="text-state-success" /> : <Copy size={14} />}
-                    {copied ? 'Copied' : 'Copy message'}
+                    {copied ? t("Copied") : 'Copy message'}
                 </button>
             )}
         </motion.div>
@@ -318,7 +319,7 @@ const MeetingChatOverlay: React.FC<MeetingChatOverlayProps> = ({
                         <div className="flex items-center justify-between px-4 py-3 pt-5 border-b border-border-subtle shrink-0">
                             <div className="flex items-center gap-2">
                                 <img src={pikaIcon} className="w-3.5 h-3.5 opacity-60 object-contain drop-shadow-sm" alt="logo" />
-                                <span className="text-[13px] font-medium text-text-secondary">Search this meeting</span>
+                                <span className="text-[13px] font-medium text-text-secondary">{t("Search this meeting")}</span>
                             </div>
                             <button
                                 onClick={handleClose}
@@ -340,8 +341,8 @@ const MeetingChatOverlay: React.FC<MeetingChatOverlayProps> = ({
 
                             {error && (
                                 <div className="text-state-danger text-[13px] py-2 flex items-center gap-2">
-                                    <span>Couldn't get a response.</span>
-                                    <button onClick={() => void regenerate()} className="underline hover:text-state-danger-strong">Retry</button>
+                                    <span>{t("Couldn't get a response.")}</span>
+                                    <button onClick={() => void regenerate()} className="underline hover:text-state-danger-strong">{t("Retry")}</button>
                                 </div>
                             )}
 
@@ -362,9 +363,7 @@ const MeetingChatOverlay: React.FC<MeetingChatOverlayProps> = ({
                                     type="submit"
                                     disabled={!input.trim() || isLoading}
                                     className="px-3 py-2 rounded-xl bg-accent-primary text-white text-[13px] font-medium disabled:opacity-50"
-                                >
-                                    Send
-                                </button>
+                                >{t("Send")}</button>
                             </form>
                         </div>
                     </motion.div>

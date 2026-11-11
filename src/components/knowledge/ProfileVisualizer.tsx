@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Pencil, Plus, RotateCcw, Save, X } from 'lucide-react';
 import type { ProfileData } from '../../../electron/knowledge/types';
@@ -241,14 +242,12 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-text-primary">Your Background</h2>
+        <h2 className="text-sm font-bold text-text-primary">{t("Your Background")}</h2>
         <div className="flex items-center gap-3">
           {isEditing ? (
             <>
               <button type="button" onClick={cancelEditing} className={ghostButtonClass}>
-                <RotateCcw size={12} />
-                Cancel
-              </button>
+                <RotateCcw size={12} />{t("Cancel")}</button>
               <button
                 type="button"
                 onClick={handleSave}
@@ -256,25 +255,23 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                 className={primaryButtonClass}
               >
                 <Save size={12} />
-                {editProfile.isLoading ? 'Saving...' : 'Save'}
+                {editProfile.isLoading ? 'Saving...' : t("Save")}
               </button>
             </>
           ) : (
             <button type="button" onClick={startEditing} className={ghostButtonClass}>
-              <Pencil size={12} />
-              Edit
-            </button>
+              <Pencil size={12} />{t("Edit")}</button>
           )}
         </div>
       </div>
 
       <div className={cardClass}>
         <div className="flex flex-col gap-3">
-          <div className={labelClass}>Profile</div>
+          <div className={labelClass}>{t("Profile")}</div>
           {isEditing ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
-                <label className={labelClass}>Name</label>
+                <label className={labelClass}>{t("Name")}</label>
                 <input
                   className={inputClass}
                   value={identity?.name || ''}
@@ -282,7 +279,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className={labelClass}>Email</label>
+                <label className={labelClass}>{t("Email")}</label>
                 <input
                   className={inputClass}
                   value={identity?.email || ''}
@@ -290,7 +287,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className={labelClass}>Phone</label>
+                <label className={labelClass}>{t("Phone")}</label>
                 <input
                   className={inputClass}
                   value={identity?.phone || ''}
@@ -298,7 +295,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className={labelClass}>Location</label>
+                <label className={labelClass}>{t("Location")}</label>
                 <input
                   className={inputClass}
                   value={identity?.location || ''}
@@ -340,26 +337,26 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
         <div className="mb-3 grid grid-cols-4 gap-4">
           <div className="flex flex-col items-center">
             <span className="text-lg font-semibold text-text-primary">{totalExperienceYears}</span>
-            <span className="text-xs text-text-secondary">Years</span>
+            <span className="text-xs text-text-secondary">{t("Years")}</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-semibold text-text-primary">{experienceCount}</span>
-            <span className="text-xs text-text-secondary">Experience</span>
+            <span className="text-xs text-text-secondary">{t("Experience")}</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-semibold text-text-primary">{projectCount}</span>
-            <span className="text-xs text-text-secondary">Projects</span>
+            <span className="text-xs text-text-secondary">{t("Projects")}</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-semibold text-text-primary">{nodeCount}</span>
-            <span className="text-xs text-text-secondary">Highlights</span>
+            <span className="text-xs text-text-secondary">{t("Highlights")}</span>
           </div>
         </div>
       </div>
 
       <div className={cardClass}>
         <div className="mb-3 flex items-center justify-between gap-3">
-          <div className={labelClass}>Skills</div>
+          <div className={labelClass}>{t("Skills")}</div>
           {isEditing && (
             <div className="flex items-center gap-2">
               <input
@@ -375,9 +372,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                 }}
               />
               <button type="button" onClick={addSkill} className={ghostButtonClass}>
-                <Plus size={12} />
-                Add
-              </button>
+                <Plus size={12} />{t("Add")}</button>
             </div>
           )}
         </div>
@@ -402,7 +397,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
 
       {experience.length > 0 && (
         <div className={cardClass}>
-          <div className={`mb-3 ${labelClass}`}>Experience</div>
+          <div className={`mb-3 ${labelClass}`}>{t("Experience")}</div>
           <div className="flex flex-col gap-4">
             {experience.map((item, index) => (
               <div key={`${item.company}-${index}`} className="flex flex-col gap-2 border-b border-border-subtle pb-4 last:border-b-0 last:pb-0">
@@ -410,7 +405,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                   <>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div className="flex flex-col gap-1.5">
-                        <label className={labelClass}>Company</label>
+                        <label className={labelClass}>{t("Company")}</label>
                         <input
                           className={inputClass}
                           value={item.company}
@@ -418,7 +413,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className={labelClass}>Role</label>
+                        <label className={labelClass}>{t("Role")}</label>
                         <input
                           className={inputClass}
                           value={item.role}
@@ -426,7 +421,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className={labelClass}>Start Date</label>
+                        <label className={labelClass}>{t("Start Date")}</label>
                         <input
                           className={inputClass}
                           value={item.startDate}
@@ -434,7 +429,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className={labelClass}>End Date</label>
+                        <label className={labelClass}>{t("End Date")}</label>
                         <input
                           className={inputClass}
                           value={item.endDate || ''}
@@ -443,7 +438,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                       </div>
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className={labelClass}>Highlights</label>
+                      <label className={labelClass}>{t("Highlights")}</label>
                       <textarea
                         className={`${inputClass} min-h-[96px] resize-y`}
                         value={item.highlights.join('\n')}
@@ -480,14 +475,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
 
       {projects.length > 0 && (
         <div className={cardClass}>
-          <div className={`mb-3 ${labelClass}`}>Projects</div>
+          <div className={`mb-3 ${labelClass}`}>{t("Projects")}</div>
           <div className="flex flex-col gap-4">
             {projects.map((item, index) => (
               <div key={`${item.name}-${index}`} className="flex flex-col gap-2 border-b border-border-subtle pb-4 last:border-b-0 last:pb-0">
                 {isEditing ? (
                   <>
                     <div className="flex flex-col gap-1.5">
-                      <label className={labelClass}>Project Name</label>
+                      <label className={labelClass}>{t("Project Name")}</label>
                       <input
                         className={inputClass}
                         value={item.name}
@@ -495,7 +490,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className={labelClass}>Description</label>
+                      <label className={labelClass}>{t("Description")}</label>
                       <textarea
                         className={`${inputClass} min-h-[88px] resize-y`}
                         value={item.description}
@@ -504,7 +499,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                     </div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div className="flex flex-col gap-1.5">
-                        <label className={labelClass}>Technologies</label>
+                        <label className={labelClass}>{t("Technologies")}</label>
                         <input
                           className={inputClass}
                           value={item.technologies.join(', ')}
@@ -513,7 +508,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className={labelClass}>Highlights</label>
+                        <label className={labelClass}>{t("Highlights")}</label>
                         <textarea
                           className={`${inputClass} min-h-[88px] resize-y`}
                           value={item.highlights.join('\n')}
@@ -555,14 +550,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
 
       {education.length > 0 && (
         <div className={cardClass}>
-          <div className={`mb-3 ${labelClass}`}>Education</div>
+          <div className={`mb-3 ${labelClass}`}>{t("Education")}</div>
           <div className="flex flex-col gap-4">
             {education.map((item, index) => (
               <div key={`${item.institution}-${index}`} className="border-b border-border-subtle pb-4 last:border-b-0 last:pb-0">
                 {isEditing ? (
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="flex flex-col gap-1.5">
-                      <label className={labelClass}>Institution</label>
+                      <label className={labelClass}>{t("Institution")}</label>
                       <input
                         className={inputClass}
                         value={item.institution}
@@ -570,7 +565,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className={labelClass}>Degree</label>
+                      <label className={labelClass}>{t("Degree")}</label>
                       <input
                         className={inputClass}
                         value={item.degree}
@@ -578,7 +573,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profileData }) => 
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className={labelClass}>Year</label>
+                      <label className={labelClass}>{t("Year")}</label>
                       <input
                         className={inputClass}
                         value={item.year || ''}

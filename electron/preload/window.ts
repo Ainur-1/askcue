@@ -18,6 +18,7 @@ export function windowChannels() {
     hideWindow: () => ipcRenderer.invoke("hide-window"),
     showOverlay: () => ipcRenderer.invoke("show-overlay"),
     hideOverlay: () => ipcRenderer.invoke("hide-overlay"),
+    getSystemLocale: () => ipcRenderer.invoke("get-system-locale"),
     getMeetingState: () => ipcRenderer.invoke("get-meeting-state"),
     getMeetingActive: () => ipcRenderer.invoke("get-meeting-active"),
     onMeetingStateChanged: (callback: (data: { isActive: boolean; startedAt?: number | null }) => void) => {

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -88,7 +89,7 @@ const MeetingBucket: React.FC<MeetingBucketProps> = ({
                 aria-expanded={isExpanded}
             >
                 <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+                    <h3 className="text-sm font-semibold text-text-primary">{t(label)}</h3>
                     <span className="rounded-full bg-bg-input px-2 py-0.5 text-xs font-medium text-text-secondary">{meetings.length}</span>
                 </div>
                 <ChevronDown size={16} className={`text-text-tertiary transition-transform ${isExpanded ? 'rotate-180' : ''}`} />

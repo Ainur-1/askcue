@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Globe, Languages, Loader2 } from 'lucide-react';
 import type { TranscriptDisplayMode, TranscriptSegment } from '../../lib/transcriptSegments';
@@ -158,7 +159,7 @@ const TranscriptNotes: React.FC<TranscriptNotesProps> = ({
                                                 ) : (
                                                     <Languages className="h-3 w-3" aria-hidden="true" />
                                                 )}
-                                                <span>{hasTranslation ? 'Повторить перевод' : 'Перевод'}</span>
+                                                <span>{hasTranslation ? t("Повторить перевод") : t("Перевод")}</span>
                                             </button>
                                         )}
                                     </div>
@@ -187,13 +188,11 @@ const TranscriptNotes: React.FC<TranscriptNotesProps> = ({
                                         {!showTranslation && isTranslationPending && (
                                             <div className="mt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
                                                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-                                                <span>Translating...</span>
+                                                <span>{t("Translating...")}</span>
                                             </div>
                                         )}
                                         {seg.translationState === 'error' && !showTranslation && (
-                                            <div className="mt-2 text-[11px] text-amber-300">
-                                                Translation failed. Try again.
-                                            </div>
+                                            <div className="mt-2 text-[11px] text-amber-300">{t("Translation failed. Try again.")}</div>
                                         )}
                                     </div>
                                 </div>
@@ -209,7 +208,7 @@ const TranscriptNotes: React.FC<TranscriptNotesProps> = ({
                                     <span className="text-[10px] font-semibold uppercase tracking-wide text-text-secondary">
                                         {partialLabel}
                                     </span>
-                                    <span className="text-[9px] text-text-tertiary">Live</span>
+                                    <span className="text-[9px] text-text-tertiary">{t("Live")}</span>
                                 </div>
                                 <div
                                     className="rounded-2xl border border-border-subtle/80 px-4 py-3 overlay-transcript-surface"
@@ -245,9 +244,7 @@ const TranscriptNotes: React.FC<TranscriptNotesProps> = ({
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
-                    </svg>
-                    Jump to latest
-                </button>
+                    </svg>{t("Jump to latest")}</button>
             )}
         </div>
     );
