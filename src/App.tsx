@@ -10,7 +10,6 @@ import SettingsOverlay from "./components/SettingsOverlay"
 import { AnimatePresence, motion } from "framer-motion"
 import UpdateBanner from "./components/UpdateBanner"
 import { AlertCircle } from "lucide-react"
-import { clampOverlayOpacity, getDefaultOverlayOpacity } from "./lib/overlayAppearance"
 import { analytics } from "./lib/analytics/analytics.service"
 import { ErrorBoundary } from "./components/ErrorBoundary"
 
@@ -80,16 +79,6 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsInitialTab, setSettingsInitialTab] = useState('general');
 
-  // Overlay opacity — only meaningful when isOverlayWindow, but stored centrally
-  // so it can be initialized once from localStorage and updated via IPC.
-  const [overlayOpacity, setOverlayOpacity] = useState<number>(() => {
-    const stored = localStorage.getItem('pika_overlay_opacity');
-    const parsed = stored ? parseFloat(stored) : NaN;
-    // Treat missing value or the old default (0.65) as "not user-set"
-    const isUserSet = Number.isFinite(parsed) && parsed !== getDefaultOverlayOpacity();
-    return isUserSet ? clampOverlayOpacity(parsed) : getDefaultOverlayOpacity();
-  });
-
   // Ollama Auto-Pull State
   const [ollamaPullStatus, setOllamaPullStatus] = useState<'idle' | 'downloading' | 'complete' | 'failed'>('idle');
   const [ollamaPullPercent, setOllamaPullPercent] = useState<number>(0);
@@ -133,29 +122,6 @@ const App: React.FC = () => {
       if (removeWarning) removeWarning();
     }
   }, []);
-
-  // Listen for overlay opacity changes — scoped to overlay window only
-  useEffect(() => {
-    if (!isOverlayWindow) return;
-    const removeOpacityListener = window.electronAPI?.onOverlayOpacityChanged?.((opacity) => {
-      setOverlayOpacity(opacity);
-    });
-    return () => {
-      if (removeOpacityListener) removeOpacityListener();
-    };
-  }, [isOverlayWindow]);
-
-  // When the theme switches and no user preference is stored, reset to theme-aware default
-  useEffect(() => {
-    if (!isOverlayWindow || !window.electronAPI?.onThemeChanged) return;
-    return window.electronAPI.onThemeChanged(() => {
-      const stored = localStorage.getItem('pika_overlay_opacity');
-      if (!stored) {
-        setOverlayOpacity(getDefaultOverlayOpacity());
-      }
-    });
-  }, [isOverlayWindow]);
-
 
   // Handlers
   const handleReindex = async () => {
@@ -264,17 +230,7 @@ const App: React.FC = () => {
         <div className="w-full relative bg-transparent">
           <QueryClientProvider client={queryClient}>
             <ToastProvider>
-              <div
-                style={{
-                  ['--overlay-opacity' as '--overlay-opacity']: String(overlayOpacity),
-                  transition: 'background-color 75ms ease, border-color 75ms ease, box-shadow 75ms ease'
-                } as React.CSSProperties}
-              >
-                <PikaInterface
-                  onEndMeeting={handleEndMeeting}
-                  overlayOpacity={overlayOpacity}
-                />
-              </div>
+              <PikaInterface onEndMeeting={handleEndMeeting} />
               <ToastViewport />
             </ToastProvider>
           </QueryClientProvider>

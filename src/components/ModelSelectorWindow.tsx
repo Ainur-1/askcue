@@ -140,15 +140,15 @@ const ModelSelectorWindow = () => {
 
     return (
         <div className="w-fit h-fit bg-transparent flex flex-col">
-            <div className={`w-[140px] h-[200px] backdrop-blur-md border rounded-[16px] overflow-hidden shadow-2xl p-2 flex flex-col animate-scale-in origin-top-left ${panelClass}`}>
+            <div className={`w-[300px] h-[320px] backdrop-blur-md border rounded-[16px] overflow-hidden shadow-2xl p-2 flex flex-col animate-scale-in origin-top-left ${panelClass}`}>
 
                 {isLoading ? (
                     <div className={`flex items-center justify-center py-4 ${isLight ? 'text-text-secondary' : 'text-text-secondary'}`}>
                         <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        <span className="text-xs">{t("Loading models...")}</span>
+                        <span className="text-xs min-w-0 truncate">{t("Loading models...")}</span>
                     </div>
                 ) : (
-                    <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-0.5">
+                    <div className="flex-1 min-h-0 min-w-0 overflow-y-auto scrollbar-hide flex flex-col gap-0.5">
                         {availableModels.length === 0 ? (
                             <div className={`px-4 py-3 text-center text-xs ${isLight ? 'text-text-secondary' : 'text-text-secondary'}`}>{t("No models connected.")}<br />{t("Check Settings.")}</div>
                         ) : (
@@ -157,6 +157,7 @@ const ModelSelectorWindow = () => {
                                 return (
                                     <button
                                         key={model.id}
+                                        title={model.name}
                                         onClick={() => handleSelectFn(model.id)}
                                         className={`
                                             w-full text-left px-3 py-2 flex items-center justify-between group transition-colors duration-200 rounded-lg

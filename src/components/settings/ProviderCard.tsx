@@ -141,7 +141,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
     const selectedOption = fetchedModels.find(m => m.id === selectedModel);
 
     return (
-        <div className="bg-bg-item-surface rounded-xl p-5 border border-border-subtle">
+        <div className="provider-card min-w-0 bg-bg-item-surface rounded-xl p-5 border border-border-subtle">
             <div className="mb-2 flex items-center justify-between">
                 <label className="flex items-center text-xs font-medium text-text-primary uppercase tracking-wide">
                     {providerName}{t("API Key")}{hasStoredKey && <span className="ml-2 text-state-success normal-case">{t("✓ Saved")}</span>}
@@ -188,7 +188,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
             </div>
 
             {/* Action Row: Test Connection + Conditional Dropdown + Fetch Models */}
-            <div className="flex items-center justify-between mb-3 w-full">
+            <div className="provider-model-row flex flex-wrap gap-3 items-center justify-between mb-3 w-full">
                 <button
                     onClick={onTestConnection}
                     disabled={(!apiKey.trim() && !hasStoredKey) || testStatus === 'testing'}
@@ -206,18 +206,18 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
 
                 {/* Inline Model Dropdown */}
                 {fetchedModels.length > 0 || preferredModel ? (
-                    <div className="relative flex-1 max-w-[200px] mx-4" ref={dropdownRef}>
+                    <div className="relative min-w-0 flex-1 basis-40 max-w-full" ref={dropdownRef}>
                         <button
                             onClick={() => fetchedModels.length > 0 && setIsDropdownOpen(!isDropdownOpen)}
                             className={`w-full bg-bg-input border border-border-subtle rounded-md px-3 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent-primary flex items-center justify-between transition-colors ${fetchedModels.length > 0 ? 'hover:bg-bg-elevated' : 'opacity-80 cursor-default'}`}
                             type="button"
                         >
-                            <span className="truncate pr-2">{selectedOption ? selectedOption.label : (preferredModel || 'Select model')}</span>
+                            <span title={selectedOption?.label || preferredModel} className="block flex-1 min-w-0 truncate pr-2">{selectedOption ? selectedOption.label : (preferredModel || 'Select model')}</span>
                             <ChevronDown size={14} className={`text-text-secondary transition-transform ${isDropdownOpen ? 'rotate-180' : ''} ${fetchedModels.length === 0 ? 'opacity-50' : ''}`} />
                         </button>
 
                         {isDropdownOpen && fetchedModels.length > 0 && (
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-full min-w-[200px] bg-bg-elevated border border-border-subtle rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto animated fadeIn">
+                            <div className="absolute top-full left-0 mt-1 w-full max-w-full bg-bg-elevated border border-border-subtle rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto animated fadeIn">
                                 <div className="p-1 space-y-0.5">
                                     {fetchedModels.map((model) => (
                                         <button
@@ -226,7 +226,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                                             className={`w-full text-left px-3 py-2 text-xs rounded-md flex items-center justify-between group transition-colors ${selectedModel === model.id ? 'bg-bg-input hover:bg-bg-elevated text-text-primary' : 'text-text-secondary hover:bg-bg-input hover:text-text-primary'}`}
                                             type="button"
                                         >
-                                            <span className="truncate">{t(model.label)}</span>
+                                            <span title={model.label} className="block min-w-0 flex-1 truncate">{model.label}</span>
                                             {selectedModel === model.id && <Check size={14} className="text-accent-primary shrink-0 ml-2" />}
                                         </button>
                                     ))}
@@ -235,7 +235,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                         )}
                     </div>
                 ) : (
-                    <div className="flex-1 mx-4" />
+                    <div className="flex-1" />
                 )}
 
                 {hasStoredKey ? (
@@ -255,7 +255,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
                     </button>
                 ) : (
                     // Placeholder span to perfectly balance flex-between if button isn't shown
-                    <span className="w-[110px]" />
+                    <span />
                 )}
             </div>
 

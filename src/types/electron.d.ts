@@ -222,6 +222,7 @@ export interface ElectronAPI {
   openMailto: (params: { to: string; subject: string; body: string }) => Promise<{ success: boolean; error?: string }>;
 
   // Audio Test
+  onAudioTestError: (callback: (message: string) => void) => () => void;
   startAudioTest: (deviceId?: string) => Promise<{ success: boolean; warning?: string }>;
   stopAudioTest: () => Promise<{ success: boolean }>;
   onAudioTestLevel: (callback: (level: number) => void) => () => void;
@@ -329,8 +330,6 @@ export interface ElectronAPI {
   licenseGetHardwareId: () => Promise<string>
 
   // Overlay Opacity (Stealth Mode)
-  setOverlayOpacity: (opacity: number) => Promise<void>;
-  onOverlayOpacityChanged: (callback: (opacity: number) => void) => () => void;
 
   // Verbose / Debug Logging
   getVerboseLogging: () => Promise<boolean>;

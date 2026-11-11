@@ -38,8 +38,8 @@ const ModelSelect: React.FC<ModelSelectProps> = ({ value, options, onChange, pla
 
     return (
         <Select.Root value={value} onValueChange={onChange}>
-            <Select.Trigger className="w-40 bg-bg-input border border-border-subtle rounded-lg px-3 py-1.5 text-xs text-text-primary flex items-center justify-between hover:bg-bg-elevated transition-colors">
-                <Select.Value placeholder={selectedOption ? selectedOption.name : placeholder} />
+            <Select.Trigger title={selectedOption?.name || value} className="model-select-trigger min-w-0 max-w-full w-72 bg-bg-input border border-border-subtle rounded-lg px-3 py-1.5 text-xs text-text-primary flex items-center justify-between hover:bg-bg-elevated transition-colors">
+                <Select.Value asChild><span className="block min-w-0 flex-1 truncate text-left">{selectedOption?.name || (value ? prettifyModelId(value) : t(placeholder))}</span></Select.Value>
                 <Select.Icon asChild>
                     <ChevronDown size={14} className="text-text-secondary transition-transform" />
                 </Select.Icon>
@@ -47,21 +47,19 @@ const ModelSelect: React.FC<ModelSelectProps> = ({ value, options, onChange, pla
 
             <Select.Portal>
                 <Select.Content
-                    className="bg-bg-elevated border border-border-subtle rounded-lg shadow-xl z-50 max-h-60 overflow-hidden animated fadeIn"
+                    className="model-select-menu bg-bg-elevated border border-border-subtle rounded-lg shadow-xl z-50 max-h-60 overflow-hidden animated fadeIn"
                     position="popper"
                     sideOffset={4}
                     align="end"
                 >
-                    <Select.Viewport className="p-1 space-y-0.5 w-40 max-h-60 overflow-y-auto">
+                    <Select.Viewport className="p-1 space-y-0.5 w-full max-h-60 overflow-y-auto">
                         {options.map((option) => (
                             <Select.Item
                                 key={option.id}
                                 value={option.id}
                                 className={`px-3 py-2 text-xs rounded-md flex items-center justify-between group transition-colors cursor-default outline-none data-[highlighted]:bg-bg-input data-[highlighted]:text-text-primary ${value === option.id ? 'bg-bg-input text-text-primary' : 'text-text-secondary'}`}
                             >
-                                <Select.ItemText>
-                                    <span className="truncate">{option.name}</span>
-                                </Select.ItemText>
+                                <Select.ItemText asChild><span title={option.name} className="block min-w-0 flex-1 truncate">{option.name}</span></Select.ItemText>
                                 <Select.ItemIndicator>
                                     <Check size={14} className="text-accent-primary shrink-0 ml-2" />
                                 </Select.ItemIndicator>
@@ -499,7 +497,7 @@ export const AIProvidersSettings: React.FC = () => {
     };
 
     return (
-        <div className="space-y-5 animated fadeIn pb-10">
+        <div className="models-settings min-w-0 space-y-5 animated fadeIn pb-10">
             {/* Default Model for Chat */}
             <div className="space-y-5">
                 <div>
@@ -507,7 +505,7 @@ export const AIProvidersSettings: React.FC = () => {
                     <p className="text-xs text-text-secondary mb-2">{t("Primary model for new chats. Other configured models act as fallbacks.")}</p>
                 </div>
 
-                <div className="bg-bg-item-surface rounded-xl p-5 border border-border-subtle flex items-center justify-between">
+                <div className="bg-bg-item-surface rounded-xl p-5 border border-border-subtle flex flex-wrap gap-4 items-center justify-between">
                     <div>
                         <label className="block text-xs font-medium text-text-primary uppercase tracking-wide mb-0">{t("Active Model")}</label>
                         <p className="text-[10px] text-text-secondary">{t("Applies to new chats instantly.")}</p>

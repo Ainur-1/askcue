@@ -52,6 +52,28 @@ async function main(){
   await run(`(()=>{const el=document.querySelector('[aria-label="Тема"]');el.value='light';el.dispatchEvent(new Event('change',{bubbles:true}))})()`);await wait(100);
   assert.equal(await run(`document.documentElement.dataset.theme`),'light');
   await shot('japanese-app-settings');
+  assert.equal(await run(`!!document.querySelector('#opacity-slider-card, #settings-mockup-wrapper')`),false);
+  await run(`document.querySelector('#settings-tab-audio').click()`);await wait(400);
+  assert.equal(await run(`window.__uitest.calls.filter(c=>c.name==='startAudioTest').length`),0,'opening Audio never starts capture');
+  await run(`document.querySelector('[data-testid="microphone-test"]').click()`);await wait(100);
+  assert.equal(await run(`window.__uitest.calls.filter(c=>c.name==='startAudioTest').length`),1);
+  await run(`window.__uitest.emit('onAudioTestError','Microphone test stopped unexpectedly. Try another input device.')`);await wait(100);
+  assert.match(await run(`document.querySelector('[role="alert"]').textContent`),/микрофона/);
+  assert.match(await run(`document.querySelector('[data-testid="microphone-test"]').textContent`),/Проверить/);
+  await run(`document.querySelector('#settings-tab-ai-providers').click()`);await wait(450);
+  assert.ok(await run(`!!document.querySelector('.models-settings')`));
+  for(const width of [1200,600]){
+    win.setContentSize(width,700);await wait(150);
+    const box=await run(`(()=>{const el=document.querySelector('.model-select-trigger');const b=el.getBoundingClientRect();return {left:b.left,right:b.right,width:innerWidth}})()`);
+    assert.ok(box.left>=0 && box.right<=box.width,JSON.stringify(box));
+  }
+  await run(`document.querySelector('.model-select-trigger').click()`);await wait(150);
+  const menu=await run(`(()=>{const el=document.querySelector('[role="listbox"]');const b=el.getBoundingClientRect();return {left:b.left,right:b.right,width:innerWidth}})()`);
+  assert.ok(menu.left>=0 && menu.right<=menu.width,JSON.stringify(menu));
+  await shot('pika-models-small');
+  await run(`document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`);await wait(150);
+  await run(`document.querySelector('#settings-tab-general').click()`);await wait(150);
+
   for (const [width,height] of [[1200,718],[960,600],[600,500]]) {
     win.setContentSize(width,height);await wait(180);
     const box=await run(`(()=>{const header=document.querySelector('.workbench-header').getBoundingClientRect();const content=document.querySelector('#settings-content');const proxy=content.querySelector('[role="switch"]');const rect=proxy.getBoundingClientRect();return {headerBottom:header.bottom,contentTop:content.getBoundingClientRect().top,right:rect.right,viewport:innerWidth,contentBottom:content.getBoundingClientRect().bottom,height:innerHeight,scrollHeight:content.scrollHeight,clientHeight:content.clientHeight}})()`);

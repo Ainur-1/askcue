@@ -8,17 +8,17 @@ import TranscriptColumn from './meeting/TranscriptColumn';
 import { analytics } from '../lib/analytics/analytics.service';
 import { useShortcuts } from '../hooks/useShortcuts';
 import { useResolvedTheme } from '../hooks/useResolvedTheme';
-import { getDefaultOverlayOpacity, getOverlayAppearance } from '../lib/overlayAppearance';
+import { getOverlayAppearance } from '../lib/overlayAppearance';
 import { useMeetingChat, type Message } from '../hooks/useMeetingChat';
 import { useMeetingTranscript } from '../hooks/useMeetingTranscript';
 import { useMeetingAudio } from '../hooks/useMeetingAudio';
 
-interface PikaInterfaceProps { onEndMeeting?: () => void; overlayOpacity?: number; }
+interface PikaInterfaceProps { onEndMeeting?: () => void; }
 type ScreenshotAttachment = { path: string; preview: string };
 type CommandHandlers = { handleWhatToSay: () => void; handleFollowUp: (intent?: string) => void; handleFollowUpQuestions: () => void; handleRecap: () => void; handleAnswerNow: () => void; handleClarify: () => void; handleCodeHint: () => void; handleBrainstorm: () => void; };
 type GeneralHandlers = { toggleVisibility: () => void; processScreenshots: () => void; resetCancel: () => Promise<void>; toggleMousePassthrough: () => void; takeScreenshot: () => Promise<void>; selectiveScreenshot: () => Promise<void>; };
 
-const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting, overlayOpacity = getDefaultOverlayOpacity() }) => {
+const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
     const isLightTheme = useResolvedTheme() === 'light';
     const [isExpanded, setIsExpanded] = useState(true);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -35,7 +35,7 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting, overlayOpac
     const transcript = useMeetingTranscript();
     const audio = useMeetingAudio();
     const chat = useMeetingChat();
-    const appearance = useMemo(() => getOverlayAppearance(overlayOpacity, isLightTheme ? 'light' : 'dark'), [overlayOpacity, isLightTheme]);
+    const appearance = useMemo(() => getOverlayAppearance(isLightTheme ? 'light' : 'dark'), [isLightTheme]);
 
     useEffect(() => localStorage.setItem('pika_splitter_position', String(splitterPosition)), [splitterPosition]);
     useEffect(() => { window.electronAPI?.getDefaultModel?.().then((result: any) => { if (result?.model) { setCurrentModel(result.model); window.electronAPI.setModel(result.model).catch(() => {}); } }).catch((err: any) => console.error('Failed to fetch default model:', err)); }, []);

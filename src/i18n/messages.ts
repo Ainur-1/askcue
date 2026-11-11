@@ -1,5 +1,9 @@
 // UI labels only. Provider/model names and conversation content are not translated.
 export const englishToRussian: Record<string,string> = {
+  "Test microphone": "Проверить микрофон",
+  "Stop microphone test": "Остановить проверку",
+  "Microphone test stopped unexpectedly. Try another input device.": "Проверка микрофона прервалась. Выберите другое устройство ввода.",
+  "Microphone test timed out. Try another input device.": "Микрофон не ответил. Выберите другое устройство ввода.",
   "AI Providers": "Провайдеры AI",
   "AI Response Language": "Язык ответов AI",
   "API Key": "Ключ API",
@@ -447,6 +451,8 @@ export const englishToRussian: Record<string,string> = {
 };
 
 export const russianToEnglish: Record<string,string> = {
+  "Проверить микрофон": "Test microphone",
+  "Остановить проверку": "Stop microphone test",
   "Провайдеры AI": "AI Providers",
   "Язык ответов AI": "AI Response Language",
   "Ключ API": "API key",

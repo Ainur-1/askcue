@@ -11,7 +11,7 @@ const responses = {
   getRecentMeetings: [], getUpcomingEvents: [], getCustomProviders: [], getOpenAICompatibleProviders: [],
   getAvailableOllamaModels: [], knowledgeGetAllJDs: [], knowledgeGetDocuments: [],
   profileGetProfile: null, profileGetStatus: {hasProfile:false,profileMode:false},
-  getStoredCredentials: {}, getPermissionStatus: {}, getRecognitionLanguages: {en:{label:'English'}},
+  getStoredCredentials: {hasOpenaiKey:true,openaiPreferredModel:'vendor/long-namespace-for-layout-tests/very-long-model-name-that-must-not-overflow-2026'}, getPermissionStatus: {}, getRecognitionLanguages: {en:{label:'English'}},
   getAiResponseLanguages: [{label:'English',value:'English'}], getSttLanguage:'en',getAiResponseLanguage:'en',
   getInputDevices: [], getOutputDevices: [], getOpenAtLogin: false,
   getDisguise:'pika', getOverlayMousePassthrough:false, getVerboseLogging:false,

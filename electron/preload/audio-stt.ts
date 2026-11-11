@@ -70,6 +70,7 @@ export function audioSttChannels() {
     getNativeAudioStatus: () => ipcRenderer.invoke("native-audio-status"),
     getInputDevices: () => ipcRenderer.invoke("get-input-devices"),
     getOutputDevices: () => ipcRenderer.invoke("get-output-devices"),
+    onAudioTestError: (callback: (message: string) => void) => { const listener = (_: unknown, message: string) => callback(message); ipcRenderer.on('audio-test-error', listener); return () => { ipcRenderer.removeListener('audio-test-error', listener); }; },
     startAudioTest: (deviceId?: string) => ipcRenderer.invoke('start-audio-test', deviceId),
     stopAudioTest: () => ipcRenderer.invoke('stop-audio-test'),
     onAudioTestLevel: (callback: (level: number) => void) => {

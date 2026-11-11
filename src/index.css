@@ -44,7 +44,6 @@
   --accent-live: var(--secondary);
 
   --overlay-bg: rgba(24, 27, 34, 0.84);
-  --overlay-opacity: 0.78;
   --overlay-border: rgba(255, 255, 255, 0.11);
   --overlay-border-soft: rgba(255, 255, 255, 0.07);
   --overlay-panel-bg: rgba(24, 27, 34, 0.84);
@@ -132,7 +131,6 @@
   --state-info-bg: rgba(59, 130, 246, 0.10);
 
   --overlay-bg: rgba(247, 249, 253, 0.9);
-  --overlay-opacity: 0.8;
   --overlay-border: rgba(59, 130, 246, 0.13);
   --overlay-border-soft: rgba(59, 130, 246, 0.08);
   --overlay-panel-bg: rgba(247, 249, 253, 0.9);

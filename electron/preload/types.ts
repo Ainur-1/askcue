@@ -165,7 +165,8 @@ export interface ElectronAPI {
   openMailto: (params: { to: string; subject: string; body: string }) => Promise<{ success: boolean; error?: string }>
 
   // Audio Test
-  startAudioTest: (deviceId?: string) => Promise<{ success: boolean }>
+  startAudioTest: (deviceId?: string) => Promise<{ success: boolean; warning?: string }>
+  onAudioTestError: (callback: (message: string) => void) => () => void
   stopAudioTest: () => Promise<{ success: boolean }>
   onAudioTestLevel: (callback: (level: number) => void) => () => void
 
@@ -276,8 +277,6 @@ export interface ElectronAPI {
   setTavilyApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>;
 
   // Overlay Opacity (Stealth Mode)
-  setOverlayOpacity: (opacity: number) => Promise<void>;
-  onOverlayOpacityChanged: (callback: (opacity: number) => void) => () => void;
 
   // Verbose / Debug Logging
   getVerboseLogging: () => Promise<boolean>;

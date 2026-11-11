@@ -71,14 +71,7 @@ export function windowChannels() {
         ipcRenderer.removeListener('overlay-mouse-passthrough-changed', subscription)
       }
     },
-    setOverlayOpacity: (opacity: number) => ipcRenderer.invoke('set-overlay-opacity', opacity),
-    onOverlayOpacityChanged: (callback: (opacity: number) => void) => {
-      const subscription = (_: any, opacity: number) => callback(opacity)
-      ipcRenderer.on('overlay-opacity-changed', subscription)
-      return () => {
-        ipcRenderer.removeListener('overlay-opacity-changed', subscription)
-      }
-    },
+
     toggleSettingsWindow: (coords?: { x: number; y: number }) => ipcRenderer.invoke('toggle-settings-window', coords),
   }
 }

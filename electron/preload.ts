@@ -171,7 +171,8 @@ interface ElectronAPI {
   openMailto: (params: { to: string; subject: string; body: string }) => Promise<{ success: boolean; error?: string }>
 
   // Audio Test
-  startAudioTest: (deviceId?: string) => Promise<{ success: boolean }>
+  startAudioTest: (deviceId?: string) => Promise<{ success: boolean; warning?: string }>
+  onAudioTestError: (callback: (message: string) => void) => () => void
   stopAudioTest: () => Promise<{ success: boolean }>
   onAudioTestLevel: (callback: (level: number) => void) => () => void
 
@@ -295,8 +296,6 @@ interface ElectronAPI {
   setTavilyApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>;
 
   // Overlay Opacity (Stealth Mode)
-  setOverlayOpacity: (opacity: number) => Promise<void>;
-  onOverlayOpacityChanged: (callback: (opacity: number) => void) => () => void;
 
   // Verbose / Debug Logging
   getVerboseLogging: () => Promise<boolean>;
@@ -859,6 +858,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   openMailto: (params: { to: string; subject: string; body: string }) => ipcRenderer.invoke('open-mailto', params),
 
   // Audio Test
+  onAudioTestError: (callback: (message: string) => void) => { const listener = (_: unknown, message: string) => callback(message); ipcRenderer.on('audio-test-error', listener); return () => { ipcRenderer.removeListener('audio-test-error', listener); }; },
   startAudioTest: (deviceId?: string) => ipcRenderer.invoke('start-audio-test', deviceId),
   stopAudioTest: () => ipcRenderer.invoke('stop-audio-test'),
   onAudioTestLevel: (callback: (level: number) => void) => {
@@ -1121,14 +1121,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   licenseGetHardwareId: () => ipcRenderer.invoke('license:get-hardware-id'),
 
   // Overlay Opacity (Stealth Mode)
-  setOverlayOpacity: (opacity: number) => ipcRenderer.invoke('set-overlay-opacity', opacity),
-  onOverlayOpacityChanged: (callback: (opacity: number) => void) => {
-    const subscription = (_: any, opacity: number) => callback(opacity)
-    ipcRenderer.on('overlay-opacity-changed', subscription)
-    return () => {
-      ipcRenderer.removeListener('overlay-opacity-changed', subscription)
-    }
-  },
+
 
   // Verbose / Debug Logging
   getVerboseLogging: () => ipcRenderer.invoke('get-verbose-logging'),

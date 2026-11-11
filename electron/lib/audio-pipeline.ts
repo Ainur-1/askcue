@@ -1,3 +1,4 @@
+import { AudioTestService } from '../audio/AudioTestService';
 import { BrowserWindow, systemPreferences } from "electron"
 import type { AppState } from "../main"
 import { SystemAudioCapture } from "../audio/SystemAudioCapture"
@@ -239,86 +240,26 @@ export function setupSystemAudioPipeline(appState: AppState): void {
 
 export async function startAudioTest(appState: AppState, deviceId?: string): Promise<{ fallbackUsed: boolean }> {
   const state = appState as any;
-  if (state._audioTestStarting) return { fallbackUsed: false };
-  state._audioTestStarting = true;
-  try {
-    return await _startAudioTestImpl(appState, deviceId);
-  } finally {
-    state._audioTestStarting = false;
-  }
-}
-
-export function attachAudioTestListeners(appState: AppState, capture: MicrophoneCapture): void {
-  capture.on('data', (chunk: Buffer) => {
-    const targets = [
-      appState.settingsWindowHelper.getSettingsWindow(),
-      appState.getWindowHelper().getLauncherWindow(),
-      appState.getWindowHelper().getOverlayWindow(),
-    ].filter((win): win is BrowserWindow => !!win && !win.isDestroyed());
-
-    if (targets.length === 0) return;
-
-    let sum = 0;
-    const step = 10;
-    const len = chunk.length;
-
-    for (let i = 0; i < len; i += 2 * step) {
-      const val = chunk.readInt16LE(i);
-      sum += val * val;
-    }
-
-    const count = len / (2 * step);
-    if (count > 0) {
-      const rms = Math.sqrt(sum / count);
-      const level = Math.min(rms / 10000, 1.0);
-      for (const target of targets) {
-        target.webContents.send('audio-test-level', level);
-      }
-    }
-  });
-
-  capture.on('error', (err: Error) => {
-    console.error('[Main] AudioTest Error:', err);
-  });
+  const epoch = state.audioTestEpoch = (state.audioTestEpoch || 0) + 1;
+  if (!(await ensureMacMicrophoneAccess('audio test'))) throw new Error('Microphone access denied.');
+  if (state.audioTestEpoch !== epoch) throw new Error('Microphone test cancelled');
+  return _startAudioTestImpl(appState, deviceId);
 }
 
 export async function _startAudioTestImpl(appState: AppState, deviceId?: string): Promise<{ fallbackUsed: boolean }> {
   const state = appState as any;
-  console.log(`[Main] Starting Audio Test on device: ${deviceId || 'default'}`);
-  stopAudioTest(appState);
-
-  if (!(await ensureMacMicrophoneAccess('audio test'))) {
-    throw new Error('Microphone access denied. Please allow microphone access in System Settings and try again.');
-  }
-
-  try {
-    state.audioTestCapture = new MicrophoneCapture(deviceId || undefined);
-    attachAudioTestListeners(appState, state.audioTestCapture);
-    state.audioTestCapture.start();
-    return { fallbackUsed: false };
-  } catch (err) {
-    console.warn('[Main] Failed to start audio test on preferred device. Falling back to default.', err);
-    try { state.audioTestCapture?.stop(); } catch { }
-    state.audioTestCapture = null;
-    try {
-      state.audioTestCapture = new MicrophoneCapture();
-      attachAudioTestListeners(appState, state.audioTestCapture);
-      state.audioTestCapture.start();
-      return { fallbackUsed: true };
-    } catch (fallbackErr) {
-      console.error('[Main] Failed to start audio test:', fallbackErr);
-      throw fallbackErr;
-    }
-  }
+  state.audioTestService ??= new AudioTestService((level) => {
+    appState.broadcast('audio-test-level', level);
+  }, (message) => {
+    appState.broadcast('audio-test-error', message);
+  });
+  return state.audioTestService.start(deviceId);
 }
 
 export function stopAudioTest(appState: AppState): void {
   const state = appState as any;
-  if (state.audioTestCapture) {
-    console.log('[Main] Stopping Audio Test');
-    state.audioTestCapture.stop();
-    state.audioTestCapture = null;
-  }
+  state.audioTestEpoch = (state.audioTestEpoch || 0) + 1;
+  state.audioTestService?.stop();
 }
 
 export function finalizeMicSTT(appState: AppState): void {

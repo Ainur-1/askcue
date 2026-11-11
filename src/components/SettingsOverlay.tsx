@@ -18,12 +18,6 @@ import { SystemProxySettings } from './settings/SystemProxySettings';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShortcuts } from '../hooks/useShortcuts';
 import { useResolvedTheme } from '../hooks/useResolvedTheme';
-import {
-    clampOverlayOpacity,
-    getOverlayAppearance,
-    OVERLAY_OPACITY_MIN,
-    getDefaultOverlayOpacity,
-} from '../lib/overlayAppearance';
 import { KeyRecorder } from './ui/KeyRecorder';
 import { ProfileVisualizer } from '../premium';
 import { JDListManager } from './knowledge/JDListManager';
@@ -43,107 +37,6 @@ const TRANSCRIPT_ASSEMBLER_PROFILE_OPTIONS: Array<{ value: TranscriptAssemblerPr
     { value: 'low_latency', label: 'Low-latency', desc: 'Fastest transcript updates, but long sentences may split earlier.' },
     { value: 'coherent', label: 'Coherent', desc: 'Most complete segments for translation; final subtitles may arrive 5-30s later.' },
 ];
-
-// ---------------------------------------------------------------------------
-// MockupPikaInterface — fake in-meeting widget for the opacity preview
-// ---------------------------------------------------------------------------
-const MockupPikaInterface = ({ opacity }: { opacity: number }) => {
-    const resolvedTheme = useResolvedTheme();
-    const appearance = useMemo(
-        () => getOverlayAppearance(opacity, resolvedTheme),
-        [opacity, resolvedTheme]
-    );
-
-    return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none bg-transparent">
-                {/* PikaInterface Widget — opacity controlled by the slider */}
-                <div
-                    id="mockup-pika-interface"
-                    className="flex flex-col items-center pointer-events-none -mt-56"
-                >
-                    {/* TopPill Replica */}
-                    <div className="flex justify-center mb-2 select-none z-50">
-                        <div className="flex items-center gap-2 rounded-full overlay-pill-surface backdrop-blur-md pl-1.5 pr-1.5 py-1.5" style={appearance.pillStyle}>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden overlay-icon-surface" style={appearance.iconStyle}>
-                                <img
-                                    src={icon}
-                                    alt="Pika"
-                                    className="w-[24px] h-[24px] object-contain opacity-95 scale-105 drop-shadow-sm"
-                                    draggable="false"
-                                />
-                            </div>
-                            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-medium border overlay-chip-surface overlay-text-interactive" style={appearance.chipStyle}>
-                                <ChevronUp className="w-3.5 h-3.5 opacity-70" />
-                                <span className="opacity-80 tracking-wide">{t("Hide")}</span>
-                            </div>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center overlay-icon-surface overlay-text-primary" style={appearance.iconStyle}>
-                                <div className="w-3.5 h-3.5 rounded-[3px] bg-state-danger opacity-80" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Main Interface Window Replica */}
-                    <div className="relative w-[600px] max-w-full overlay-shell-surface overlay-text-primary backdrop-blur-2xl border rounded-[24px] overflow-hidden flex flex-col pt-2 pb-3" style={appearance.shellStyle}>
-
-                        {/* Rolling Transcript Bar */}
-                        <div className="w-full flex justify-center py-2 px-4 border-b mb-1 overlay-transcript-surface" style={appearance.transcriptStyle}>
-                            <p className="text-[13px] truncate max-w-[90%] font-medium overlay-text-primary">
-                                <span className={`${resolvedTheme === 'light' ? 'text-blue-700' : 'text-state-info'} mr-2 font-semibold`}>{t("Interviewer")}</span>
-                                <span className="opacity-95">So how would you optimize the current algorithm?</span>
-                            </p>
-                        </div>
-
-                        {/* Chat History Mock */}
-                        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3">
-                            <div className="flex justify-start">
-                                <div className="max-w-[85%] px-4 py-3 text-[14px] leading-relaxed font-normal overlay-text-primary">
-                                    <span className="font-semibold text-state-success block mb-1">{t("Suggestion")}</span>
-                                    A good approach would be to use a hash map to cache the intermediate results, which brings the time complexity down from O(n²) to O(n).
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Quick Actions */}
-                        <div className="flex flex-nowrap justify-center items-center gap-1.5 px-4 pb-3 pt-3">
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium border shrink-0 overlay-chip-surface overlay-text-interactive" style={appearance.chipStyle}>
-                                <Pencil className="w-3 h-3 opacity-70" />{t("What to answer?")}</div>
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium border shrink-0 overlay-chip-surface overlay-text-interactive" style={appearance.chipStyle}>
-                                <MessageSquare className="w-3 h-3 opacity-70" />{t("Clarify")}</div>
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium border shrink-0 overlay-chip-surface overlay-text-interactive" style={appearance.chipStyle}>
-                                <RefreshCw className="w-3 h-3 opacity-70" />{t("Recap")}</div>
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium border shrink-0 overlay-chip-surface overlay-text-interactive" style={appearance.chipStyle}>
-                                <HelpCircle className="w-3 h-3 opacity-70" />{t("Follow Up Question")}</div>
-                            <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium min-w-[74px] shrink-0 border overlay-chip-surface overlay-text-interactive" style={appearance.chipStyle}>
-                                <Zap className="w-3 h-3 opacity-70" />{t("Answer")}</div>
-                        </div>
-
-                        {/* Input Area */}
-                        <div className="px-3">
-                            <div className="relative group">
-                                <div className="w-full border rounded-xl pl-3 pr-10 py-2.5 h-[38px] flex items-center overlay-input-surface" style={appearance.inputStyle}>
-                                    <span className="text-[13px] overlay-text-muted">{t("Ask anything on screen or conversation")}</span>
-                                </div>
-                            </div>
-
-                            {/* Bottom Row */}
-                            <div className="flex items-center justify-between mt-3 px-0.5">
-                                <div className="flex items-center gap-1.5">
-                                    <div className="flex items-center gap-2 px-3 py-1.5 border rounded-lg text-xs font-medium w-[140px] overlay-control-surface overlay-text-interactive" style={appearance.controlStyle}>
-                                        <span className="truncate min-w-0 flex-1">Gemini 3 Flash</span>
-                                        <ChevronDown size={14} className="shrink-0" />
-                                    </div>
-                                    <div className="w-px h-3 mx-1" style={appearance.dividerStyle} />
-                                    <div className="w-7 h-7 flex items-center justify-center rounded-lg overlay-icon-surface overlay-text-muted" style={appearance.iconStyle}>
-                                        <SlidersHorizontal className="w-3.5 h-3.5" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </div>
-    );
-};
 
 interface CustomSelectProps {
     label: string;
@@ -464,157 +357,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
     const [aiResponseLanguage, setAiResponseLanguage] = useState('English');
     const [availableAiLanguages, setAvailableAiLanguages] = useState<any[]>([]);
 
-    // Overlay Opacity state
-    const [overlayOpacity, setOverlayOpacity] = useState<number>(() => {
-        const stored = localStorage.getItem('pika_overlay_opacity');
-        const parsed = stored ? parseFloat(stored) : NaN;
-        // Treat missing value or the old default (0.65) as "not user-set"
-        const isUserSet = Number.isFinite(parsed) && parsed !== getDefaultOverlayOpacity();
-        return isUserSet ? clampOverlayOpacity(parsed) : getDefaultOverlayOpacity();
-    });
-
-    // When the theme changes and the user hasn't saved a custom value, reset to theme-aware default
-    const resolvedTheme = useResolvedTheme();
-    useEffect(() => {
-        const stored = localStorage.getItem('pika_overlay_opacity');
-        const parsed = stored ? parseFloat(stored) : NaN;
-        const isUserSet = Number.isFinite(parsed) && parsed !== getDefaultOverlayOpacity();
-        if (!isUserSet) {
-            setOverlayOpacity(getDefaultOverlayOpacity());
-        }
-    }, [resolvedTheme]);
-
-
-    // Live preview state — true while the user is holding down the slider
-    const [isPreviewingOpacity, setIsPreviewingOpacity] = useState(false);
-    const [previewOverlayOpacity, setPreviewOverlayOpacity] = useState(overlayOpacity);
-
-    // Ref to hold the latest opacity value without triggering renders during drag
-    const latestOpacityRef = React.useRef(overlayOpacity);
-
-    const handleOpacityChange = (val: number) => {
-        // DOM-direct updates for 0-lag 60fps drag (bypasses React reconciliation)
-        const percentText = `${Math.round(val * 100)}%`;
-        document.querySelectorAll('.opacity-percent-label').forEach(el => el.textContent = percentText);
-        setPreviewOverlayOpacity(val);
-        latestOpacityRef.current = val;
-
-        // Broadcast IPC in real-time so actual meeting overlay tracks slider instantly
-        // (safe to do at 60fps, does not trigger React renders)
-        window.electronAPI?.setOverlayOpacity?.(val);
-    };
-
-    // Bug fix #3: keep latestOpacityRef in sync when overlayOpacity changes outside of a drag
-    // (e.g. on first mount, or if another part of code updates it)
-    useEffect(() => {
-        latestOpacityRef.current = overlayOpacity;
-        setPreviewOverlayOpacity(overlayOpacity);
-    }, [overlayOpacity]);
-
-    // Bug fix #3 (close-during-drag): if the overlay closes while the user is still dragging,
-    // restore all DOM state so nothing is left in a broken state.
-    useEffect(() => {
-        if (!isOpen && isPreviewingOpacity) {
-            stopPreviewingOpacity();
-        }
-    }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const startPreviewingOpacity = () => {
-        // Bug fix #5: guard against rapid repeated calls (double pointerDown / touch events)
-        if (isPreviewingOpacity) return;
-
-        // Direct DOM mutation for sub-millisecond instant hide (bypassing slow React tree diffs)
-        document.body.classList.add('disable-transitions');
-
-        const backdrop = document.getElementById('settings-backdrop');
-        const wrapper = document.getElementById('settings-panel-wrapper');
-        const panel = document.getElementById('settings-panel');
-        const card = document.getElementById('opacity-slider-card');
-        const mockup = document.getElementById('settings-mockup-wrapper');
-        const launcher = document.getElementById('launcher-container');
-
-        if (backdrop) {
-            backdrop.style.backgroundColor = 'transparent';
-            backdrop.style.backdropFilter = 'none';
-            backdrop.style.transition = 'none';
-        }
-        if (wrapper) {
-            wrapper.style.backgroundColor = 'transparent';
-            wrapper.style.border = 'none';
-            wrapper.style.boxShadow = 'none';
-        }
-        if (panel) {
-            panel.style.visibility = 'hidden';
-        }
-        if (launcher) {
-            launcher.style.visibility = 'hidden';
-        }
-
-        if (card) {
-            card.style.visibility = 'visible';
-            card.style.position = 'relative';
-            card.style.zIndex = '9999';
-        }
-        if (mockup) {
-            mockup.style.opacity = '1';
-        }
-
-        setPreviewOverlayOpacity(latestOpacityRef.current);
-        setIsPreviewingOpacity(true);
-    };
-
-    const stopPreviewingOpacity = () => {
-        // Direct DOM restoration
-        document.body.classList.remove('disable-transitions');
-        const backdrop = document.getElementById('settings-backdrop');
-        const wrapper = document.getElementById('settings-panel-wrapper');
-        const panel = document.getElementById('settings-panel');
-        const card = document.getElementById('opacity-slider-card');
-        const mockup = document.getElementById('settings-mockup-wrapper');
-        const launcher = document.getElementById('launcher-container');
-
-        if (backdrop) {
-            backdrop.style.backgroundColor = '';
-            backdrop.style.backdropFilter = '';
-            backdrop.style.transition = '';
-        }
-        if (wrapper) {
-            wrapper.style.backgroundColor = '';
-            wrapper.style.border = '';
-            wrapper.style.boxShadow = '';
-        }
-        if (panel) {
-            panel.style.visibility = '';
-        }
-        if (launcher) {
-            launcher.style.visibility = '';
-        }
-
-        if (card) {
-            card.style.visibility = '';
-            card.style.position = '';
-            card.style.zIndex = '';
-        }
-        if (mockup) {
-            // Bug fix #4: restore mockup to hidden (opacity 0) rather than leaving it visible
-            mockup.style.opacity = '0';
-        }
-
-        setIsPreviewingOpacity(false);
-        // Sync final dragged value back to React state (persists to localStorage + IPC via useEffect)
-        setOverlayOpacity(latestOpacityRef.current);
-        setPreviewOverlayOpacity(latestOpacityRef.current);
-    };
-
-    useEffect(() => {
-        // Only persist to localStorage here. IPC is handled real-time in handleOpacityChange
-        // to avoid a redundant extra call 150ms after every drag ends.
-        const timeoutId = setTimeout(() => {
-            localStorage.setItem('pika_overlay_opacity', String(overlayOpacity));
-        }, 150);
-        return () => clearTimeout(timeoutId);
-    }, [overlayOpacity]);
-
     useEffect(() => {
         const loadLanguages = async () => {
             if (window.electronAPI?.getRecognitionLanguages) {
@@ -769,6 +511,8 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
     const [selectedInput, setSelectedInput] = useState('');
     const [selectedOutput, setSelectedOutput] = useState('');
     const [micLevel, setMicLevel] = useState(0);
+    const [isMicTesting, setIsMicTesting] = useState(false);
+    const [micTestError, setMicTestError] = useState('');
     const [inputDeviceNotFound, setInputDeviceNotFound] = useState(false);
     const [useExperimentalSck, setUseExperimentalSck] = useState(false);
 
@@ -1315,40 +1059,28 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
         }
     }, [isOpen, selectedInput, selectedOutput]); // Re-run if isOpen changes, or if selected devices are cleared
 
-    // Use the native mic test path so device IDs stay consistent with the meeting runtime.
     useEffect(() => {
-        if (isOpen && activeTab === 'audio') {
-            const unsubscribe = window.electronAPI?.onAudioTestLevel?.((level) => {
-                setMicLevel(Math.max(0, Math.min(100, level * 100)));
-            });
+        if (!isOpen || activeTab !== 'audio' || !isMicTesting) return;
+        let cancelled = false;
+        setMicTestError('');
+        const unsubscribe = window.electronAPI.onAudioTestLevel(level => {
+            if (!cancelled) setMicLevel(Math.max(0, Math.min(100, level * 100)));
+        });
+        const removeError = window.electronAPI.onAudioTestError(message => {
+            if (!cancelled) { setMicTestError(message); setIsMicTesting(false); }
+        });
+        window.electronAPI.startAudioTest(selectedInput || undefined).then(result => {
+            if (!cancelled) setInputDeviceNotFound(Boolean(result.warning));
+        }).catch(error => {
+            if (!cancelled) { setMicTestError(String(error)); setIsMicTesting(false); }
+        });
+        return () => {
+            cancelled = true; unsubscribe?.(); removeError?.(); setMicLevel(0);
+            void window.electronAPI.stopAudioTest().catch(console.error);
+        };
+    }, [isOpen, activeTab, selectedInput, isMicTesting]);
 
-            window.electronAPI?.startAudioTest(selectedInput || undefined).then((result) => {
-                if (result?.warning) {
-                    setInputDeviceNotFound(true);
-                    setSelectedInput('');
-                    localStorage.removeItem('preferredInputDeviceId');
-                } else {
-                    setInputDeviceNotFound(false);
-                }
-            }).catch((error) => {
-                console.error("Error starting native microphone test:", error);
-                setMicLevel(0);
-            });
-
-            return () => {
-                unsubscribe?.();
-                window.electronAPI?.stopAudioTest?.().catch((error) => {
-                    console.error("Error stopping native microphone test:", error);
-                });
-                setMicLevel(0);
-            };
-        } else {
-            setMicLevel(0);
-            window.electronAPI?.stopAudioTest?.().catch((error) => {
-                console.error("Error stopping native microphone test:", error);
-            });
-        }
-    }, [isOpen, activeTab, selectedInput]);
+    useEffect(() => { if (!isOpen || activeTab !== 'audio') setIsMicTesting(false); }, [isOpen, activeTab]);
 
     return (
         <AnimatePresence>
@@ -1359,7 +1091,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     id="settings-backdrop"
-                    className={`fixed inset-0 z-50 flex items-center justify-center p-8 transition-colors duration-150 ${embedded ? `embedded-settings ${materialsOnly ? 'materials-only' : ''}` : isPreviewingOpacity ? 'bg-transparent backdrop-blur-none' : 'bg-black/60 backdrop-blur-sm'}`}
+                    className={`fixed inset-0 z-50 flex items-center justify-center p-8 transition-colors duration-150 ${embedded ? `embedded-settings ${materialsOnly ? 'materials-only' : ''}` : 'bg-black/60 backdrop-blur-sm'}`}
                 >
                     <motion.div
                         id="settings-panel-wrapper"
@@ -1379,14 +1111,13 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                             onClick={onClose}
                             aria-label={t("Close settings")}
                             className="absolute top-4 right-4 z-10 p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-item-active/60 transition-colors"
-                            style={{ visibility: embedded || isPreviewingOpacity ? 'hidden' : 'visible' }}
+                            style={{ visibility: embedded ? 'hidden' : 'visible' }}
                         >
                             <X size={16} strokeWidth={2.25} />
                         </button>
                         <div
                             id="settings-panel"
                             className="settings-layout flex w-full h-full flex-col"
-                            style={{ visibility: isPreviewingOpacity ? 'hidden' : 'visible' }}
                         >
                         {!materialsOnly && <div className="settings-tabs-bar">
                           <nav role="tablist" aria-label={t("Настройки")}>
@@ -1629,49 +1360,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                             </div>
                                             </div>
 
-                                                {/* ------------------------------------------------------------------ */}
-                                                {/* Interface Opacity (Stealth Mode)                                   */}
-                                                {/* ------------------------------------------------------------------ */}
-                                                <div
-                                                    id="opacity-slider-card"
-                                                    style={isPreviewingOpacity ? { visibility: 'visible', position: 'relative', zIndex: 9999 } : {}}
-                                                    className={`${isLight ? 'bg-bg-card' : 'bg-bg-item-surface'} rounded-xl p-5 border border-border-subtle mt-4`}
-                                                >
-                                                    <div className="flex items-center justify-between mb-3">
-                                                        <label className="flex items-center gap-2 text-xs font-medium text-text-secondary uppercase tracking-wide">
-                                                            <Eye size={13} className="text-text-secondary" />{t("Interface Opacity")}</label>
-                                                        <span className="opacity-percent-label text-xs font-semibold text-text-primary tabular-nums">
-                                                            {Math.round(overlayOpacity * 100)}%
-                                                        </span>
-                                                    </div>
-
-                                                    <input
-                                                        type="range"
-                                                        min={OVERLAY_OPACITY_MIN}
-                                                        max={1.0}
-                                                        step={0.01}
-                                                        defaultValue={overlayOpacity}
-                                                        onChange={(e) => handleOpacityChange(parseFloat(e.target.value))}
-                                                        onPointerDown={startPreviewingOpacity}
-                                                        onPointerUp={stopPreviewingOpacity}
-                                                        onPointerCancel={stopPreviewingOpacity}
-                                                        onPointerLeave={stopPreviewingOpacity}
-                                                        className="w-full h-1.5 rounded-full appearance-none bg-bg-input accent-accent-primary"
-                                                        style={{ WebkitAppearance: 'none' } as React.CSSProperties}
-                                                    />
-
-                                                    <div className="flex justify-between mt-1.5">
-                                                        <span className="text-[10px] text-text-tertiary">{t("More Stealth")}</span>
-                                                        <span className="text-[10px] text-text-tertiary">{t("Fully Visible")}</span>
-                                                    </div>
-
-                                                    <p className="text-xs text-text-tertiary mt-2">{t("Controls the visibility of the in-meeting overlay.")}{' '}
-                                                        <span className="text-text-secondary">{t("Hold the slider to preview.")}</span>
-                                                    </p>
-                                                </div>
-
                                         </div>
-
                                     </div>
 
                                     {/* Process Disguise */}
@@ -2522,6 +2211,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                             <div>
                                                 <div className="flex justify-between text-xs text-text-secondary mb-2 px-1">
                                                     <span>{t("Input Level")}</span>
+                                                    <button type="button" data-testid="microphone-test" onClick={() => setIsMicTesting(value => !value)} className="text-xs text-accent-primary">{t(isMicTesting ? 'Stop microphone test' : 'Test microphone')}</button>
                                                 </div>
                                                 <div className="h-1.5 bg-bg-input rounded-full overflow-hidden">
                                                     <div
@@ -2531,6 +2221,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                 </div>
                                             </div>
 
+                                            {micTestError && <p role="alert" className="text-xs text-state-danger">{t(micTestError)}</p>}
                                             <div className="h-px bg-border-subtle my-2" />
 
                                             <CustomSelect
@@ -2635,21 +2326,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                 </motion.div>
             )
             }
-            {/* ------------------------------------------------------------------ */}
-            {/* Live Preview — mockup sits below the z-50 modal                    */}
-            {/* ------------------------------------------------------------------ */}
-            {/* ------------------------------------------------------------------ */}
-            {/* Live Preview — mockup sits below the z-50 modal                    */}
-            {/* ALWAYS MOUNTED to prevent React AnimatePresence lag spikes         */}
-            {/* ------------------------------------------------------------------ */}
-            <div
-                id="settings-mockup-wrapper"
-                /* z-[49] is intentional: must sit just below the z-50 settings modal it previews */
-                className="fixed inset-0 z-[49] pointer-events-none transition-opacity duration-150"
-                style={{ opacity: isPreviewingOpacity ? 1 : 0 }}
-            >
-                <MockupPikaInterface opacity={previewOverlayOpacity} />
-            </div>
         </AnimatePresence >
     );
 };
