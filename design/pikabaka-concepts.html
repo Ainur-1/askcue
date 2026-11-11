@@ -1,5 +1,6 @@
 <div id="pikabaka-concepts">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
     #pikabaka-concepts { width:100%; }
     #pikabaka-concepts .pk-stage { min-height:790px; display:grid; align-content:start; padding:4px 0 12px; }
     #pikabaka-concepts .pk-stage[hidden] { display:none!important; }
@@ -142,6 +143,7 @@
     #pikabaka-concepts .pk-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
     #pikabaka-concepts .pk-form-field { display:grid; gap:7px; font-size:12px; min-width:0; }
     #pikabaka-concepts .pk-app .pk-form-field .pk-field { width:100%; max-width:none; min-width:0; }
+    #pikabaka-concepts .pk-app .pk-form-field .pk-color { width:56px; max-width:56px; height:40px; padding:4px; }
     #pikabaka-concepts .pk-app textarea.pk-field { resize:vertical; min-height:90px; }
     #pikabaka-concepts .pk-editor-section { display:grid; gap:12px; padding:22px 0; border-bottom:1px solid var(--pk-line); }
     #pikabaka-concepts .pk-editor-section h2,#pikabaka-concepts .pk-editor-section h3 { overflow-wrap:anywhere; }
@@ -166,7 +168,81 @@
     #pikabaka-concepts .pk-capture-copy { padding:20px; }
     #pikabaka-concepts .pk-selection { position:absolute; border:2px solid var(--pk-accent); background:color-mix(in srgb,var(--pk-accent) 9%,transparent); pointer-events:none; }
     #pikabaka-concepts .pk-sheet meter { width:100%; height:16px; margin-top:16px; accent-color:var(--pk-accent); }
+    /* Pikabaka's own CSS, informed by Hermes Desktop's Nous theme and flat-surface conventions. */
+    #pikabaka-concepts .pk-app[data-skin="hermes"] {
+      --pk-chrome:color-mix(in srgb,var(--pk-ink) 4%,var(--pk-bg));
+      --pk-hairline:color-mix(in srgb,var(--pk-ink) 10%,var(--pk-bg));
+      border-color:var(--pk-hairline); border-radius:10px;
+      box-shadow:0 2px 5px light-dark(#1f232807,#00000024);
+      line-height:1.5; letter-spacing:0;
+    }
+    #pikabaka-concepts .pk-workspace[data-skin="hermes"] { grid-template-columns:196px minmax(0,1fr); }
+    #pikabaka-concepts .pk-workspace.pk-in-call[data-skin="hermes"] { grid-template-columns:minmax(0,1fr); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-rail { background:var(--pk-chrome); border-color:var(--pk-hairline); padding:22px 12px 18px; gap:26px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-brand { font-size:16px; letter-spacing:-.5px; font-weight:600; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-brand svg { color:var(--pk-ink); width:18px; height:18px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-brand span span { color:var(--pk-ink); font-weight:600; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-nav { font-size:13px!important; font-weight:400; line-height:1.4; padding:9px 10px; border-radius:5px; gap:9px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-nav[aria-current="page"] { background:color-mix(in srgb,var(--pk-accent) 9%,var(--pk-chrome)); color:var(--pk-ink)!important; font-weight:500; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-nav[aria-current="page"] svg { color:var(--pk-accent); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-topbar { min-height:54px; padding:10px 20px; gap:10px; background:var(--pk-chrome); border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-topbar h1 { font-size:14px; font-weight:500; letter-spacing:0; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-topbar .pk-row { gap:9px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button { font-size:12px; font-weight:500; line-height:1.4; padding:6px 10px; border-radius:5px; border-color:var(--pk-hairline); background:var(--pk-surface); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-primary,
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer [data-action="send"] { background:var(--pk-primary-fill); border-color:transparent; color:var(--pk-on-accent); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-primary:hover,
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer [data-action="send"]:hover { filter:brightness(.94); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-quiet { background:transparent; border-color:transparent; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-button-quiet:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-visibility { border-color:var(--pk-hairline); border-radius:5px; padding:5px 8px; font-size:11px; background:var(--pk-bg); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-visibility span { min-width:72px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-live { font-size:11px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-live .pk-dot { background:light-dark(#1f8a65,#3fb950); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-live .pk-dot-paused { background:var(--pk-muted); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-duration { font-size:11px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-model { font-size:11px; max-width:150px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-body { padding:22px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-eyebrow { font-size:11px; font-weight:500; letter-spacing:.7px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] h2 { font-size:18px; font-weight:500; letter-spacing:-.3px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] h3 { font-size:13px; font-weight:500; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-chip { font-size:11px; border-radius:4px; padding:3px 6px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-answer-content { margin:18px 0; min-height:220px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-answer-lead { font-size:calc(var(--pk-font) * 1.4); font-weight:500; letter-spacing:-.25px; line-height:1.55; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-answer-content ul { font-size:var(--pk-font); gap:10px; line-height:1.65; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-transcript { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-transcript-head { margin-bottom:20px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-quote { font-size:13px; line-height:1.65; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer { border-radius:8px; border-color:var(--pk-hairline); background:var(--pk-surface); padding:13px; box-shadow:0 1px 2px light-dark(#1f232808,#0000001a); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-composer textarea { font-size:13px; min-height:52px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-tools { border-radius:6px; padding:9px; background:var(--pk-chrome); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-segmented { gap:12px; border-bottom:1px solid var(--pk-hairline); margin-bottom:22px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-segmented button { padding:9px 4px; font-size:12px; border-radius:0; border-bottom:2px solid transparent; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-segmented button[aria-selected="true"] { background:transparent; border-bottom-color:var(--pk-accent); color:var(--pk-ink); font-weight:500; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-search { margin:0 0 22px; border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-search input { font-size:13px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-meeting { padding:18px 10px; border-color:var(--pk-hairline); border-radius:5px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-meeting:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-meeting .pk-meeting-icon { width:30px; height:30px; background:transparent; border-radius:0; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-sheet { padding:18px 0; border:0; border-radius:0; background:transparent; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-editor-item { background:transparent; border-radius:0; padding:16px 0; border-top:1px solid var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-editor-section { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-settings-row { padding:17px 0; border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-settings-row strong { font-size:13px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-field { border-color:var(--pk-hairline); border-radius:5px; font-size:13px; background:var(--pk-surface); box-shadow:inset 0 1px 1px light-dark(#1f232806,#00000018); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] input { accent-color:var(--pk-accent); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-chat article { background:var(--pk-soft); border-radius:6px; }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-details { border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-preparation { max-width:650px; margin-top:8px; }
+    #pikabaka-concepts .pk-focus[data-skin="hermes"] { max-width:700px; }
+    #pikabaka-concepts .pk-focus[data-skin="hermes"] .pk-question { padding-top:5px; border-color:var(--pk-hairline); }
+    #pikabaka-concepts .pk-focus[data-skin="hermes"] .pk-answer-lead { font-size:calc(var(--pk-font) * 1.55); }
+    #pikabaka-concepts .pk-focus[data-skin="hermes"] .pk-answer-content li { border-color:var(--pk-hairline); }
     @media (max-width:760px) {
+      #pikabaka-concepts .pk-workspace[data-skin="hermes"] { grid-template-columns:minmax(0,1fr); }
+      #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-rail { padding:15px 12px; gap:14px; }
+      #pikabaka-concepts .pk-app[data-skin="hermes"] .pk-body { padding:18px; }
       #pikabaka-concepts .pk-stage { min-height:1080px; }
       #pikabaka-concepts .pk-stage-focus { padding:20px 0; }
       #pikabaka-concepts .pk-workspace { grid-template-columns:minmax(0,1fr); }
@@ -256,8 +332,12 @@
       const saved=globalThis.openai?.widgetState?.modelContent||{};
       let revision=Number.isSafeInteger(saved.revision)?saved.revision:0;
       const apps=[{el:root.querySelector('#pk-workspace'),compact:false,screen:saved.workspaceScreen||'session'},{el:root.querySelector('#pk-focus'),compact:true,screen:saved.focusScreen||'session'}];
-      const screens=['session','history','materials','settings','record','profile-edit','job-edit','document','import','prep','negotiation','company','providers','provider-edit','instructions','translation','shortcut','audio-test','capture','voice','export','email','calendar','confirm','copy','diagnostics','about'];
-      for(const app of apps){Object.assign(app,{active:false,listening:false,startedAt:null,endedAt:null,tool:'answer',answerOverride:null,transcript:!app.compact,translation:false,tools:false,nav:false,settings:'general',material:'profile',model:data.settings.answerModel,record:1,job:1,document:1,provider:1,search:'',prompt:'',attachment:null,messages:[],draft:null,returnTo:null,error:'',toast:'',savedNotes:false,view:'summary',category:'Все',negotiationPhase:0,voiceText:'',audioState:'receiving',font:14,spacing:24,radius:12,theme:'system',accent:'#267867'});if(!screens.includes(app.screen))app.screen='session';if(['profile-edit','job-edit','provider-edit','document','import','confirm','shortcut','instructions','translation','capture','voice','export','email','copy'].includes(app.screen))app.screen='session';}
+      const designSkins={
+        hermes:{skin:'hermes',family:'Segoe UI',font:14,spacing:22,radius:6,accent:'#0053fd',bgLight:'#fcfcfc',bgDark:'#0d1117',inkLight:'#1f2328',inkDark:'#e6edf3'},
+        classic:{skin:'classic',family:'Segoe UI',font:14,spacing:24,radius:12,accent:'#267867',bgLight:'#fafaf8',bgDark:'#151716',inkLight:'#202923',inkDark:'#e7ede8'}
+      };
+      const screens=['session','history','materials','settings','record','profile-edit','job-edit','document','import','prep','negotiation','company','providers','provider-edit','instructions','translation','shortcut','audio-test','capture','voice','export','email','calendar','confirm','copy','diagnostics','about','appearance'];
+      for(const app of apps){Object.assign(app,{active:false,listening:false,startedAt:null,endedAt:null,tool:'answer',answerOverride:null,transcript:!app.compact,translation:false,tools:false,nav:false,settings:'general',material:'profile',model:data.settings.answerModel,record:1,job:1,document:1,provider:1,search:'',prompt:'',attachment:null,messages:[],draft:null,returnTo:null,error:'',toast:'',savedNotes:false,view:'summary',category:'Все',negotiationPhase:0,voiceText:'',audioState:'receiving',...designSkins.hermes,theme:'system'});if(!screens.includes(app.screen))app.screen='session';if(['profile-edit','job-edit','provider-edit','document','import','confirm','shortcut','instructions','translation','capture','voice','export','email','copy'].includes(app.screen))app.screen='session';}
       const persist=()=>{revision++;globalThis.openai?.setWidgetState?.({modelContent:{workspaceScreen:apps[0].screen,focusScreen:apps[1].screen,revision},privateContent:null}).catch(()=>{});};
       globalThis.addEventListener('openai:set_globals',event=>{const state=event.detail?.globals?.widgetState?.modelContent;if(!state||(state.revision||0)<revision)return;revision=state.revision||0;apps.forEach((app,i)=>{const screen=state[i?'focusScreen':'workspaceScreen'];if(screens.includes(screen)&&screen!==app.screen&&!screen.endsWith('-edit')){app.screen=screen;render(app);}});});
       const elapsed=app=>app.startedAt===null?0:Math.max(0,Math.floor(((app.endedAt??Date.now())-app.startedAt)/1000));
@@ -322,7 +402,7 @@
       function settingsScreen(app){
         const tabs=[['general','Общие'],['audio','Аудио'],['models','Модели'],['window','Окно'],['shortcuts','Клавиши'],['about','О программе']];
         let content='';
-        if(app.settings==='general')content=`${toggle('Использовать системный прокси','proxy','В приложении применяется без перезапуска.')}${setting('Язык ответов','language',['Русский','English','Deutsch'])}<label class="pk-settings-row"><strong>Оформление</strong><select class="pk-field" data-theme>${[['system','Как в системе'],['light','Светлое'],['dark','Тёмное']].map(([key,label])=>`<option value="${key}" ${app.theme===key?'selected':''}>${label}</option>`).join('')}</select></label>${toggle('Запускать при входе','startup')}${toggle('Подробные логи','logs')}${toolbar(button('diagnostics','Диагностика','activity'),button('calendar','Google Calendar','calendar-days'))}`;
+        if(app.settings==='general')content=`${toggle('Использовать системный прокси','proxy','В приложении применяется без перезапуска.')}${setting('Язык ответов','language',['Русский','English','Deutsch'])}<div class="pk-settings-row"><span><strong>Оформление</strong><p>${esc(app.family)}</p></span>${button('appearance','Настроить','palette')}</div>${toggle('Запускать при входе','startup')}${toggle('Подробные логи','logs')}${toolbar(button('diagnostics','Диагностика','activity'),button('calendar','Google Calendar','calendar-days'))}`;
         else if(app.settings==='audio')content=`${setting('Системный звук','systemAudio',['Устройство по умолчанию','Наушники','Динамики'])}${setting('Микрофон','microphone',['Микрофон по умолчанию','USB-микрофон','Без микрофона'])}${setting('Распознавание','stt',['Groq · Whisper','OpenAI','Deepgram','ElevenLabs','Soniox','Google','Azure','IBM Watson'])}<label class="pk-settings-row"><strong>Ключ / данные провайдера STT</strong><input class="pk-field" type="password" autocomplete="off" data-config="sttKey" value="${esc(data.settings.sttKey)}" aria-label="Ключ провайдера STT" placeholder="Тестовое значение"></label><label class="pk-settings-row"><strong>Регион / путь Service Account</strong><input class="pk-field" data-config="sttRegion" value="${esc(data.settings.sttRegion)}" aria-label="Регион или Service Account"></label><label class="pk-settings-row"><strong>Модель STT</strong><input class="pk-field" data-config="sttModel" value="${esc(data.settings.sttModel)}" aria-label="Модель STT"></label>${setting('Язык речи','sttLanguage',['Автоопределение','Русский','English','Deutsch'])}${setting('Сегментация речи','segmentation',['Сбалансированный','Быстрый','Связный'])}${toggle('Показывать транскрипт','showTranscript')}${toggle('Перевод транскрипта','translation')}${toggle('Экспериментальный захват звука macOS','experimentalCapture')}${toolbar(button('translation-model','Настроить перевод','languages'),button('test-audio','Проверить звук','audio-lines'))}`;
         else if(app.settings==='models')content=`${setting('Модель для ответов','answerModel',availableModels())}<div class="pk-settings-row"><strong>Подключения провайдеров</strong>${button('provider','Настроить','plug')}</div><div class="pk-settings-row"><strong>Свои инструкции</strong>${button('instructions','Редактировать','pencil')}</div><div class="pk-settings-row"><strong>Модель перевода</strong>${button('translation-model','Настроить','languages')}</div>`;
         else if(app.settings==='window')content=`<div class="pk-settings-row"><span><strong>Detectable / Undetectable</strong><p>Переключатель всегда в верхней панели. Undetectable включает защиту окон от захвата; на macOS также скрывает Pika в Dock и трее. Результат зависит от способа захвата экрана.</p></span></div>${toggle('Сквозные клики','passthrough')}<label class="pk-settings-row"><span><strong>Непрозрачность</strong><p><output data-opacity-value>${data.settings.opacity}%</output></p></span><input type="range" min="40" max="100" value="${data.settings.opacity}" data-config="opacity" aria-label="Непрозрачность"></label>${setting('Маскировка процесса','disguise',['Без маскировки','Терминал','Системные настройки','Монитор активности'])}`;
@@ -348,14 +428,37 @@
       function captureScreen(app){const area=app.captureArea;const rect=app.selection||{left:14,top:20,width:62,height:52};return `${back()}<p class="pk-small pk-muted">${area?'Выделите нужную область в демонстрационном экране.':'Предпросмотр демонстрационного экрана.'} Реальный экран не захватывается.</p><div class="pk-capture" data-capture-surface><div class="pk-capture-chrome">API · заметки</div><div class="pk-capture-copy"><h3>Ограничение запросов</h3><pre>GET /api/events\n429 Too Many Requests\nRetry-After: 30</pre></div>${area?`<div class="pk-selection" data-selection style="left:${rect.left}%;top:${rect.top}%;width:${rect.width}%;height:${rect.height}%"></div>`:''}</div>${toolbar(button('attach-capture',area?'Добавить область':'Добавить снимок','check','primary'),button('cancel','Отмена','x'))}`;}
       function voiceScreen(app){return `<form class="pk-editor" data-form="voice">${back()}<div class="pk-row"><span class="pk-chip">${app.voiceRecording?'Запись примера':'Голосовой вопрос'}</span>${button('voice-record',app.voiceRecording?'Остановить':'Начать запись',app.voiceRecording?'square':'mic')}</div>${field('Распознанный вопрос','text',app.draft.text,{area:true})}<p class="pk-small pk-muted">Голосовой сценарий демонстрируется на примере; микрофон браузера не включается.</p>${toolbar(button('apply-voice','Добавить вопрос','check','primary'),button('cancel','Отмена','x'))}</form>`;}
       function audioTestScreen(app){const status=audioStatus({...app,active:true,listening:true});return `${back()}<div class="pk-settings-row"><strong>Системный звук</strong><span class="pk-small">${esc(data.settings.systemAudio)}</span></div><div class="pk-settings-row"><strong>Микрофон</strong><span class="pk-small">${esc(data.settings.microphone)}</span></div><label class="pk-form-field"><span>Сценарий сигнала</span><select class="pk-field" data-audio-scenario>${[['receiving','Есть транскрипт'],['waiting','Звук есть, текста пока нет'],['silent','Нет системного звука'],['disconnected','Соединение потеряно']].map(([key,label])=>`<option value="${key}" ${app.audioState===key?'selected':''}>${label}</option>`).join('')}</select></label><section class="pk-sheet" role="status"><h3>${status}</h3><meter min="0" max="100" value="${app.audioState==='receiving'?65:app.audioState==='waiting'?40:0}" aria-label="Пример уровня сигнала"></meter><p class="pk-small">${app.audioState==='silent'?'Проверьте источник системного звука и воспроизведение в приложении звонка.':app.audioState==='disconnected'?'Проверьте подключение, прокси и ключ провайдера распознавания.':'Показано ожидаемое состояние интерфейса.'}</p></section><p class="pk-small pk-muted">Это проверка состояний макета, без обращения к аудиоустройствам.</p>${toolbar(button('audio-settings','Настройки аудио','sliders-horizontal'))}`;}
+      function appearanceScreen(app){
+        const color=(label,key)=>`<label class="pk-form-field"><span>${label}</span><div class="pk-row"><input type="color" class="pk-field pk-color" data-appearance="${key}" value="${app[key]}" aria-label="${label}"><code>${app[key]}</code></div></label>`;
+        return `<section class="pk-editor">${back()}<label class="pk-form-field"><span>Стиль интерфейса</span><select class="pk-field" data-appearance="skin"><option value="hermes" ${app.skin==='hermes'?'selected':''}>Hermes · Nous</option><option value="classic" ${app.skin==='classic'?'selected':''}>Исходный макет</option></select></label><div class="pk-form-grid"><label class="pk-form-field"><span>Шрифт</span><select class="pk-field" data-appearance="family">${['Segoe UI','Inter','Manrope','IBM Plex Sans'].map(family=>`<option ${app.family===family?'selected':''}>${family}</option>`).join('')}</select></label><label class="pk-form-field"><span>Тема</span><select class="pk-field" data-appearance="theme">${[['system','Как в системе'],['light','Светлая'],['dark','Тёмная']].map(([value,label])=>`<option value="${value}" ${app.theme===value?'selected':''}>${label}</option>`).join('')}</select></label></div><label class="pk-form-field"><span>Размер текста · ${app.font} px</span><input type="range" min="13" max="17" value="${app.font}" data-appearance="font" aria-label="Размер текста"></label><div class="pk-form-grid">${color('Фон · светлая тема','bgLight')}${color('Текст · светлая тема','inkLight')}${color('Фон · тёмная тема','bgDark')}${color('Текст · тёмная тема','inkDark')}${color('Акцент','accent')}</div><section class="pk-sheet"><h3>Предпросмотр</h3><p style="color:var(--pk-ink);font:inherit;margin-top:12px">Текущий разговор · История встреч · Материалы</p><p class="pk-answer-lead" style="margin-top:16px">Я бы вынес счётчик в общее хранилище.</p><div class="pk-row"><span class="pk-chip">Мой опыт</span><span class="pk-live"><span class="pk-dot"></span>Слушаю</span></div></section>${toolbar(button('reset-appearance','Сбросить настройки стиля','rotate-ccw'))}</section>`;
+      }
       function diagnosticsScreen(app){return `${back()}<div class="pk-editor"><div class="pk-settings-row"><strong>Системный прокси</strong><span>${data.settings.proxy?'Использовать':'Не использовать'}</span></div><div class="pk-settings-row"><strong>Распознавание</strong><span>${esc(data.settings.stt)}</span></div><div class="pk-settings-row"><strong>Google Calendar</strong><span>OAuth не настроен</span></div><div class="pk-settings-row"><strong>Подробные логи</strong><span>${data.settings.logs?'Включены':'Выключены'}</span></div><pre data-diagnostics>UI prototype · no network requests\nAudio state: ${esc(app.audioState)}\nSystem proxy preference: ${data.settings.proxy}\nActive conversation: ${app.active}</pre>${toolbar(button('copy-diagnostics','Копировать диагностику','copy'))}</div>`;}
       function render(app){
         const inCall=app.active&&app.screen==='session';
-        app.el.classList.toggle('pk-in-call',inCall);
+        app.el.classList.toggle('pk-in-call',inCall);app.el.dataset.skin=app.skin;
         app.el.style.setProperty('--pk-radius',app.radius+'px');app.el.style.setProperty('--pk-font',app.font+'px');app.el.style.setProperty('--pk-space',app.spacing+'px');
         app.el.style.colorScheme=app.theme==='system'?'light dark':app.theme;
+        app.el.style.fontFamily='"'+app.family+'", "Segoe UI", sans-serif';
+        app.el.style.setProperty('--pk-bg','light-dark('+app.bgLight+','+app.bgDark+')');
+        app.el.style.setProperty('--pk-ink','light-dark('+app.inkLight+','+app.inkDark+')');
+        app.el.style.setProperty('--pk-surface','light-dark(color-mix(in srgb, '+app.bgLight+' 65%, #fff), color-mix(in srgb, '+app.bgDark+' 97%, #fff))');
+        app.el.style.setProperty('--pk-soft','color-mix(in srgb, var(--pk-ink) 5%, var(--pk-bg))');
+        app.el.style.setProperty('--pk-line','color-mix(in srgb, var(--pk-ink) 14%, var(--pk-bg))');
+        app.el.style.setProperty('--pk-muted','color-mix(in srgb, var(--pk-ink) 70%, var(--pk-bg))');
+        if(app.accent!=='#267867') {
+          const rgb=app.accent.slice(1).match(/.{2}/g).map(value=>parseInt(value,16)/255);
+          const linear=rgb.map(value=>value<=.04045?value/12.92:Math.pow((value+.055)/1.055,2.4));
+          const luminance=linear[0]*.2126+linear[1]*.7152+linear[2]*.0722;
+          app.el.style.setProperty('--pk-on-accent',luminance>.179?'#13201b':'#ffffff');
+        } else app.el.style.removeProperty('--pk-on-accent');
         if(app.accent!=='#267867'){app.el.style.setProperty('--pk-accent',app.accent);app.el.style.setProperty('--pk-accent-soft',`color-mix(in srgb, ${app.accent} 13%, var(--pk-surface))`);}else{app.el.style.removeProperty('--pk-accent');app.el.style.removeProperty('--pk-accent-soft');}
-        const title=({session:app.active?(activeJob()?.title||'Текущий разговор'):'Новый разговор',history:'История встреч',materials:'Материалы',settings:'Настройки',record:currentMeeting(app)?.name||'Запись встречи','profile-edit':'Редактирование профиля','job-edit':app.draft?.id?'Вакансия':'Новая вакансия',document:'Документ',import:'Добавить материал',prep:'Подготовка к вакансии',negotiation:'Подготовка к переговорам',company:'О компании',providers:'Подключения моделей','provider-edit':'Настройка провайдера',instructions:app.draft?.rename?'Переименовать встречу':'Свои инструкции',translation:'Перевод транскрипта',shortcut:'Горячая клавиша','audio-test':'Проверка звука',capture:app.captureArea?'Область экрана':'Скриншот',voice:'Голосовой вопрос',export:'Экспорт встречи',email:'Письмо после встречи',calendar:'Календарь',confirm:app.draft?.title||'Подтверждение',copy:'Копирование',diagnostics:'Диагностика',about:'О программе'})[app.screen];
+        app.el.style.setProperty('--pk-primary-fill',app.accent);
+        if(app.skin==='hermes'&&app.accent==='#0053fd'){
+          app.el.style.setProperty('--pk-accent','light-dark(#0053fd,#4a84fe)');
+          app.el.style.setProperty('--pk-on-accent','#ffffff');
+          app.el.style.setProperty('--pk-accent-soft','color-mix(in srgb, var(--pk-accent) 10%, var(--pk-surface))');
+        }
+        const title=({session:app.active?(activeJob()?.title||'Текущий разговор'):'Новый разговор',history:'История встреч',materials:'Материалы',settings:'Настройки',record:currentMeeting(app)?.name||'Запись встречи','profile-edit':'Редактирование профиля','job-edit':app.draft?.id?'Вакансия':'Новая вакансия',document:'Документ',import:'Добавить материал',prep:'Подготовка к вакансии',negotiation:'Подготовка к переговорам',company:'О компании',providers:'Подключения моделей','provider-edit':'Настройка провайдера',instructions:app.draft?.rename?'Переименовать встречу':'Свои инструкции',translation:'Перевод транскрипта',shortcut:'Горячая клавиша','audio-test':'Проверка звука',capture:app.captureArea?'Область экрана':'Скриншот',voice:'Голосовой вопрос',export:'Экспорт встречи',email:'Письмо после встречи',calendar:'Календарь',confirm:app.draft?.title||'Подтверждение',copy:'Копирование',diagnostics:'Диагностика',about:'О программе',appearance:'Оформление'})[app.screen];
         const visibility=`<label class="pk-visibility cursor-interaction" data-tooltip="Undetectable включает защиту окон от захвата; на macOS также скрывает Pika в Dock и трее.">${icon(data.undetectable?'eye-off':'eye')}<span data-visibility-label>${data.undetectable?'Undetectable':'Detectable'}</span><input type="checkbox" class="pk-switch cursor-interaction" role="switch" data-visibility-mode aria-label="Режим Undetectable" ${data.undetectable?'checked':''}></label>`;
         const status=inCall?`<span class="pk-live"><span class="pk-dot ${!app.listening||['silent','disconnected'].includes(app.audioState)?'pk-dot-paused':''}"></span>${audioStatus(app)}</span>`:app.active?button('return-session','Вернуться к разговору','radio'):'';
         const modelPicker=['session','prep','negotiation'].includes(app.screen)?`<select class="pk-model" data-model aria-label="Модель ответов">${availableModels().map(model=>`<option ${model===app.model?'selected':''}>${esc(model)}</option>`).join('')}</select>`:'';
@@ -387,6 +490,7 @@
         else if(app.screen==='voice')content=voiceScreen(app);
         else if(app.screen==='audio-test')content=audioTestScreen(app);
         else if(app.screen==='diagnostics')content=diagnosticsScreen(app);
+        else if(app.screen==='appearance')content=appearanceScreen(app);
         app.el.querySelector('[data-content]').innerHTML=content+`${app.error?`<p class="pk-error" role="alert">${esc(app.error)}</p>`:''}<div class="pk-toast" role="status" aria-live="polite">${esc(app.toast)}</div>`;
         if(globalThis.lucide)lucide.createIcons({attrs:{width:16,height:16}});
       }
@@ -505,6 +609,8 @@
         if(name==='reset-shortcuts'){data.shortcuts=clone(defaultShortcuts);return;}
         if(name==='test-audio'){open(app,'audio-test');return;}
         if(name==='diagnostics'){open(app,'diagnostics');return;}
+        if(name==='appearance'){open(app,'appearance');return;}
+        if(name==='reset-appearance'){apps.forEach(variant=>Object.assign(variant,designSkins[app.skin],{theme:'system'}));return;}
         if(name==='copy-diagnostics'){requestCopy(app,app.el.querySelector('[data-diagnostics]').textContent);return;}
         if(name==='calendar'){open(app,'calendar');return;}
         if(name==='save-notes'){const m=currentMeeting(app);m.notes=app.notesDraft?.id===m.id?app.notesDraft.text:m.notes;app.savedNotes=true;return;}
@@ -544,6 +650,7 @@
           if(node.matches('[data-visibility-mode]')){data.undetectable=node.checked;renderAll();return;}
           if(node.matches('[data-model]')){data.settings.answerModel=node.value;apps.forEach(variant=>variant.model=node.value);}
           if(node.matches('[data-theme]'))app.theme=node.value;
+          if(node.matches('[data-appearance]'))apps.forEach(variant=>{if(node.dataset.appearance==='skin')Object.assign(variant,designSkins[node.value]);else variant[node.dataset.appearance]=node.dataset.appearance==='font'?Number(node.value):node.value;});
           if(node.matches('[data-config]')){data.settings[node.dataset.config]=node.type==='checkbox'?node.checked:node.type==='range'?Number(node.value):node.value;if(node.dataset.config==='answerModel')apps.forEach(variant=>variant.model=node.value);if(node.dataset.config==='showTranscript')apps.forEach(variant=>variant.transcript=node.checked);if(node.dataset.config==='translation')apps.forEach(variant=>variant.translation=node.checked);}
           if(node.matches('[data-profile-enabled]'))data.profileEnabled=node.checked;
           if(node.matches('[data-document-enabled]')){const doc=data.documents.find(item=>item.id===Number(node.dataset.documentEnabled));if(node.checked&&!doc.indexed){doc.indexed=true;}doc.enabled=node.checked;}
@@ -588,7 +695,7 @@
         });
         app.el.addEventListener('pointerup',()=>{captureDrag=null;});
         render(app);
-        if(globalThis.Tweak){const tweak=new Tweak({container:app.el,onChange:()=>render(app)});tweak.addSlider(app,'radius',{label:'Скругление',min:4,max:20,step:2,unit:'px'});tweak.addSlider(app,'font',{label:'Размер текста',min:13,max:17,unit:'px'});tweak.addSlider(app,'spacing',{label:'Отступы',min:16,max:32,step:2,unit:'px'});tweak.addSelect(app,'theme',{label:'Тема',options:[{label:'Как в чате',value:'system'},{label:'Светлая',value:'light'},{label:'Тёмная',value:'dark'}]});tweak.addColorPicker(app,'accent',{label:'Акцент',reference:'--pk-accent'});tweak.addSelect(app,'audioState',{label:'Состояние звука',options:[{label:'Есть транскрипт',value:'receiving'},{label:'Звук без текста',value:'waiting'},{label:'Нет звука',value:'silent'},{label:'Нет соединения',value:'disconnected'}]});}
+        if(globalThis.Tweak){const tweak=new Tweak({container:app.el,onChange:()=>render(app)});tweak.addSlider(app,'radius',{label:'Скругление',min:4,max:20,step:2,unit:'px'});tweak.addSlider(app,'spacing',{label:'Отступы',min:16,max:32,step:2,unit:'px'});tweak.addSelect(app,'audioState',{label:'Состояние звука',options:[{label:'Есть транскрипт',value:'receiving'},{label:'Звук без текста',value:'waiting'},{label:'Нет звука',value:'silent'},{label:'Нет соединения',value:'disconnected'}]});}
       }
       const durationInterval=setInterval(()=>{if(!root.isConnected){clearInterval(durationInterval);return;}for(const app of apps){const timer=app.el.querySelector('[data-elapsed]');if(timer)timer.textContent=formatElapsed(elapsed(app));}},1000);
     })();
