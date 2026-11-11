@@ -1,0 +1,373 @@
+<div id="pikabaka-concepts">
+  <style>
+    #pikabaka-concepts { width:100%; }
+    #pikabaka-concepts .pk-stage { min-height:790px; display:grid; align-content:start; padding:4px 0 12px; }
+    #pikabaka-concepts .pk-stage[hidden] { display:none!important; }
+    #pikabaka-concepts .pk-stage-focus { align-content:center; padding:36px 20px; }
+    #pikabaka-concepts .pk-app {
+      --pk-bg:light-dark(#fafaf8,#151716); --pk-surface:light-dark(#fff,#1b1e1c);
+      --pk-soft:light-dark(#f1f3ef,#232824); --pk-line:light-dark(#e4e7e1,#303731);
+      --pk-ink:light-dark(#202923,#e7ede8); --pk-muted:light-dark(#69736b,#9ba79e);
+      --pk-accent:light-dark(#267867,#92cbb7); --pk-on-accent:light-dark(#fff,#13281e);
+      --pk-accent-soft:light-dark(#e7f0e9,#293c30); --pk-danger:light-dark(#a9443d,#edafa8);
+      --pk-radius:12px; --pk-space:24px; --pk-font:14px;
+      background:var(--pk-bg); color:var(--pk-ink); font-family:Inter,"Segoe UI",sans-serif;
+      font-size:var(--pk-font); line-height:1.55; border:1px solid var(--pk-line);
+      border-radius:calc(var(--pk-radius) + 6px); overflow:clip; text-align:left;
+      box-shadow:0 14px 50px light-dark(#2030200b,#00000030); color-scheme:light dark;
+    }
+    #pikabaka-concepts .pk-app * { box-sizing:border-box; }
+    #pikabaka-concepts .pk-app [hidden] { display:none!important; }
+    #pikabaka-concepts .pk-app h1,#pikabaka-concepts .pk-app h2,#pikabaka-concepts .pk-app h3,#pikabaka-concepts .pk-app p { margin:0; }
+    #pikabaka-concepts .pk-app h1 { font-size:24px; font-weight:600; letter-spacing:-.7px; line-height:1.25; }
+    #pikabaka-concepts .pk-app h2 { font-size:20px; font-weight:600; letter-spacing:-.45px; }
+    #pikabaka-concepts .pk-app h3 { font-size:14px; font-weight:600; }
+    #pikabaka-concepts .pk-app button,#pikabaka-concepts .pk-app input,#pikabaka-concepts .pk-app select,#pikabaka-concepts .pk-app textarea { font:inherit; }
+    #pikabaka-concepts .pk-app button { color:inherit; cursor:inherit; }
+    #pikabaka-concepts .pk-app button:focus-visible,#pikabaka-concepts .pk-app input:focus-visible,#pikabaka-concepts .pk-app select:focus-visible,#pikabaka-concepts .pk-app textarea:focus-visible { outline:2px solid var(--pk-accent); outline-offset:3px; }
+    #pikabaka-concepts .pk-app button:disabled { opacity:.45; }
+    #pikabaka-concepts .pk-app svg { width:16px; height:16px; flex-shrink:0; stroke-width:1.65; }
+    #pikabaka-concepts .pk-app .pk-small { font-size:12px; }
+    #pikabaka-concepts .pk-app .pk-muted { color:var(--pk-muted); }
+    #pikabaka-concepts .pk-app .pk-eyebrow { font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--pk-muted); }
+    #pikabaka-concepts .pk-app .pk-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    #pikabaka-concepts .pk-app .pk-between { justify-content:space-between; }
+    #pikabaka-concepts .pk-app .pk-stack { display:grid; gap:20px; }
+    #pikabaka-concepts .pk-app .pk-button { border:1px solid var(--pk-line); border-radius:8px; background:var(--pk-surface); display:inline-flex; gap:8px; align-items:center; justify-content:center; padding:8px 12px; font-size:12px; font-weight:500; white-space:normal; }
+    #pikabaka-concepts .pk-app .pk-button:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-app .pk-button-primary { background:var(--pk-ink); color:var(--pk-bg); border-color:var(--pk-ink); }
+    #pikabaka-concepts .pk-app .pk-button-primary:hover { background:var(--pk-accent); color:var(--pk-on-accent); border-color:var(--pk-accent); }
+    #pikabaka-concepts .pk-app .pk-button-quiet { border-color:transparent; background:transparent; color:var(--pk-muted); }
+    #pikabaka-concepts .pk-app .pk-icon { width:32px; height:32px; padding:7px; flex-shrink:0; }
+    #pikabaka-concepts .pk-app .pk-chip { display:inline-flex; align-items:center; gap:6px; padding:3px 7px; border-radius:5px; background:var(--pk-soft); color:var(--pk-muted); font-size:11px; }
+    #pikabaka-concepts .pk-app .pk-live { display:inline-flex; align-items:center; gap:7px; color:var(--pk-muted); font-size:12px; }
+    #pikabaka-concepts .pk-app .pk-dot { width:6px; height:6px; border-radius:50%; background:var(--pk-accent); flex-shrink:0; }
+    #pikabaka-concepts .pk-app .pk-dot-paused { background:var(--pk-muted); }
+    #pikabaka-concepts .pk-app .pk-rule { border:0; border-top:1px solid var(--pk-line); margin:0; }
+    #pikabaka-concepts .pk-app .pk-brand { font-size:17px; letter-spacing:-.75px; font-weight:650; display:flex; align-items:center; gap:9px; }
+    #pikabaka-concepts .pk-app .pk-brand svg { width:20px; height:20px; color:var(--pk-accent); }
+    #pikabaka-concepts .pk-app .pk-brand span span { color:var(--pk-muted); font-weight:400; }
+    #pikabaka-concepts .pk-workspace { display:grid; grid-template-columns:164px minmax(0,1fr); min-height:742px; }
+    #pikabaka-concepts .pk-rail { background:var(--pk-surface); border-right:1px solid var(--pk-line); padding:24px 14px 18px; display:flex; flex-direction:column; gap:28px; }
+    #pikabaka-concepts .pk-rail .pk-brand { padding:0 8px; }
+    #pikabaka-concepts .pk-rail nav { display:grid; gap:5px; }
+    #pikabaka-concepts .pk-nav { display:flex; align-items:center; gap:10px; width:100%; padding:10px; font-size:12px!important; text-align:left; border:0; border-radius:8px; background:transparent; color:var(--pk-muted)!important; }
+    #pikabaka-concepts .pk-nav:hover { background:var(--pk-soft); }
+    #pikabaka-concepts .pk-nav[aria-current="page"] { background:var(--pk-accent-soft); color:var(--pk-ink)!important; font-weight:600; }
+    #pikabaka-concepts .pk-rail-bottom { margin-top:auto; display:grid; gap:14px; padding:0 8px; }
+    #pikabaka-concepts .pk-monogram { height:26px; width:26px; border-radius:50%; background:var(--pk-soft); display:grid; place-items:center; font-size:11px; }
+    #pikabaka-concepts .pk-main { min-width:0; }
+    #pikabaka-concepts .pk-topbar { min-height:66px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:16px var(--pk-space); border-bottom:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-topbar .pk-title { font-weight:500; font-size:12px; }
+    #pikabaka-concepts .pk-app .pk-model { appearance:auto; padding:5px 6px; border:0; border-radius:5px; background:transparent; color:var(--pk-muted); font-size:11px; max-width:170px; }
+    #pikabaka-concepts .pk-body { padding:var(--pk-space); }
+    #pikabaka-concepts .pk-session-head { margin-bottom:25px; }
+    #pikabaka-concepts .pk-session-head h1 { margin-top:6px; }
+    #pikabaka-concepts .pk-session-head p { margin-top:7px; }
+    #pikabaka-concepts .pk-session-grid { display:grid; grid-template-columns:minmax(185px,.78fr) minmax(0,1.22fr); gap:var(--pk-space); }
+    #pikabaka-concepts .pk-transcript { border-right:1px solid var(--pk-line); padding-right:var(--pk-space); min-width:0; }
+    #pikabaka-concepts .pk-transcript-head { margin-bottom:23px; }
+    #pikabaka-concepts .pk-transcript ol { list-style:none; margin:0; padding:0; display:grid; gap:22px; }
+    #pikabaka-concepts .pk-turn { display:grid; gap:6px; }
+    #pikabaka-concepts .pk-turn-meta { display:flex; align-items:center; gap:8px; color:var(--pk-muted); font-size:11px; }
+    #pikabaka-concepts .pk-turn-meta time { font-variant-numeric:tabular-nums; }
+    #pikabaka-concepts .pk-app .pk-quote { background:transparent; border:0; text-align:left; padding:0; font-size:calc(var(--pk-font) - 1px); line-height:1.65; overflow-wrap:anywhere; }
+    #pikabaka-concepts .pk-app .pk-quote:hover { color:var(--pk-accent); }
+    #pikabaka-concepts .pk-translation { font-size:11px; color:var(--pk-muted); padding-top:3px; }
+    #pikabaka-concepts .pk-answer { min-width:0; }
+    #pikabaka-concepts .pk-answer-content { margin:20px 0 22px; min-height:225px; }
+    #pikabaka-concepts .pk-app .pk-answer-lead { font-size:calc(var(--pk-font) * 1.5); font-weight:500; letter-spacing:-.35px; line-height:1.5; margin-bottom:19px; }
+    #pikabaka-concepts .pk-answer-content ul { margin:12px 0 0; padding-left:18px; display:grid; gap:10px; font-size:calc(var(--pk-font) - 1px); }
+    #pikabaka-concepts .pk-answer-content li::marker { color:var(--pk-muted); }
+    #pikabaka-concepts .pk-answer-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding-top:12px; }
+    #pikabaka-concepts .pk-context { display:flex; align-items:center; gap:6px; color:var(--pk-muted); font-size:11px; }
+    #pikabaka-concepts .pk-actions { margin-top:22px; display:flex; gap:7px; flex-wrap:wrap; }
+    #pikabaka-concepts .pk-tools { margin-top:12px; padding:14px; background:var(--pk-soft); border-radius:var(--pk-radius); display:flex; flex-wrap:wrap; gap:7px; }
+    #pikabaka-concepts .pk-composer { background:var(--pk-surface); border:1px solid var(--pk-line); border-radius:var(--pk-radius); margin-top:22px; padding:12px; }
+    #pikabaka-concepts .pk-app .pk-composer textarea { resize:vertical; width:100%; min-height:45px; background:transparent; border:0; color:var(--pk-ink); font-size:12px; padding:0; }
+    #pikabaka-concepts .pk-composer textarea::placeholder { color:var(--pk-muted); }
+    #pikabaka-concepts .pk-composer-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    #pikabaka-concepts .pk-attachment { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 8px; background:var(--pk-soft); border-radius:6px; font-size:11px; margin-bottom:12px; }
+    #pikabaka-concepts .pk-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:19px; color:var(--pk-muted); font-size:11px; }
+    #pikabaka-concepts .pk-toast { margin-top:12px; color:var(--pk-accent); font-size:12px; min-height:18px; }
+    #pikabaka-concepts .pk-page-head { display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:18px; margin-bottom:24px; }
+    #pikabaka-concepts .pk-page-head p { margin-top:7px; font-size:12px; color:var(--pk-muted); }
+    #pikabaka-concepts .pk-search { display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--pk-line); padding:9px 0; margin:20px 0; color:var(--pk-muted); }
+    #pikabaka-concepts .pk-app .pk-search input { width:100%; background:transparent; color:var(--pk-ink); border:0; font-size:12px; min-width:0; }
+    #pikabaka-concepts .pk-segmented { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:24px; }
+    #pikabaka-concepts .pk-segmented button { background:transparent; border:0; border-radius:6px; padding:7px 10px; color:var(--pk-muted); font-size:11px; }
+    #pikabaka-concepts .pk-segmented button[aria-selected="true"] { background:var(--pk-soft); color:var(--pk-ink); font-weight:600; }
+    #pikabaka-concepts .pk-meeting { display:flex; align-items:center; gap:14px; width:100%; padding:20px 0; text-align:left; background:transparent; border:0; border-bottom:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-meeting .pk-meeting-icon { width:38px; height:38px; background:var(--pk-soft); border-radius:10px; display:grid; place-items:center; flex-shrink:0; }
+    #pikabaka-concepts .pk-meeting .pk-meeting-copy { flex:1; min-width:0; }
+    #pikabaka-concepts .pk-meeting strong { font-size:13px; font-weight:500; }
+    #pikabaka-concepts .pk-meeting p { color:var(--pk-muted); font-size:11px; margin-top:3px; }
+    #pikabaka-concepts .pk-app .pk-sheet { padding:22px; border:1px solid var(--pk-line); border-radius:var(--pk-radius); background:var(--pk-surface); }
+    #pikabaka-concepts .pk-sheet h3 { margin-bottom:10px; }
+    #pikabaka-concepts .pk-sheet p { font-size:12px; color:var(--pk-muted); }
+    #pikabaka-concepts .pk-file-row { display:flex; align-items:center; gap:10px; padding:16px 0; border-bottom:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-file-row .pk-file-info { flex:1; }
+    #pikabaka-concepts .pk-file-info strong { font-weight:500; font-size:12px; }
+    #pikabaka-concepts .pk-file-info p { font-size:11px; color:var(--pk-muted); margin-top:2px; }
+    #pikabaka-concepts .pk-settings-row { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:19px 0; border-bottom:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-settings-row strong { font-size:12px; font-weight:500; }
+    #pikabaka-concepts .pk-settings-row p { font-size:11px; color:var(--pk-muted); margin-top:3px; max-width:340px; }
+    #pikabaka-concepts .pk-app .pk-switch { appearance:none; width:33px; height:19px; min-width:33px; border-radius:12px; background:var(--pk-line); position:relative; border:0; margin:0; }
+    #pikabaka-concepts .pk-app .pk-switch::after { content:""; position:absolute; top:3px; left:3px; width:13px; height:13px; border-radius:50%; background:var(--pk-surface); box-shadow:0 1px 2px #0002; }
+    #pikabaka-concepts .pk-app .pk-switch:checked { background:var(--pk-accent); }
+    #pikabaka-concepts .pk-app .pk-switch:checked::after { transform:translateX(14px); }
+    #pikabaka-concepts .pk-app .pk-field { border:1px solid var(--pk-line); background:var(--pk-surface); color:var(--pk-ink); padding:7px 9px; border-radius:7px; max-width:190px; font-size:12px; }
+    #pikabaka-concepts .pk-focus { width:100%; max-width:670px; margin:auto; min-height:668px; background:var(--pk-surface); }
+    #pikabaka-concepts .pk-focus .pk-topbar { min-height:58px; padding:14px 23px; }
+    #pikabaka-concepts .pk-focus .pk-body { padding:25px 28px 19px; }
+    #pikabaka-concepts .pk-focus .pk-brand { font-size:15px; }
+    #pikabaka-concepts .pk-focus .pk-question { padding:14px 0 21px; margin-bottom:23px; border-bottom:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-focus .pk-question p { margin-top:7px; font-size:14px; }
+    #pikabaka-concepts .pk-focus .pk-answer-content { min-height:200px; margin:15px 0 6px; }
+    #pikabaka-concepts .pk-focus .pk-answer-lead { font-size:calc(var(--pk-font) * 1.7); line-height:1.45; letter-spacing:-.65px; }
+    #pikabaka-concepts .pk-focus .pk-answer-content ul { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); list-style:none; padding:0; gap:16px; margin-top:22px; }
+    #pikabaka-concepts .pk-focus .pk-answer-content li { border-top:1px solid var(--pk-line); padding-top:10px; font-size:11px; }
+    #pikabaka-concepts .pk-focus .pk-actions { margin-top:17px; }
+    #pikabaka-concepts .pk-focus .pk-composer { margin-top:17px; background:var(--pk-bg); }
+    #pikabaka-concepts .pk-focus .pk-transcript { border:0; padding:17px 0; margin-top:15px; border-top:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-focus-nav { display:flex; gap:4px; flex-wrap:wrap; padding:10px 16px; border-bottom:1px solid var(--pk-line); }
+    #pikabaka-concepts .pk-focus-nav .pk-nav { width:auto; padding:7px 10px; font-size:11px!important; }
+    #pikabaka-concepts .pk-app pre { margin:12px 0; padding:17px; border-radius:8px; background:var(--pk-soft); font:12px/1.8 ui-monospace,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+    @media (max-width:760px) {
+      #pikabaka-concepts .pk-stage { min-height:1080px; }
+      #pikabaka-concepts .pk-stage-focus { padding:20px 0; }
+      #pikabaka-concepts .pk-workspace { grid-template-columns:minmax(0,1fr); }
+      #pikabaka-concepts .pk-rail { padding:15px; gap:15px; border-right:0; border-bottom:1px solid var(--pk-line); }
+      #pikabaka-concepts .pk-rail nav { display:flex; flex-wrap:wrap; }
+      #pikabaka-concepts .pk-rail .pk-nav { width:auto; }
+      #pikabaka-concepts .pk-rail-bottom { display:none; }
+      #pikabaka-concepts .pk-session-grid { grid-template-columns:1fr; }
+      #pikabaka-concepts .pk-transcript { order:2; border-right:0; padding:20px 0 0; border-top:1px solid var(--pk-line); }
+      #pikabaka-concepts .pk-session-grid .pk-transcript ol { gap:12px; }
+      #pikabaka-concepts .pk-app .pk-answer-content { min-height:0; }
+      #pikabaka-concepts .pk-focus .pk-answer-content ul { grid-template-columns:1fr; gap:10px; }
+      #pikabaka-concepts .pk-focus .pk-body { padding:22px 18px; }
+      #pikabaka-concepts .pk-app .pk-settings-row { gap:10px; flex-wrap:wrap; }
+      #pikabaka-concepts .pk-app { --pk-space:18px; }
+    }
+    @media (pointer:coarse) {
+      #pikabaka-concepts .pk-app button { min-height:44px; }
+      #pikabaka-concepts .pk-app .pk-switch { min-height:24px; height:24px; width:40px; }
+      #pikabaka-concepts .pk-app .pk-switch::after { width:18px; height:18px; }
+      #pikabaka-concepts .pk-app .pk-switch:checked::after { transform:translateX(16px); }
+    }
+  </style>
+  <div class="viz-carousel" aria-label="Два направления дизайна Pikabaka" data-previous-label="Предыдущий" data-next-label="Следующий">
+    <section data-variant="Рабочая область" class="pk-stage" aria-label="Рабочая область Pikabaka">
+      <div class="pk-app pk-workspace" id="pk-workspace" aria-label="Рабочая область">
+        <aside class="pk-rail">
+          <div class="pk-brand"><i data-lucide="audio-lines" aria-hidden="true"></i><span>pika<span>baka</span></span></div>
+          <nav aria-label="Разделы Pikabaka">
+            <button class="pk-nav cursor-interaction" data-screen="session" aria-current="page"><i data-lucide="radio" aria-hidden="true"></i>Сейчас</button>
+            <button class="pk-nav cursor-interaction" data-screen="history"><i data-lucide="clock-3" aria-hidden="true"></i>Встречи</button>
+            <button class="pk-nav cursor-interaction" data-screen="materials"><i data-lucide="files" aria-hidden="true"></i>Материалы</button>
+            <button class="pk-nav cursor-interaction" data-screen="settings"><i data-lucide="settings-2" aria-hidden="true"></i>Настройки</button>
+          </nav>
+          <div class="pk-rail-bottom">
+            <span class="pk-small pk-muted">Личное пространство</span>
+            <div class="pk-row"><span class="pk-monogram">Я</span><span class="pk-small">Мой профиль</span></div>
+          </div>
+        </aside>
+        <main class="pk-main"><header class="pk-topbar" data-topbar></header><div class="pk-body" data-content></div></main>
+      </div>
+    </section>
+    <section data-variant="Фокус" class="pk-stage pk-stage-focus viz-dotted-background" aria-label="Компактное окно Pikabaka" hidden>
+      <div class="pk-app pk-focus" id="pk-focus" aria-label="Фокус">
+        <header class="pk-topbar" data-topbar></header>
+        <nav class="pk-focus-nav" aria-label="Разделы компактного окна" data-focus-nav hidden>
+          <button class="pk-nav cursor-interaction" data-screen="session">Сейчас</button>
+          <button class="pk-nav cursor-interaction" data-screen="history">Встречи</button>
+          <button class="pk-nav cursor-interaction" data-screen="materials">Материалы</button>
+          <button class="pk-nav cursor-interaction" data-screen="settings">Настройки</button>
+        </nav>
+        <main class="pk-body" data-content></main>
+      </div>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const root = document.getElementById('pikabaka-concepts');
+      const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+      const button = (action, label, name, type='quiet') => `<button type="button" class="pk-button pk-button-${type} cursor-interaction" data-action="${action}">${name?icon(name):''}${label}</button>`;
+      const models = ['GPT · быстрый','Claude · подробный','Gemini','Groq','Ollama · локально','Свой провайдер'];
+      const question = 'Как ограничить число запросов, если сервис работает на нескольких серверах?';
+      const turns = [
+        ['12:04','Собеседник','Представим API, которое работает на нескольких серверах.','Imagine an API running on multiple servers.'],
+        ['12:05','Вы','Нужно уточнить, лимит общий или отдельно для каждого пользователя?','Should the limit be global or per user?'],
+        ['12:08','Собеседник',question,'How would you rate-limit requests across multiple servers?']
+      ];
+      const answers = {
+        answer:{label:'Вариант ответа',lead:'Я бы вынес счётчик в общее хранилище и проверял лимит атомарно.',points:['Сначала уточню: лимит на пользователя, ключ или весь сервис.','Для нескольких серверов — Redis и token bucket; операция через Lua.','Заранее выберу поведение при недоступности Redis и ответ 429 с Retry-After.']},
+        clarify:{label:'Уточняющие вопросы',lead:'Лимит должен быть строгим или допустимы короткие всплески нагрузки?',points:['Лимит общий, по клиенту или по отдельному маршруту?','Насколько важна согласованность между регионами?','Что предпочтительнее при сбое: отказ или временное превышение?']},
+        recap:{label:'Краткое резюме',lead:'Обсуждаем ограничение запросов в распределённом API.',points:['Несколько серверов должны разделять состояние лимитера.','Важны атомарность, допустимые всплески и поведение при сбое.','Ещё не определены ключ лимита и требования между регионами.']},
+        followup:{label:'Что могут спросить дальше',lead:'Будь готов объяснить, почему счётчик в памяти одного сервера не подходит.',points:['Как избежать гонки при обновлении счётчика?','Какой алгоритм выбрать: sliding window или token bucket?','Что произойдёт при потере связи с Redis?']},
+        brainstorm:{label:'Другие подходы',lead:'Сравню три варианта: Redis, API gateway и распределённые локальные квоты.',points:['Redis — проще обеспечить единый лимит и атомарность.','Gateway — централизует контроль до приложения.','Локальные квоты — меньше задержка, но сложнее строгая согласованность.']},
+        negotiation:{label:'Обсуждение условий',lead:'Прежде чем обсуждать предложение, уточню ожидания от роли и критерии успеха.',points:['Какие задачи будут приоритетными в первые месяцы?','Как устроены команда, обратная связь и пересмотр условий?','Какие части предложения можно обсуждать?']},
+        voice:{label:'Ответ на ваш вопрос',lead:'Можно начать с простого решения и явно назвать его ограничения.',points:['Сформулируй предположения перед выбором алгоритма.','Покажи компромисс между точностью, доступностью и задержкой.','После этого переходи к конкретной реализации.']},
+        code:{label:'Набросок кода',lead:'Саму проверку лимита скрою за атомарной операцией.',points:['Проверка и изменение состояния выполняются одной операцией.','Ключ лимита передаётся явно.','При отказе возвращаем 429 и время следующей попытки.']}
+      };
+      const meetings = [
+        {name:'Backend · пробное собеседование',date:'Сегодня, 11:30',duration:'42 мин',note:'Распределённые системы, кеширование и API'},
+        {name:'System design · подготовка',date:'Вчера, 18:10',duration:'28 мин',note:'Очереди, повторные запросы, отказоустойчивость'},
+        {name:'English · тренировочный звонок',date:'Понедельник, 15:00',duration:'35 мин',note:'Опыт, проекты и архитектурные решения'}
+      ];
+      const escape = (value) => String(value).replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const stored = globalThis.openai?.widgetState?.modelContent || {};
+      const apps = [
+        {el:root.querySelector('#pk-workspace'),compact:false,screen:stored.workspaceScreen||'session'},
+        {el:root.querySelector('#pk-focus'),compact:true,screen:stored.focusScreen||'session'}
+      ];
+      const validScreens = ['session','history','materials','settings','record'];
+      for (const app of apps) {
+        Object.assign(app,{tool:'answer',listening:true,microphone:true,voice:false,tools:false,transcript:!app.compact,translation:false,attachment:false,nav:false,settings:'general',material:'profile',model:models[0],record:0,toast:'',prompt:'',proxy:true,radius:12,font:14,spacing:24,theme:'system',accent:'#267867'});
+        if (!validScreens.includes(app.screen)) app.screen='session';
+      }
+      const persist = () => {
+        const api=globalThis.openai;
+        if(api?.setWidgetState) api.setWidgetState({modelContent:{workspaceScreen:apps[0].screen,focusScreen:apps[1].screen},privateContent:null}).catch(()=>{});
+      };
+      globalThis.addEventListener('openai:set_globals',event=>{
+        const saved=event.detail?.globals?.widgetState?.modelContent;
+        if(!saved) return;
+        apps.forEach((app,index)=>{
+          const screen=saved[index===0?'workspaceScreen':'focusScreen'];
+          if(validScreens.includes(screen)) {app.screen=screen;render(app);}
+        });
+      });
+      function transcript(app) {
+        return `<aside class="pk-transcript" aria-label="Транскрипт разговора"><div class="pk-row pk-between pk-transcript-head"><h3>Разговор</h3>${button('translation',app.translation?'Оригинал':'Перевод','languages')}</div><ol>${turns.map(([time,speaker,text,translation])=>`<li class="pk-turn"><div class="pk-turn-meta"><time>${time}</time><span>${speaker}</span></div><button class="pk-quote cursor-interaction" data-quote="${escape(text)}">${escape(text)}</button>${app.translation?`<p class="pk-translation">${translation}</p>`:''}</li>`).join('')}</ol><div class="pk-row" style="margin-top:24px"><span class="pk-live"><span class="pk-dot ${app.listening?'':'pk-dot-paused'}"></span>${app.listening?'Системный звук принимается':'Распознавание на паузе'}</span></div></aside>`;
+      }
+      function answer(app) {
+        const data=answers[app.tool]||answers.answer;
+        return `<section class="pk-answer" aria-label="Подсказка"><div class="pk-row pk-between"><span class="pk-eyebrow">${data.label}</span>${button('copy','Копировать','copy')}</div><div class="pk-answer-content"><p class="pk-answer-lead">${data.lead}</p>${app.tool==='code'?'<pre>allowed = await limiter.consume(user_id)\nif not allowed:\n    return Response(status_code=429)</pre>':''}<ul>${data.points.map(p=>`<li>${p}</li>`).join('')}</ul></div><div class="pk-answer-foot"><span class="pk-context">${icon('file-text')} Резюме + вакансия</span><div class="pk-row">${button('shorten','Короче','minimize-2')}${button('rephrase','Иначе','refresh-cw')}</div></div></section>`;
+      }
+      function actions(app) {
+        return `<div class="pk-actions">${button('answer','Подсказать','sparkles','primary')}${button('clarify','Уточнить',null)}${button('more',app.tools?'Свернуть':'Все действия','ellipsis')}${app.compact?button('transcript',app.transcript?'Скрыть разговор':'Разговор','captions'):''}</div>${app.tools?`<div class="pk-tools" aria-label="Дополнительные действия">${button('followup','Следующие вопросы','messages-square')}${button('recap','Резюме','list')}${button('brainstorm','Идеи','lightbulb')}${button('code','Код','code-2')}${button('negotiation','Переговоры','handshake')}${button('voice',app.voice?'Остановить запись':'Голосовой вопрос','mic')}${button('audio-settings','Настроить звук','sliders-horizontal')}${button('capture','Скриншот','scan-line')}${button('capture-area','Область экрана','scan')}</div>`:''}`;
+      }
+      function composer(app) {
+        return `<div class="pk-composer">${app.attachment?`<div class="pk-attachment"><span class="pk-row">${icon('image')} Фрагмент экрана</span>${button('remove-attachment','Убрать','x')}</div>`:''}<label><span class="sr-only">Вопрос по разговору</span><textarea data-prompt placeholder="${app.voice?'Слушаю ваш вопрос…':'Спросить по разговору или экрану…'}" rows="2">${escape(app.prompt)}</textarea></label><div class="pk-composer-bottom"><div class="pk-row">${button('capture','Экран','scan-line')}${button('voice',app.voice?'Остановить':'Голос','mic')}</div>${button('send','Отправить','arrow-up')}</div></div>`;
+      }
+      function sessionScreen(app) {
+        const header=app.compact?`<div class="pk-question"><div class="pk-row pk-between"><span class="pk-eyebrow">Собеседник · последний вопрос</span><span class="pk-small pk-muted">12:08</span></div><p>${question}</p></div>`:`<div class="pk-session-head"><div class="pk-row pk-between"><span class="pk-eyebrow">Сессия · backend</span><span class="pk-chip">Пробное интервью</span></div><h1>Распределённые системы</h1><p class="pk-small pk-muted">Лимиты запросов · контекст из резюме и вакансии</p></div>`;
+        return `${header}${app.compact?answer(app):`<div class="pk-session-grid">${transcript(app)}${answer(app)}</div>`}${actions(app)}${composer(app)}${app.compact&&app.transcript?transcript(app):''}<footer class="pk-footer"><span class="pk-row">${icon('keyboard')} Горячие клавиши доступны для всех действий</span>${button('finish','Завершить сессию','square')}</footer>`;
+      }
+      function historyScreen(app) {
+        return `<div class="pk-page-head"><div><span class="pk-eyebrow">Всё важное остаётся</span><h1 style="margin-top:8px">Встречи</h1><p>Разговоры, ответы и ваши заметки.</p></div>${button('start','Новая сессия','plus','primary')}</div><label class="pk-search">${icon('search')}<input data-search placeholder="Найти по названию или содержимому" aria-label="Поиск встреч"></label><div class="pk-row pk-between" style="margin-bottom:9px"><span class="pk-eyebrow">Недавние</span>${button('calendar','Календарь','calendar-days')}</div><div data-meetings>${meetingRows('')}</div>`;
+      }
+      function meetingRows(query) {
+        const rows=meetings.map((m,i)=>({m,i})).filter(({m})=>(m.name+' '+m.note).toLowerCase().includes(query.toLowerCase()));
+        return rows.length?rows.map(({m,i})=>`<button class="pk-meeting cursor-interaction" data-record="${i}"><span class="pk-meeting-icon">${icon('audio-lines')}</span><span class="pk-meeting-copy"><strong>${m.name}</strong><p>${m.note}</p><p>${m.date} · ${m.duration}</p></span>${icon('arrow-up-right')}</button>`).join(''):'<p class="pk-muted pk-small">Встреч с таким названием нет.</p>';
+      }
+      function recordScreen(app) {
+        const meeting=meetings[app.record]||meetings[0];
+        return `<div class="pk-page-head"><div>${button('history','К встречам','arrow-left')}<h1 style="margin-top:18px">${meeting.name}</h1><p>${meeting.date} · ${meeting.duration}</p></div>${button('export','Экспорт','download')}</div><div class="pk-stack"><div class="pk-sheet"><h3>Главное</h3><p>Обсудили атомарную проверку лимита, хранение общего состояния и компромиссы при сбоях. Следующий шаг — сравнить алгоритмы на нескольких сценариях нагрузки.</p></div><h3>Заметки</h3><label><span class="sr-only">Ваши заметки о встрече</span><textarea class="pk-field" style="width:100%;max-width:none;min-height:85px" placeholder="Что стоит разобрать перед следующим разговором?"></textarea></label><div class="pk-row">${button('recap','Обновить резюме','list')}${button('email','Письмо после встречи','mail')}${button('export','PDF / текст','file-down')}</div>${transcript(app)}</div>`;
+      }
+      function materialsScreen(app) {
+        const tabs=[['profile','Мой опыт'],['jobs','Вакансии'],['documents','Документы']];
+        const content=app.material==='profile'?`<div class="pk-sheet"><div class="pk-row pk-between"><span class="pk-eyebrow">Профиль кандидата</span>${button('edit-profile','Редактировать','pencil')}</div><h2 style="margin:17px 0 8px">Backend-разработчик</h2><p>Опыт в API, распределённых сервисах и обработке данных.</p><div class="pk-row" style="margin-top:17px"><span class="pk-chip">TypeScript</span><span class="pk-chip">Python</span><span class="pk-chip">PostgreSQL</span></div></div><div class="pk-file-row">${icon('file-text')}<div class="pk-file-info"><strong>Резюме.pdf</strong><p>Используется для персональных ответов</p></div>${button('import','Заменить',null)}</div>`:app.material==='jobs'?`<div class="pk-sheet"><div class="pk-row pk-between"><span class="pk-eyebrow">Активная вакансия</span><span class="pk-chip">В контексте</span></div><h2 style="margin:17px 0 8px">Backend Engineer</h2><p>API, очереди, кеширование и системный дизайн.</p><div class="pk-row" style="margin-top:20px">${button('prepare','Подготовиться','notebook-pen','primary')}${button('negotiation','Обсудить условия','handshake')}</div></div>`:`<div class="pk-file-row">${icon('file-text')}<div class="pk-file-info"><strong>Заметки по архитектуре.md</strong><p>Материал доступен для поиска по содержимому</p></div><span class="pk-chip">В контексте</span></div><div class="pk-file-row">${icon('file-text')}<div class="pk-file-info"><strong>Мои проекты.pdf</strong><p>Описание проектов для ответов об опыте</p></div>${button('reindex','Индексировать','refresh-cw')}</div>`;
+        return `<div class="pk-page-head"><div><span class="pk-eyebrow">Контекст для точных ответов</span><h1 style="margin-top:8px">Материалы</h1><p>Резюме, вакансия и знания о ваших проектах.</p></div>${button('import','Добавить','plus','primary')}</div><div class="pk-segmented" role="tablist" aria-label="Тип материалов">${tabs.map(([id,label])=>`<button role="tab" aria-selected="${app.material===id}" data-material="${id}" class="cursor-interaction">${label}</button>`).join('')}</div>${content}`;
+      }
+      function settingsScreen(app) {
+        const tabs=[['general','Общие'],['audio','Аудио'],['models','Модели'],['window','Окно'],['shortcuts','Клавиши']];
+        const toggle=(label,desc,key,checked)=>`<label class="pk-settings-row"><span><strong>${label}</strong><p>${desc}</p></span><input type="checkbox" class="pk-switch cursor-interaction" data-setting="${key}" ${checked?'checked':''} aria-label="${label}"></label>`;
+        const select=(label,desc,options)=>`<label class="pk-settings-row"><span><strong>${label}</strong><p>${desc}</p></span><select class="pk-field">${options.map(x=>`<option>${x}</option>`).join('')}</select></label>`;
+        let body;
+        if(app.settings==='general') body=`${toggle('Системный прокси','Применяется сразу. Локальные модели подключаются напрямую.','proxy',app.proxy)}${select('Язык ответов','Язык подсказок и заметок.',['Русский','English','Deutsch'])}<label class="pk-settings-row"><span><strong>Оформление</strong><p>Спокойная светлая или тёмная поверхность.</p></span><select class="pk-field" data-theme><option value="system" ${app.theme==='system'?'selected':''}>Как в системе</option><option value="light" ${app.theme==='light'?'selected':''}>Светлое</option><option value="dark" ${app.theme==='dark'?'selected':''}>Тёмное</option></select></label>${toggle('Запускать при входе','Pikabaka будет готова к следующему разговору.','startup',false)}${toggle('Подробные логи','Диагностика подключения и распознавания.','logs',false)}`;
+        else if(app.settings==='audio') body=`${select('Системный звук','Что слышит собеседник в звонке.',['Устройство по умолчанию','Наушники','Динамики'])}${select('Микрофон','Ваш голос и голосовые вопросы.',['Микрофон по умолчанию','USB-микрофон'])}${select('Распознавание','Провайдер и язык речи.',['Groq · Whisper','OpenAI','Deepgram','ElevenLabs','Soniox','Google','Azure','IBM Watson'])}${select('Профиль транскрипта','Баланс между скоростью и цельностью фраз.',['Сбалансированный','Быстрый','Связный'])}${toggle('Перевод транскрипта','Оригинал остаётся доступным рядом с переводом.','translation',app.translation)}<div class="pk-row" style="margin-top:20px">${button('test-audio','Проверить звук','audio-lines')}</div>`;
+        else if(app.settings==='models') body=`${select('Модель для ответов','Подключённые провайдеры и локальные модели.',models)}<div class="pk-settings-row"><span><strong>Подключения</strong><p>OpenAI, Claude, Gemini, Groq, Ollama и совместимые API.</p></span>${button('provider','Настроить','plug')}</div><div class="pk-settings-row"><span><strong>Свои инструкции</strong><p>Тон ответа, ваша роль и особенности собеседования.</p></span>${button('instructions','Редактировать','pencil')}</div><div class="pk-settings-row"><span><strong>Модель перевода</strong><p>Отдельный провайдер для транскрипта.</p></span>${button('translation-model','Выбрать','languages')}</div>`;
+        else if(app.settings==='window') body=`${toggle('Скрывать при демонстрации','Поведение зависит от приложения видеосвязи.','protection',false)}${toggle('Сквозные клики','Взаимодействуйте с окном под подсказкой.','passthrough',false)}<label class="pk-settings-row"><span><strong>Непрозрачность</strong><p>Читаемость окна во время разговора.</p></span><input type="range" min="40" max="100" value="94" aria-label="Непрозрачность"></label>${select('Маскировка процесса','Сохранён выбор отображаемого имени.',['Без маскировки','Терминал','Системные настройки','Монитор активности'])}`;
+        else body=[['Подсказать','Ctrl + Enter'],['Голосовой вопрос','Настроить'],['Скриншот / область','Настроить'],['Показать или скрыть окно','Настроить'],['Уточнить / код / идеи','Настроить']].map(([label,key])=>`<div class="pk-settings-row"><strong>${label}</strong>${button('shortcut',key,'keyboard')}</div>`).join('');
+        return `<div class="pk-page-head"><div><span class="pk-eyebrow">Подстроить под себя</span><h1 style="margin-top:8px">Настройки</h1><p>Все возможности — в понятных разделах.</p></div></div><div class="pk-segmented" role="tablist" aria-label="Раздел настроек">${tabs.map(([id,label])=>`<button role="tab" aria-selected="${app.settings===id}" data-settings="${id}" class="cursor-interaction">${label}</button>`).join('')}</div>${body}`;
+      }
+      function render(app) {
+        app.el.style.setProperty('--pk-radius',app.radius+'px');
+        app.el.style.setProperty('--pk-font',app.font+'px');
+        app.el.style.setProperty('--pk-space',app.spacing+'px');
+        app.el.style.colorScheme=app.theme==='system'?'light dark':app.theme;
+        if(app.accent!=='#267867') { app.el.style.setProperty('--pk-accent',app.accent); app.el.style.setProperty('--pk-accent-soft',`color-mix(in srgb, ${app.accent} 13%, var(--pk-surface))`); }
+        else { app.el.style.removeProperty('--pk-accent'); app.el.style.removeProperty('--pk-accent-soft'); }
+        const listening=app.listening?'<span class="pk-dot"></span>Слушаю':'<span class="pk-dot pk-dot-paused"></span>Пауза';
+        app.el.querySelector('[data-topbar]').innerHTML=`<div class="pk-row">${app.compact?`<div class="pk-brand">${icon('audio-lines')}<span>pika<span>baka</span></span></div>`:'<span class="pk-title">Мой рабочий стол</span>'}<span class="pk-live">${listening}</span></div><div class="pk-row"><select class="pk-model" data-model aria-label="Модель ответов">${models.map(m=>`<option ${m===app.model?'selected':''}>${m}</option>`).join('')}</select>${app.screen==='session'?`<span class="pk-small pk-muted" style="font-variant-numeric:tabular-nums">12:08</span>${button('pause',app.listening?'Пауза':'Продолжить',app.listening?'pause':'play')}`:''}${app.compact?button('navigation','Разделы','panel-left'):button('settings','Настройки','settings-2')}</div>`;
+        app.el.querySelectorAll('[data-screen]').forEach(b=>b.setAttribute('aria-current',b.dataset.screen===app.screen?'page':'false'));
+        const nav=app.el.querySelector('[data-focus-nav]'); if(nav) nav.hidden=!app.nav;
+        const content=app.el.querySelector('[data-content]');
+        content.innerHTML=({'session':sessionScreen,'history':historyScreen,'materials':materialsScreen,'settings':settingsScreen,'record':recordScreen}[app.screen]||sessionScreen)(app)+`<div class="pk-toast" role="status" aria-live="polite">${escape(app.toast)}</div>`;
+        if(globalThis.lucide) lucide.createIcons({attrs:{width:16,height:16}});
+      }
+      for(const app of apps) {
+        render(app);
+        app.el.addEventListener('input',event=>{
+          if(event.target.matches('[data-search]')) app.el.querySelector('[data-meetings]').innerHTML=meetingRows(event.target.value);
+          if(event.target.matches('[data-prompt]')) app.prompt=event.target.value;
+        });
+        app.el.addEventListener('change',event=>{
+          const target=event.target;
+          if(!target.matches('[data-model],[data-theme],[data-setting]')) return;
+          if(target.matches('[data-model]')) {app.model=target.value; app.toast='Модель для ответов изменена.';}
+          if(target.matches('[data-theme]')) app.theme=target.value;
+          if(target.matches('[data-setting]')) {app[target.dataset.setting]=target.checked; app.toast=target.dataset.setting==='proxy'?'Маршрут подключения изменён.':'Настройка сохранена.';}
+          render(app); persist();
+        });
+        app.el.addEventListener('click',event=>{
+          const target=event.target.closest('button'); if(!target) return;
+          app.toast='';
+          if(target.dataset.screen) {app.screen=target.dataset.screen; app.nav=false;}
+          else if(target.dataset.settings) app.settings=target.dataset.settings;
+          else if(target.dataset.material) app.material=target.dataset.material;
+          else if(target.dataset.record!==undefined) {app.record=Number(target.dataset.record); app.screen='record';}
+          else if(target.dataset.quote) {
+            const input=app.el.querySelector('[data-prompt]');
+            if(input) {app.prompt=target.dataset.quote; input.value=app.prompt; input.focus();}
+            return;
+          } else {
+            const action=target.dataset.action;
+            if(!action) return;
+            if(answers[action]) {app.tool=action; if(action==='voice') app.voice=!app.voice; else app.screen='session';}
+            else if(action==='more') app.tools=!app.tools;
+            else if(action==='transcript') app.transcript=!app.transcript;
+            else if(action==='translation') app.translation=!app.translation;
+            else if(action==='pause') app.listening=!app.listening;
+            else if(action==='navigation') app.nav=!app.nav;
+            else if(action==='capture'||action==='capture-area') {app.attachment=true; app.toast=action==='capture'?'Скриншот добавлен в контекст.':'Фрагмент экрана добавлен в контекст.';}
+            else if(action==='remove-attachment') app.attachment=false;
+            else if(action==='send') {const text=app.el.querySelector('[data-prompt]')?.value.trim(); if(!text){app.toast='Введите вопрос или добавьте фрагмент разговора.';}else{app.tool='voice';app.voice=false;app.toast='Вопрос добавлен в диалог.';}}
+            else if(action==='start') {app.screen='session';app.listening=true;app.tool='answer';}
+            else if(action==='finish') {app.screen='history';app.listening=false;app.toast='Сессия сохранена во встречах.';}
+            else if(action==='settings'||action==='audio-settings') {app.screen='settings';app.settings=action==='audio-settings'?'audio':'general';}
+            else if(action==='history') app.screen='history';
+            else if(action==='shorten') {app.toast='Короткий вариант: общий счётчик в Redis, атомарная проверка и явная политика при сбоях.';}
+            else if(action==='rephrase') {app.toast='Можно сказать иначе: вынесу состояние лимита за пределы отдельных серверов.';}
+            else if(action==='copy') app.toast='Ответ выбран для копирования.';
+            else if(action==='calendar') app.toast='Календарь подключается к списку предстоящих встреч.';
+            else if(action==='export') app.toast='Форматы экспорта: PDF, Markdown, текст.';
+            else if(action==='email') app.toast='Письмо составляется по итогам выбранной встречи.';
+            else if(action==='prepare') {app.screen='session';app.tool='followup';}
+            else if(action==='import') app.toast='Можно добавить резюме, вакансию или документ.';
+            else if(action==='reindex') app.toast='Документ выбран для повторной индексации.';
+            else if(action==='edit-profile') app.toast='Профиль: опыт, навыки, проекты и образование.';
+            else if(action==='provider') app.toast='Подключения: адрес сервера, API-ключ и доступные модели.';
+            else if(action==='instructions') app.toast='Свои инструкции: роль, стиль и контекст собеседования.';
+            else if(action==='translation-model') app.toast='Модель перевода настраивается отдельно от ответов.';
+            else if(action==='shortcut') app.toast='Сочетание клавиш можно переназначить.';
+            else if(action==='test-audio') app.toast='Здесь проверяются системный звук и микрофон.';
+          }
+          render(app);persist();
+        });
+        if(globalThis.Tweak) {
+          const tweak=new Tweak({container:app.el,onChange:()=>render(app)});
+          tweak.addSlider(app,'radius',{label:'Скругление',min:4,max:20,step:2,unit:'px',reference:'--pk-radius'});
+          tweak.addSlider(app,'font',{label:'Размер текста',min:13,max:17,step:1,unit:'px',reference:'--pk-font'});
+          tweak.addSlider(app,'spacing',{label:'Воздух между блоками',min:16,max:32,step:2,unit:'px',reference:'--pk-space'});
+          tweak.addSelect(app,'theme',{label:'Тема',options:[{label:'Как в чате',value:'system'},{label:'Светлая',value:'light'},{label:'Тёмная',value:'dark'}]});
+          tweak.addColorPicker(app,'accent',{label:'Акцент',reference:'--pk-accent'});
+          if(app.compact) tweak.addToggle(app,'transcript',{label:'Показывать разговор'});
+        }
+      }
+    })();
+  </script>
+</div>
