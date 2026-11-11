@@ -252,7 +252,7 @@ export function _applyDisguise(appState: AppState, mode: 'terminal' | 'settings'
   // 3. Update App User Model ID (Windows Taskbar grouping)
   if (isWin) {
     // Use unique AUMID per disguise to avoid grouping with the real app
-    app.setAppUserModelId(`com.pika.assistant.${mode}`);
+    app.setAppUserModelId(mode === 'none' ? 'com.royisme.pika' : `com.pika.assistant.${mode}`);
   }
 
   // 4. Update Icons

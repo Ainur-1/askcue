@@ -1,5 +1,15 @@
 // UI labels only. Provider/model names and conversation content are not translated.
 export const englishToRussian: Record<string,string> = {
+  "Search meetings": "Поиск встреч",
+  "Search titles, notes and transcripts.": "По названиям, итогам и расшифровкам.",
+  "Search saved conversations…": "Найти сохранённый разговор…",
+  "Searching…": "Ищу…",
+  "Search failed. Try again.": "Не удалось выполнить поиск. Повторите попытку.",
+  "No meetings found.": "Встречи не найдены.",
+  "No saved conversations yet.": "Сохранённых разговоров пока нет.",
+  "Meetings": "Встречи",
+  "Ask AI": "Задать вопрос AI",
+  "Updates": "Обновления",
   "Test microphone": "Проверить микрофон",
   "Stop microphone test": "Остановить проверку",
   "Microphone test stopped unexpectedly. Try another input device.": "Проверка микрофона прервалась. Выберите другое устройство ввода.",

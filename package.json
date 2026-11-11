@@ -40,7 +40,7 @@
     "watch": "tsc -p electron/tsconfig.json --watch",
     "start": "pnpm run app:dev",
     "dist": "pnpm run app:build",
-    "icons:generate": "node generate_icon.js"
+    "icons:generate": "node scripts/generate-icons.cjs"
   },
   "build": {
     "generateUpdatesFilesForAllChannels": true,
@@ -141,6 +141,9 @@
       "category": "Office"
     },
     "nsis": {
+      "installerIcon": "assets/icons/win/icon.ico",
+      "uninstallerIcon": "assets/icons/win/icon.ico",
+      "installerHeaderIcon": "assets/icons/win/icon.ico",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,

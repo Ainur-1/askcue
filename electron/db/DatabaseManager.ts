@@ -1,3 +1,4 @@
+import { normalizeSearchText, searchSnippet, type MeetingSearchHit } from './meetingSearch';
 
 import Database from 'better-sqlite3';
 import path from 'path';
@@ -805,6 +806,30 @@ export class DatabaseManager {
                 transcript: [] as any[],
                 usage: [] as any[]
             };
+        });
+    }
+
+    public searchMeetings(query: string): MeetingSearchHit[] {
+        if (!this.db || typeof query !== 'string') return [];
+        const needle = normalizeSearchText(query.slice(0, 200));
+        if (!needle) return [];
+        // A JS-backed SQLite function gives Unicode case folding, unlike SQLite lower().
+        this.db.function('pika_contains', { deterministic: true }, (value: unknown) =>
+            normalizeSearchText(String(value ?? '')).includes(needle) ? 1 : 0);
+        const rows = this.db.prepare(`
+            SELECT m.id, m.title, m.created_at, m.summary_json,
+                (SELECT content FROM transcripts t WHERE t.meeting_id=m.id AND pika_contains(t.content) LIMIT 1) AS transcript_match
+            FROM meetings m
+            WHERE pika_contains(m.title) OR pika_contains(m.summary_json)
+                OR EXISTS (SELECT 1 FROM transcripts t WHERE t.meeting_id=m.id AND pika_contains(t.content))
+            ORDER BY m.created_at DESC LIMIT 30
+        `).all() as Array<{ id: string; title: string; created_at: string; summary_json: string; transcript_match?: string }>;
+        return rows.map(row => {
+            let summary: any = {};
+            try { summary = JSON.parse(row.summary_json || '{}'); } catch { /* old malformed summary */ }
+            const text = row.transcript_match || summary.legacySummary || summary.detailedSummary?.overview ||
+                [...(summary.detailedSummary?.keyPoints || []), ...(summary.detailedSummary?.actionItems || [])].join(' ') || row.title;
+            return { id: row.id, title: row.title, date: row.created_at, snippet: searchSnippet(text, needle) };
         });
     }
 

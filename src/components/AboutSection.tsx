@@ -1,3 +1,4 @@
+import AppUpdates from './settings/AppUpdates';
 import { t } from '../i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { Heart, ExternalLink } from 'lucide-react';
@@ -74,6 +75,8 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                 </div>
                 <p className="text-sm text-text-secondary leading-relaxed mt-3 max-w-[52ch]">{t("Interview copilot and meeting assistant. Transcription, answer suggestions, and screen analysis — running locally on your device.")}</p>
             </motion.div>
+
+            <AppUpdates />
 
             {/* Divider */}
             <motion.div variants={fadeUp} className="border-t border-border-subtle" />

@@ -1,3 +1,4 @@
+import brandLogo from '../../assets/pikabaka-logo.svg';
 import { t } from '../i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { AlertCircle, ArrowRight, Briefcase, Calendar, CheckCircle, DownloadCloud, Link as LinkIcon, RefreshCw, Zap, History, BookOpen, Settings, MessageSquarePlus, AudioLines, Mic, FileText } from 'lucide-react';
@@ -45,7 +46,6 @@ const Launcher: React.FC<LauncherProps> = ({
         wasMeetingActive.current = isMeetingActive;
     }, [isMeetingActive]);
     const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
-    const [forwardMeeting, setForwardMeeting] = useState<Meeting | null>(null);
     const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
     const [isPrepared, setIsPrepared] = useState(false);
     const [preparedEvent, setPreparedEvent] = useState<any>(null);
@@ -163,7 +163,6 @@ const Launcher: React.FC<LauncherProps> = ({
         }
     };
     const handleOpenMeeting = async (meeting: Meeting) => {
-        setForwardMeeting(null);
         setPage('history');
         console.log('[Launcher] Opening meeting:', meeting.id);
         analytics.trackCommandExecuted('open_meeting_details');
@@ -195,20 +194,13 @@ const Launcher: React.FC<LauncherProps> = ({
         setActiveMenuId(null);
     };
     const handleBack = () => {
-        setForwardMeeting(selectedMeeting);
         setSelectedMeeting(null);
-    };
-    const handleForward = () => {
-        if (forwardMeeting) {
-            setSelectedMeeting(forwardMeeting);
-            setForwardMeeting(null);
-        }
     };
     return (
         <div className="workbench text-text-primary">
           <div className="workbench-row">
             <aside className="workbench-sidebar paper-texture">
-              <div className="workbench-brand"><AudioLines size={24}/><span>Pikabaka</span></div>
+              <div className="workbench-brand"><img src={brandLogo} alt=""/><span>Pikabaka</span></div>
               <nav className="workbench-nav" aria-label={t("Разделы")}>
                 <button title={t("Новый разговор")} aria-current={page === 'session' ? 'page' : undefined} onClick={() => { setPage('session'); setSelectedMeeting(null); }}><MessageSquarePlus size={18}/><span>{isMeetingActive ? t("Текущий разговор") : t("Новый разговор")}</span></button>
                 <button title={t("История встреч")} aria-current={page === 'history' ? 'page' : undefined} onClick={() => { setPage('history'); setSelectedMeeting(null); }}><History size={18}/><span>{t("История встреч")}</span></button>
@@ -220,10 +212,6 @@ const Launcher: React.FC<LauncherProps> = ({
             <div className="workbench-body">
             <LauncherHeader
                 meetings={meetings}
-                selectedMeeting={selectedMeeting}
-                forwardMeeting={forwardMeeting}
-                onBack={handleBack}
-                onForward={handleForward}
                 title={selectedMeeting ? selectedMeeting.title : page === 'history' ? t("История встреч") : page === 'materials' ? t("Материалы") : page === 'settings' ? t("Настройки") : isMeetingActive ? t("Текущий разговор") : t("Новый разговор")}
                 status={<DetectableControl />}
                 onAIQuery={(query) => {
@@ -231,16 +219,12 @@ const Launcher: React.FC<LauncherProps> = ({
                     setSubmittedGlobalQuery(query);
                     setIsGlobalChatOpen(true);
                 }}
-                onLiteralSearch={(query) => {
-                    analytics.trackCommandExecuted('literal_search');
-                    setSubmittedGlobalQuery(query);
-                    setIsGlobalChatOpen(true);
-                }}
-                onOpenMeetingId={(meetingId) => {
+                onOpenMeetingId={async (meetingId) => {
                     const meeting = meetings.find(m => m.id === meetingId);
-                    if (meeting) {
-                        handleOpenMeeting(meeting);
-                        analytics.trackCommandExecuted('open_meeting_from_search');
+                    if (meeting) await handleOpenMeeting(meeting);
+                    else {
+                        const details = await window.electronAPI.getMeetingDetails(meetingId);
+                        if (details) { setPage('history'); setSelectedMeeting(details); }
                     }
                 }}
             />

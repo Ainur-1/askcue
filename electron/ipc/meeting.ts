@@ -37,6 +37,8 @@ export function registerMeetingHandlers(appState: AppState): void {
     return DatabaseManager.getInstance().getRecentMeetings(50);
   });
 
+  safeHandle("search-meetings", async (_, query: string) => DatabaseManager.getInstance().searchMeetings(query));
+
   safeHandle("get-meeting-details", async (event, id) => {
     // Helper to fetch full details
     return DatabaseManager.getInstance().getMeetingDetails(id);

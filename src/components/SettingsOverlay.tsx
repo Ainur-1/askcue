@@ -269,7 +269,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
     const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>('system');
     const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
     const [isAiLangDropdownOpen, setIsAiLangDropdownOpen] = useState(false);
-    const [updateStatus, setUpdateStatus] = useState<'idle' | 'checking' | 'available' | 'uptodate' | 'error'>('idle');
     const themeDropdownRef = React.useRef<HTMLDivElement>(null);
     const aiLangDropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -957,45 +956,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
 
 
 
-    const handleCheckForUpdates = async () => {
-        if (updateStatus === 'checking') return;
-        setUpdateStatus('checking');
-        try {
-            await window.electronAPI.checkForUpdates();
-        } catch (error) {
-            console.error("Failed to check for updates:", error);
-            setUpdateStatus('error');
-            setTimeout(() => setUpdateStatus('idle'), 3000);
-        }
-    };
-
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const unsubs = [
-            window.electronAPI.onUpdateChecking(() => {
-                setUpdateStatus('checking');
-            }),
-            window.electronAPI.onUpdateAvailable(() => {
-                setUpdateStatus('available');
-                // Don't close settings - let user see the button change to "Update Available"
-            }),
-            window.electronAPI.onUpdateNotAvailable(() => {
-                setUpdateStatus('uptodate');
-                setTimeout(() => setUpdateStatus('idle'), 3000);
-            }),
-            window.electronAPI.onUpdateError((err) => {
-                console.error('[Settings] Update error:', err);
-                setUpdateStatus('error');
-                setTimeout(() => setUpdateStatus('idle'), 3000);
-            })
-        ];
-
-        return () => unsubs.forEach(unsub => unsub());
-    }, [isOpen, onClose]);
-
-
-
     useEffect(() => {
         if (isOpen) {
             // Load detectable status
@@ -1130,7 +1090,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                               {id:'about',label:'О приложении',Icon:Info},
                             ].map(({id,label,Icon}) => <button key={id} id={`settings-tab-${id}`} type="button" role="tab" aria-selected={activeTab===id} aria-controls="settings-content" onClick={() => setActiveTab(id)}><Icon size={15}/>{t(label)}</button>)}
                           </nav>
-                          <button type="button" className="settings-quit" onClick={() => window.electronAPI.quitApp()}>{t("Выйти из Pika")}</button>
                         </div>}
 
                         {/* Content */}
@@ -1217,7 +1176,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                 {/* Debug Logging */}
                                                 <div className="flex items-center justify-between px-4 py-3">
                                                     <div className="flex items-center gap-4">
-                                                        <div className={`w-10 h-10 bg-bg-item-surface rounded-lg border flex items-center justify-center transition-colors ${verboseLogging ? 'border-state-warning-border text-state-warning' : 'border-border-subtle text-text-tertiary'}`}>
+                                                        <div className={`w-10 h-10 bg-bg-item-surface rounded-lg border flex items-center justify-center transition-colors border-border-subtle text-text-tertiary`}>
                                                             <Terminal size={20} />
                                                         </div>
                                                         <div>
@@ -1231,7 +1190,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                             setVerboseLogging(newState);
                                                             window.electronAPI?.setVerboseLogging?.(newState);
                                                         }}
-                                                        className={`w-11 h-6 rounded-full relative transition-colors ${verboseLogging ? 'bg-state-warning' : 'bg-bg-toggle-switch border border-border-muted'}`}
+                                                        className={`w-11 h-6 rounded-full relative transition-colors ${verboseLogging ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}
                                                     >
                                                         <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${verboseLogging ? 'translate-x-5' : 'translate-x-0'}`} />
                                                     </div>
@@ -1305,58 +1264,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                     </div>
                                                 </div>
 
-                                                {/* Version */}
-                                                <div className="flex items-start justify-between gap-4 px-4 py-3">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="w-10 h-10 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary shrink-0">
-                                                            <BadgeCheck size={20} />
-                                                        </div>
-                                                        <div>
-                                                            <h3 className="text-sm font-bold text-text-primary">{t("Version")}</h3>
-                                                            <p className="text-xs text-text-secondary mt-0.5">{t("You are currently using Pika version")}{packageJson.version}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <button
-                                                        onClick={async () => {
-                                                            if (updateStatus === 'available') {
-                                                                try {
-                                                                    // @ts-ignore
-                                                                    await window.electronAPI.downloadUpdate();
-                                                                    onClose(); // Close settings to show the banner
-                                                                } catch (err) {
-                                                                    console.error("Failed to start download:", err);
-                                                                }
-                                                            } else {
-                                                                handleCheckForUpdates();
-                                                            }
-                                                        }}
-                                                        disabled={updateStatus === 'checking'}
-                                                        className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all flex items-center gap-2 shrink-0 ${updateStatus === 'checking' ? 'bg-bg-input text-text-tertiary cursor-wait' :
-                                                            updateStatus === 'available' ? 'bg-accent-primary text-white hover:bg-accent-secondary shadow-lg shadow-blue-500/20' :
-                                                                updateStatus === 'uptodate' ? 'bg-state-success-soft text-state-success border border-state-success-border' :
-                                                                    updateStatus === 'error' ? 'bg-state-danger-soft text-state-danger border border-state-danger-border' :
-                                                                        'bg-bg-component hover:bg-bg-input text-text-primary'
-                                                            }`}
-                                                    >
-                                                        {updateStatus === 'checking' ? (
-                                                            <>
-                                                                <RefreshCw size={14} className="animate-spin" />{t("Checking...")}</>
-                                                        ) : updateStatus === 'available' ? (
-                                                            <>
-                                                                <ArrowDown size={14} />{t("Update Available")}</>
-                                                        ) : updateStatus === 'uptodate' ? (
-                                                            <>
-                                                                <Check size={14} />{t("Up to date")}</>
-                                                        ) : updateStatus === 'error' ? (
-                                                            <>
-                                                                <X size={14} />{t("Error")}</>
-                                                        ) : (
-                                                            <>
-                                                                <RefreshCw size={14} />{t("Check for updates")}</>
-                                                        )}
-                                                    </button>
-                                                </div>
                                             </div>
                                             </div>
 

@@ -19,6 +19,15 @@ async function main(){
   const click=async text=>{await run(`(()=>{const node=[...document.querySelectorAll('button')].find(n=>n.textContent.trim()===${JSON.stringify(text)});if(!node)throw Error('Missing button '+${JSON.stringify(text)});node.click()})()`);await wait(400)};
   const shot=async(name,w=win)=>{w.webContents.invalidate();await wait(200);fs.writeFileSync('temp/'+name+'.png',(await w.webContents.capturePage()).toPNG())};
   assert.match(await run('document.body.innerText'),/Новый разговор/);
+
+  await run(`document.querySelector('.header-search-button').click()`);await wait(200);
+  await run(`(()=>{const el=document.querySelector('[role="dialog"] input');const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;setter.call(el,'Redis');el.dispatchEvent(new Event('input',{bubbles:true}));})()`);await wait(400);
+  assert.match(await run(`document.querySelector('[role="dialog"]').textContent`),/Redis architecture/);
+  assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='searchMeetings'&&c.args[0]==='Redis')`));
+  await run(`document.querySelector('[role="dialog"] input').dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}))`);await wait(200);
+  assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='getMeetingDetails'&&c.args[0]==='old-meeting')`));
+  assert.equal(await run(`document.querySelector('.workbench-title').textContent`),'Redis architecture');
+  await run(`document.querySelector('.workbench-nav button').click()`);await wait(250);
   assert.equal(await run(`!!document.querySelector('img[alt="App Icon"]')`),false);
   await shot('japanese-app-preparation');
   await click('История встреч');
@@ -31,6 +40,10 @@ async function main(){
   assert.equal(await run(`document.querySelector('[aria-label="Шрифт заголовков"]')`),null);
   assert.match(await run(`getComputedStyle(document.querySelector('.workbench-title')).fontFamily`),/Segoe|system-ui/);
   assert.ok(await run(`!!document.querySelector('.settings-tabs-bar [role="tablist"]')`));
+  assert.equal(await run(`!!document.querySelector('.settings-quit')`),false);
+  assert.equal(await run(`!!document.querySelector('.app-updates')`),false);
+  await run(`document.querySelector('#settings-tab-about').click()`);await wait(200);assert.ok(await run(`!!document.querySelector('.app-updates')`));
+  await run(`document.querySelector('#settings-tab-general').click()`);await wait(200);
   assert.equal(await run(`document.querySelector('[aria-label="Тема"]').options.length`),2);
   assert.equal(await run(`document.querySelector('[aria-label="Язык интерфейса"]').value`),'system');
   const setLanguage=async value=>{await run(`(()=>{const el=document.querySelector('[aria-label="Язык интерфейса"]')||document.querySelector('[aria-label="Interface language"]');el.value=${JSON.stringify(value)};el.dispatchEvent(new Event('change',{bubbles:true}))})()`);await wait(180)};

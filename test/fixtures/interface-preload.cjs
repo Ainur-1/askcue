@@ -28,6 +28,8 @@ window.electronAPI = new Proxy({platform:'win32'}, {get(target, name) {
     calls.push({name,args});
     if(name === 'getSystemProxyEnabled') return proxyEnabled;
     if(name === 'setSystemProxyEnabled') {proxyEnabled=args[0]; return {success:true};}
+    if(name === 'getMeetingDetails') return {id:'old-meeting',title:'Redis architecture',date:'2026-11-10',duration:'01:00',summary:'Redis notes',transcript:[],usage:[]};
+    if(name === 'searchMeetings') return String(args[0]).toLowerCase().includes('redis') ? [{id:'old-meeting',title:'Redis architecture',date:'2026-11-10',snippet:'Лимиты запросов и Redis'}] : [];
     if(name === 'getUndetectable') return undetectable;
     if(name === 'setUndetectable') { undetectable=args[0]; emit('onUndetectableChanged',undetectable); return; }
     if(name === 'getMeetingActive') return active;
