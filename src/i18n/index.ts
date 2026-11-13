@@ -1,9 +1,12 @@
+import { migratePreferences } from '../lib/migratePreferences';
 import { useSyncExternalStore } from 'react';
 import { normalizeLanguagePreference, resolveInterfaceLanguage, type LanguagePreference } from './language';
 import { englishToRussian, russianToEnglish } from './messages';
 
-const preferenceKey = 'pika_interface_language';
-const localeKey = 'pika_system_locale';
+migratePreferences(localStorage);
+
+const preferenceKey = 'askcue_interface_language';
+const localeKey = 'askcue_system_locale';
 const listeners = new Set<() => void>();
 let preference = normalizeLanguagePreference(localStorage.getItem(preferenceKey));
 let systemLocale = localStorage.getItem(localeKey) || navigator.language;

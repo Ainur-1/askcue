@@ -2,7 +2,7 @@ import { useInterfaceLanguage } from './i18n';
 import React, { useState, useEffect } from "react" // forcing refresh
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ToastProvider, ToastViewport } from "./components/ui/toast"
-import PikaInterface from "./components/PikaInterface"
+import AskCueInterface from "./components/AskCueInterface"
 import SettingsPopup from "./components/SettingsPopup" // Keeping for legacy/specific window support if needed
 import Launcher from "./components/Launcher"
 import ModelSelectorWindow from "./components/ModelSelectorWindow"
@@ -133,7 +133,7 @@ const App: React.FC = () => {
 
   const handleStartMeeting = async () => {
     try {
-      localStorage.setItem('pika_last_meeting_start', Date.now().toString());
+      localStorage.setItem('askcue_last_meeting_start', Date.now().toString());
       const inputDeviceId = localStorage.getItem('preferredInputDeviceId');
       let outputDeviceId = localStorage.getItem('preferredOutputDeviceId');
       const useExperimentalSck = localStorage.getItem('useExperimentalSckBackend') === 'true';
@@ -173,14 +173,14 @@ const App: React.FC = () => {
       await window.electronAPI.endMeeting();
       console.log("[App.tsx] endMeeting IPC completed");
       
-      const startStr = localStorage.getItem('pika_last_meeting_start');
+      const startStr = localStorage.getItem('askcue_last_meeting_start');
       if (startStr) {
         const duration = Date.now() - parseInt(startStr, 10);
         const threshold = import.meta.env.DEV ? 10000 : 180000;
         if (duration >= threshold) {
-          localStorage.setItem('pika_show_profile_toaster', 'true');
+          localStorage.setItem('askcue_show_profile_toaster', 'true');
         }
-        localStorage.removeItem('pika_last_meeting_start');
+        localStorage.removeItem('askcue_last_meeting_start');
       }
 
       // Switch back to Native Launcher Mode
@@ -230,7 +230,7 @@ const App: React.FC = () => {
         <div className="w-full relative bg-transparent">
           <QueryClientProvider client={queryClient}>
             <ToastProvider>
-              <PikaInterface onEndMeeting={handleEndMeeting} />
+              <AskCueInterface onEndMeeting={handleEndMeeting} />
               <ToastViewport />
             </ToastProvider>
           </QueryClientProvider>

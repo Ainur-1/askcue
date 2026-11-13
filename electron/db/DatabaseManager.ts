@@ -1,4 +1,5 @@
 import { normalizeSearchText, searchSnippet, type MeetingSearchHit } from './meetingSearch';
+import { migrateDemoBranding } from './brandMigration';
 
 import Database from 'better-sqlite3';
 import path from 'path';
@@ -43,17 +44,17 @@ export class DatabaseManager {
 
     private constructor() {
         const userDataPath = app.getPath('userData');
-        const pikaDb = path.join(userDataPath, 'pika.db');
+        const askcueDb = path.join(userDataPath, 'askcue.db');
         const legacyDb = path.join(userDataPath, 'natively.db');
-        if (!fs.existsSync(pikaDb) && fs.existsSync(legacyDb)) {
+        if (!fs.existsSync(askcueDb) && fs.existsSync(legacyDb)) {
             try {
-                fs.renameSync(legacyDb, pikaDb);
-                console.log('[DatabaseManager] Migrated natively.db to pika.db');
+                fs.renameSync(legacyDb, askcueDb);
+                console.log('[DatabaseManager] Migrated natively.db to askcue.db');
             } catch (e) {
                 console.warn('[DatabaseManager] Could not migrate legacy database file:', e);
             }
         }
-        this.dbPath = pikaDb;
+        this.dbPath = askcueDb;
         this.init();
     }
 
@@ -112,6 +113,7 @@ export class DatabaseManager {
             }
 
             this.runMigrations();
+            migrateDemoBranding(this.db);
         } catch (error) {
             console.error('[DatabaseManager] Failed to initialize database:', error);
             throw error;
@@ -814,14 +816,14 @@ export class DatabaseManager {
         const needle = normalizeSearchText(query.slice(0, 200));
         if (!needle) return [];
         // A JS-backed SQLite function gives Unicode case folding, unlike SQLite lower().
-        this.db.function('pika_contains', { deterministic: true }, (value: unknown) =>
+        this.db.function('askcue_contains', { deterministic: true }, (value: unknown) =>
             normalizeSearchText(String(value ?? '')).includes(needle) ? 1 : 0);
         const rows = this.db.prepare(`
             SELECT m.id, m.title, m.created_at, m.summary_json,
-                (SELECT content FROM transcripts t WHERE t.meeting_id=m.id AND pika_contains(t.content) LIMIT 1) AS transcript_match
+                (SELECT content FROM transcripts t WHERE t.meeting_id=m.id AND askcue_contains(t.content) LIMIT 1) AS transcript_match
             FROM meetings m
-            WHERE pika_contains(m.title) OR pika_contains(m.summary_json)
-                OR EXISTS (SELECT 1 FROM transcripts t WHERE t.meeting_id=m.id AND pika_contains(t.content))
+            WHERE askcue_contains(m.title) OR askcue_contains(m.summary_json)
+                OR EXISTS (SELECT 1 FROM transcripts t WHERE t.meeting_id=m.id AND askcue_contains(t.content))
             ORDER BY m.created_at DESC LIMIT 30
         `).all() as Array<{ id: string; title: string; created_at: string; summary_json: string; transcript_match?: string }>;
         return rows.map(row => {
@@ -997,7 +999,7 @@ export class DatabaseManager {
 
         const summaryMarkdown = `# Overview
 
-Pika is a real-time AI meeting assistant designed to help you stay focused, informed, and fast-moving during calls. Get live insights while you speak, instant answers to questions, and structured notes after every meeting.
+AskCue is a real-time AI meeting assistant designed to help you stay focused, informed, and fast-moving during calls. Get live insights while you speak, instant answers to questions, and structured notes after every meeting.
 
 # Getting Started
 
@@ -1007,7 +1009,7 @@ Join a scheduled meeting and start directly from the meeting notification.
 
 ### During a Meeting
 - Use the **five quick action buttons** for real-time assistance
-- Show or hide Pika at any time:
+- Show or hide AskCue at any time:
   - **Mac**: Cmd + B
   - **Windows**: Ctrl + B
 - Move the widget anywhere on your screen by hovering over the top pill and dragging
@@ -1025,7 +1027,7 @@ Join a scheduled meeting and start directly from the meeting notification.
 - **Smart Note Taking**: Automatically captures key points, action items, and structured summaries.
 - **Summary**: A concise high-level brief of the entire meeting.
 - **Transcript**: Full real-time speech-to-text transcript, available during and after the call.
-- **Usage**: Track your interaction history and see how Pika assisted you.
+- **Usage**: Track your interaction history and see how AskCue assisted you.
 
 ## Live Insights
 Click **Live Insights** during a call to view:
@@ -1042,7 +1044,7 @@ Click **Live Insights** during a call to view:
 - **Full Screen Screenshot**: Cmd + H
 - **Selective Screenshot**: Cmd + Shift + H
 
-# Making the Most of Pika
+# Making the Most of AskCue
 
 ### Custom Context
 Upload resumes, project briefs, sales scripts, or other documents to tailor responses to your workflow. (coming soon).
@@ -1053,7 +1055,7 @@ Go to **Settings → Language Preferences** to:
 - Enable real-time translation during calls
 
 ### Undetectability
-Unlock the **Undetectability** add-on to keep Pika invisible during screen sharing.
+Unlock the **Undetectability** add-on to keep AskCue invisible during screen sharing.
 
 # Interface Basics
 
@@ -1087,7 +1089,7 @@ If you don’t already have one, follow the steps below to create it.
 ## 3. Create a Service Account
 - Navigate to **IAM & Admin → Service Accounts**
 - Click **Create Service Account**
-- **Name**: pika-stt
+- **Name**: askcue-stt
 - **Description**: optional
 
 ## 4. Assign Permissions
@@ -1099,7 +1101,7 @@ If you don’t already have one, follow the steps below to create it.
 - Select **JSON**
 - Download the file
 
-**Once downloaded, return to Settings → Credentials in Pika and select this file to complete setup.**
+**Once downloaded, return to Settings → Credentials in AskCue and select this file to complete setup.**
 
 # Free Google Cloud Credit (New Users)
 
@@ -1117,21 +1119,21 @@ The credit can be used for Speech-to-Text and is sufficient for extended testing
 # Support
 
 If you need help with setup or usage, contact us anytime at:
-pika.contact@gmail.com`;
+https://github.com/royisme/pikabaka/issues`;
 
         const demoMeeting: Meeting = {
             id: demoId,
-            title: "Pika Demo & Guide",
+            title: "AskCue Demo & Guide",
             date: today.toISOString(),
             duration: "5:00",
-            summary: "Complete guide to using Pika - your real-time AI meeting assistant.",
+            summary: "Complete guide to using AskCue - your real-time AI meeting assistant.",
             detailedSummary: {
                 overview: summaryMarkdown,
                 actionItems: [],
                 keyPoints: []
             },
             transcript: [
-                { speaker: 'interviewer', text: "Welcome to Pika! Let me show you how it works.", timestamp: 0 },
+                { speaker: 'interviewer', text: "Welcome to AskCue! Let me show you how it works.", timestamp: 0 },
                 { speaker: 'user', text: "Thanks! I'm excited to try it out.", timestamp: 5000 },
                 { speaker: 'interviewer', text: "You have 5 quick action buttons. 'What to answer' listens to the conversation and suggests what you should say.", timestamp: 10000 },
                 { speaker: 'user', text: "That sounds helpful for interviews.", timestamp: 18000 },
@@ -1141,13 +1143,13 @@ pika.contact@gmail.com`;
                 { speaker: 'interviewer', text: "'Follow Up Questions' suggests questions you can ask. 'Answer' lets you speak a question and get an instant response.", timestamp: 35000 },
                 { speaker: 'user', text: "Can I take screenshots during calls?", timestamp: 45000 },
                 { speaker: 'interviewer', text: "Yes! Press Cmd+H for full screen or Cmd+Shift+H to select an area. The AI will analyze it and help you.", timestamp: 50000 },
-                { speaker: 'user', text: "How do I hide Pika during screen share?", timestamp: 60000 },
+                { speaker: 'user', text: "How do I hide AskCue during screen share?", timestamp: 60000 },
                 { speaker: 'interviewer', text: "Press Cmd+B to toggle visibility anytime. You can also enable undetectable mode in settings.", timestamp: 65000 },
                 { speaker: 'user', text: "This is amazing. What happens after the call?", timestamp: 75000 },
                 { speaker: 'interviewer', text: "You get detailed meeting notes with action items, key points, full transcript, and a log of all AI interactions.", timestamp: 80000 }
             ],
             usage: [
-                { type: 'assist', timestamp: 15000, question: 'What features does Pika have?', answer: 'Pika offers 5 quick action buttons, screenshot analysis, real-time transcription, and comprehensive meeting notes.' },
+                { type: 'assist', timestamp: 15000, question: 'What features does AskCue have?', answer: 'AskCue offers 5 quick action buttons, screenshot analysis, real-time transcription, and comprehensive meeting notes.' },
                 { type: 'followup', timestamp: 40000, question: 'How do the action buttons work?', answer: 'Each button serves a specific purpose: suggest answers, clarify questions, recap conversations, generate follow-up questions, or get instant voice-to-answer responses.' }
             ],
             isProcessed: true

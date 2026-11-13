@@ -1,6 +1,6 @@
 <div align="center">
 
-# Pika
+# AskCue
 
 **The open-source AI interview copilot & meeting assistant.**
 Real-time transcription, AI-suggested answers, and screenshot reasoning — running on your machine.
@@ -10,25 +10,23 @@ Real-time transcription, AI-suggested answers, and screenshot reasoning — runn
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey)](#system-requirements)
 [![GitHub Stars](https://img.shields.io/github/stars/royisme/pikabaka?style=social)](https://github.com/royisme/pikabaka/stargazers)
 
-[Download](https://github.com/royisme/pikabaka/releases/latest) · [Demo](#demo) · [Features](#features) · [Why Pika](#why-pika) · [FAQ](#faq)
+[Download](https://github.com/royisme/pikabaka/releases/latest) · [Demo](#demo) · [Features](#features) · [Why AskCue](#why-askcue) · [FAQ](#faq)
 
 </div>
 
 ---
 
-Pika listens to your meetings, transcribes both sides of the conversation in under 500 ms, and quietly suggests answers powered by the LLM you choose — OpenAI, Claude, Gemini, Groq, or fully offline with Ollama. Bring your own API key, keep your audio on your machine, and customize every shortcut.
+AskCue listens to your meetings, transcribes both sides of the conversation in under 500 ms, and quietly suggests answers powered by the LLM you choose — OpenAI, Claude, Gemini, Groq, or fully offline with Ollama. Bring your own API key, keep your audio on your machine, and customize every shortcut.
 
-If you've been looking for an **open-source alternative to Cluely, Granola, or Otter** that respects your privacy and your wallet, Pika is built for you.
+If you've been looking for an **open-source alternative to Cluely, Granola, or Otter** that respects your privacy and your wallet, AskCue is built for you.
 
 ## Demo
 
-![Pika preview](demo/out/pika-preview.gif)
+The demo composition lives in [`demo/src/AskCueDemo.tsx`](demo/src/AskCueDemo.tsx) and can be rendered with [Remotion](https://www.remotion.dev/).
 
-Full demo video: [`demo/out/pika-demo.mp4`](demo/out/pika-demo.mp4) · Built with [Remotion](https://www.remotion.dev/).
+## Why AskCue
 
-## Why Pika
-
-|                                       | **Pika** | Cluely | Granola | Otter |
+|                                       | **AskCue** | Cluely | Granola | Otter |
 | ------------------------------------- | :------: | :----: | :-----: | :---: |
 | Open source                           |    ✓ AGPL-3.0    |   —    |    —    |   —   |
 | Bring your own API key                |    ✓     |   —    |    —    |   —   |
@@ -68,14 +66,14 @@ Grab the latest signed build from [GitHub Releases](https://github.com/royisme/p
 
 > **macOS unsigned warning**: If macOS reports the app as unverified, clear quarantine:
 > ```bash
-> xattr -cr "/Applications/Pika.app"
+> xattr -cr "/Applications/AskCue.app"
 > ```
 
 ### Build from source
 
 ```bash
-git clone https://github.com/royisme/pikabaka.git
-cd pikabaka
+git clone https://github.com/royisme/pikabaka.git askcue
+cd askcue
 pnpm install            # also rebuilds native modules for Electron ABI
 pnpm run build:native   # compile Rust audio module
 pnpm run app:dev        # Vite + Electron in dev mode
@@ -123,7 +121,7 @@ Three-process Electron app:
             └────────────────────────┘    └──────────────────┘
 ```
 
-Local data lives in `~/Library/Application Support/Pika` (macOS) or `%APPDATA%\Pika` (Windows). API keys live in the OS keychain. No telemetry runs by default.
+Local data lives in `~/Library/Application Support/askcue` (macOS) or `%APPDATA%\askcue` (Windows). Provider credentials remain in the local configuration directory. Existing profiles are copied on first launch without overwriting newer settings.
 
 ## System Requirements
 
@@ -143,7 +141,7 @@ Track progress in [GitHub Issues](https://github.com/royisme/pikabaka/issues).
 
 ## FAQ
 
-**Is Pika free?**
+**Is AskCue free?**
 Yes — AGPL-3.0. Free for personal use, study, and open-source projects. Commercial / proprietary integrations should review the AGPL terms or reach out about a commercial license.
 
 **Does my audio leave my machine?**
@@ -152,13 +150,13 @@ Only if you choose a cloud STT/LLM provider. Pair Ollama with a local STT engine
 **Where are my API keys stored?**
 In your OS keychain — Keychain Access on macOS, Credential Manager on Windows. Never in plaintext config files.
 
-**How is Pika different from Cluely?**
+**How is AskCue different from Cluely?**
 Open source under AGPL-3.0, no subscription, you bring your own API key, and you can run completely offline with Ollama. Every shortcut and provider is configurable.
 
 **Why "stealth mode"?**
-The overlay can be hidden from screen-sharing tools so private notes during a sales demo don't show on the customer's screen. It's a privacy feature, not a permission to break rules — please use Pika ethically and respect any policies that apply to your conversations.
+The overlay can be hidden from screen-sharing tools so private notes during a sales demo don't show on the customer's screen. It's a privacy feature, not a permission to break rules — please use AskCue ethically and respect any policies that apply to your conversations.
 
-**Can I use Pika during a coding interview?**
+**Can I use AskCue during a coding interview?**
 Use it for **prep and rehearsal** before the interview — that's the legitimate use case. Real interviews almost always have explicit rules about external assistance; respect them.
 
 **Does it work on Linux?**
@@ -176,7 +174,7 @@ Pull requests welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CO
 
 <div align="center">
 
-If Pika is useful to you, [give it a star](https://github.com/royisme/pikabaka) — it helps others discover the project.
+If AskCue is useful to you, [give it a star](https://github.com/royisme/pikabaka) — it helps others discover the project.
 
 **Keywords**: AI interview copilot, AI meeting assistant, real-time transcription, open source Cluely alternative, local AI assistant, Electron AI app, BYO API key meeting tool, privacy-first AI copilot, screenshot AI assistant, RAG meeting memory.
 

@@ -33,17 +33,17 @@ If you see "App is damaged":
 
 - **For .zip downloads:**
   1. Move the app to your Applications folder.
-  2. Open Terminal and run: `xattr -cr /Applications/Pika.app`
+  2. Open Terminal and run: `xattr -cr /Applications/AskCue.app`
 
 - **For .dmg downloads:**
   1. Open Terminal and run:
      ```bash
-     xattr -cr ~/Downloads/Pika-2.0.2-arm64.dmg
+     xattr -cr ~/Downloads/AskCue-2.0.2-arm64.dmg
      # Or for Intel Macs:
-     xattr -cr ~/Downloads/Pika-2.0.2-x64.dmg
+     xattr -cr ~/Downloads/AskCue-2.0.2-x64.dmg
      ```
   2. Install the downloaded DMG
-  3. Open Terminal and run: `xattr -cr /Applications/Pika.app`
+  3. Open Terminal and run: `xattr -cr /Applications/AskCue.app`
 
 ## ⚠️Windows Installation (Unsigned Build)
 

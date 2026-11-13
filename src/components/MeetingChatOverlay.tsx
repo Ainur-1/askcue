@@ -4,7 +4,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { X, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import pikaIcon from '../../assets/icon.png';
+import askcueIcon from '../../assets/icon.png';
 import { electronChatFetch } from '../lib/electronChatFetch';
 
 import ReactMarkdown from 'react-markdown';
@@ -318,7 +318,7 @@ const MeetingChatOverlay: React.FC<MeetingChatOverlayProps> = ({
 
                         <div className="flex items-center justify-between px-4 py-3 pt-5 border-b border-border-subtle shrink-0">
                             <div className="flex items-center gap-2">
-                                <img src={pikaIcon} className="w-3.5 h-3.5 opacity-60 object-contain drop-shadow-sm" alt="logo" />
+                                <img src={askcueIcon} className="w-3.5 h-3.5 opacity-60 object-contain drop-shadow-sm" alt="logo" />
                                 <span className="text-[13px] font-medium text-text-secondary">{t("Search this meeting")}</span>
                             </div>
                             <button

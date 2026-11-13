@@ -9,7 +9,7 @@
   "prerelease": false,
   "packages": {
     ".": {
-      "package-name": "pika",
+      "package-name": "askcue",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [],
       "changelog-sections": [

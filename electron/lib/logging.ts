@@ -1,6 +1,7 @@
 import { app, systemPreferences } from "electron"
 import path from "path"
 import fs from "fs"
+import { formatLogArguments, redactLogText } from './logRedaction';
 
 // CQ-04 fix: do NOT call app.getPath() at module load time.
 // app.getPath('documents') is not guaranteed to be available before app.whenReady().
@@ -9,7 +10,7 @@ let _logFile: string | null = null;
 const getLogFile = (): string | null => {
   if (_logFile) return _logFile;
   try {
-    _logFile = path.join(app.getPath('documents'), 'pika_debug.log');
+    _logFile = path.join(app.getPath('documents'), 'askcue_debug.log');
     return _logFile;
   } catch {
     // app.ready not yet fired — return null, logToFile will skip silently
@@ -43,7 +44,7 @@ export function logToFile(msg: string) {
     } catch {
       // statSync throws if the file doesn't exist yet — that's fine
     }
-    fs.appendFileSync(logFile, new Date().toISOString() + ' ' + msg + '\n');
+    fs.appendFileSync(logFile, new Date().toISOString() + ' ' + redactLogText(msg) + '\n');
   } catch (e) {
     // Ignore logging errors
   }
@@ -73,26 +74,26 @@ export async function ensureMacMicrophoneAccess(context: string): Promise<boolea
 
 export function setupConsoleOverrides(): void {
   console.log = (...args: any[]) => {
-    const msg = args.map(a => (a instanceof Error) ? a.stack || a.message : (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+    const msg = formatLogArguments(args);
     logToFile('[LOG] ' + msg);
     try {
-      originalLog.apply(console, args);
+      originalLog.call(console, msg);
     } catch { }
   };
 
   console.warn = (...args: any[]) => {
-    const msg = args.map(a => (a instanceof Error) ? a.stack || a.message : (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+    const msg = formatLogArguments(args);
     logToFile('[WARN] ' + msg);
     try {
-      originalWarn.apply(console, args);
+      originalWarn.call(console, msg);
     } catch { }
   };
 
   console.error = (...args: any[]) => {
-    const msg = args.map(a => (a instanceof Error) ? a.stack || a.message : (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+    const msg = formatLogArguments(args);
     logToFile('[ERROR] ' + msg);
     try {
-      originalError.apply(console, args);
+      originalError.call(console, msg);
     } catch { }
   };
 }

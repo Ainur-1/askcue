@@ -13,16 +13,16 @@ import { useMeetingChat, type Message } from '../hooks/useMeetingChat';
 import { useMeetingTranscript } from '../hooks/useMeetingTranscript';
 import { useMeetingAudio } from '../hooks/useMeetingAudio';
 
-interface PikaInterfaceProps { onEndMeeting?: () => void; }
+interface AskCueInterfaceProps { onEndMeeting?: () => void; }
 type ScreenshotAttachment = { path: string; preview: string };
 type CommandHandlers = { handleWhatToSay: () => void; handleFollowUp: (intent?: string) => void; handleFollowUpQuestions: () => void; handleRecap: () => void; handleAnswerNow: () => void; handleClarify: () => void; handleCodeHint: () => void; handleBrainstorm: () => void; };
 type GeneralHandlers = { toggleVisibility: () => void; processScreenshots: () => void; resetCancel: () => Promise<void>; toggleMousePassthrough: () => void; takeScreenshot: () => Promise<void>; selectiveScreenshot: () => Promise<void>; };
 
-const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
+const AskCueInterface: React.FC<AskCueInterfaceProps> = ({ onEndMeeting }) => {
     const isLightTheme = useResolvedTheme() === 'light';
     const [isExpanded, setIsExpanded] = useState(true);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [splitterPosition, setSplitterPosition] = useState(() => { const parsed = Number(localStorage.getItem('pika_splitter_position') ?? 40); return Number.isFinite(parsed) ? Math.min(80, Math.max(20, parsed)) : 40; });
+    const [splitterPosition, setSplitterPosition] = useState(() => { const parsed = Number(localStorage.getItem('askcue_splitter_position') ?? 40); return Number.isFinite(parsed) ? Math.min(80, Math.max(20, parsed)) : 40; });
     const [isMousePassthrough, setIsMousePassthrough] = useState(false);
     const [isUndetectable, setIsUndetectable] = useState(false);
     const [currentModel, setCurrentModel] = useState('gemini-3-flash-preview');
@@ -37,17 +37,17 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
     const chat = useMeetingChat();
     const appearance = useMemo(() => getOverlayAppearance(isLightTheme ? 'light' : 'dark'), [isLightTheme]);
 
-    useEffect(() => localStorage.setItem('pika_splitter_position', String(splitterPosition)), [splitterPosition]);
+    useEffect(() => localStorage.setItem('askcue_splitter_position', String(splitterPosition)), [splitterPosition]);
     useEffect(() => { window.electronAPI?.getDefaultModel?.().then((result: any) => { if (result?.model) { setCurrentModel(result.model); window.electronAPI.setModel(result.model).catch(() => {}); } }).catch((err: any) => console.error('Failed to fetch default model:', err)); }, []);
     useEffect(() => { const unsubscribe = window.electronAPI?.onModelChanged?.((modelId: string) => setCurrentModel((prev) => (prev === modelId ? prev : modelId))); return () => unsubscribe?.(); }, []);
     useEffect(() => { window.electronAPI?.getUndetectable?.().then(setIsUndetectable); const unsubscribe = window.electronAPI?.onUndetectableChanged?.(setIsUndetectable); return () => unsubscribe?.(); }, []);
-    useEffect(() => localStorage.setItem('pika_undetectable', String(isUndetectable)), [isUndetectable]);
+    useEffect(() => localStorage.setItem('askcue_undetectable', String(isUndetectable)), [isUndetectable]);
     useEffect(() => { window.electronAPI?.getOverlayMousePassthrough?.().then(setIsMousePassthrough).catch(() => {}); const unsubscribe = window.electronAPI?.onOverlayMousePassthroughChanged?.(setIsMousePassthrough); return () => unsubscribe?.(); }, []);
     useEffect(() => window.electronAPI?.onSettingsVisibilityChange?.(setIsSettingsOpen), []);
     useEffect(() => { if (isExpanded) { window.electronAPI.showWindow(isStealthRef.current); isStealthRef.current = false; } else setTimeout(() => window.electronAPI.hideWindow(), 400); }, [isExpanded]);
     useEffect(() => window.electronAPI?.onToggleExpand?.(() => setIsExpanded((prev) => !prev)), []);
     useEffect(() => window.electronAPI?.onEnsureExpanded?.(() => { isStealthRef.current = true; setIsExpanded(true); }), []);
-    useEffect(() => window.electronAPI?.onSessionReset?.(() => { console.log('[PikaInterface] Resetting session state...'); chat.setSystemMessages([]); chat.setInputValue(''); chat.setAttachedContext([]); audio.setManualTranscript(''); audio.setVoiceInput(''); chat.setIsProcessing(false); analytics.trackConversationStarted(); }), [chat.setSystemMessages, chat.setInputValue, chat.setAttachedContext, audio.setManualTranscript, audio.setVoiceInput, chat.setIsProcessing]);
+    useEffect(() => window.electronAPI?.onSessionReset?.(() => { console.log('[AskCueInterface] Resetting session state...'); chat.setSystemMessages([]); chat.setInputValue(''); chat.setAttachedContext([]); audio.setManualTranscript(''); audio.setVoiceInput(''); chat.setIsProcessing(false); analytics.trackConversationStarted(); }), [chat.setSystemMessages, chat.setInputValue, chat.setAttachedContext, audio.setManualTranscript, audio.setVoiceInput, chat.setIsProcessing]);
 
     const handleScreenshotAttach = useCallback((data: ScreenshotAttachment) => { setIsExpanded(true); chat.setAttachedContext((prev) => (prev.some((s) => s.path === data.path) ? prev : [...prev, data].slice(-5))); }, [chat.setAttachedContext]);
     const updateContentDimensions = useCallback(() => {
@@ -90,6 +90,7 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
         try {
             await window.electronAPI.submitManualQuestion(question);
         } catch (error) {
+            chat.failResponse();
             chat.setIsProcessing(false);
             chat.setSystemMessages((prev) => [
                 ...prev,
@@ -114,7 +115,7 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
     const generalHandlersRef = useRef<GeneralHandlers>(null!);
     generalHandlersRef.current = {
         toggleVisibility: () => window.electronAPI.toggleWindow(), processScreenshots: chat.handleWhatToSay,
-        resetCancel: async () => { if (chat.isProcessing) chat.setIsProcessing(false); else { await window.electronAPI.resetIntelligence(); chat.setSystemMessages([]); chat.setAttachedContext([]); chat.setInputValue(''); } },
+        resetCancel: async () => { if (chat.isProcessing) chat.stop(); else { await window.electronAPI.resetIntelligence(); chat.setSystemMessages([]); chat.setAttachedContext([]); chat.setInputValue(''); chat.resetResponseTimer(); } },
         toggleMousePassthrough: () => { const next = !isMousePassthrough; setIsMousePassthrough(next); window.electronAPI?.setOverlayMousePassthrough?.(next); },
         takeScreenshot: async () => { const data = await window.electronAPI.takeScreenshot().catch((err) => console.error('Error triggering screenshot:', err)); if (data?.path) handleScreenshotAttach(data as ScreenshotAttachment); },
         selectiveScreenshot: async () => { const data = await window.electronAPI.takeSelectiveScreenshot().catch((err) => console.error('Error triggering selective screenshot:', err)); if (data && !data.cancelled && data.path) handleScreenshotAttach(data as ScreenshotAttachment); },
@@ -141,7 +142,7 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
 
     const setMessages = useCallback((updater: React.SetStateAction<Message[]>) => { chat.setSystemMessages((prev) => (typeof updater === 'function' ? (updater as (p: Message[]) => Message[])(prev) : updater)); }, [chat.setSystemMessages]);
     const transcriptProps = { ...transcript, ...audio, appearance, isLightTheme };
-    const chatProps = { messages: chat.messages, knowledgeContext: chat.knowledgeContext, attachedContext: chat.attachedContext, setAttachedContext: chat.setAttachedContext, actionButtonMode: chat.actionButtonMode, inputValue: chat.inputValue, setInputValue: chat.setInputValue, isProcessing: chat.isProcessing, handleWhatToSay: chat.handleWhatToSay, handleClarify: chat.handleClarify, handleFollowUpQuestions: chat.handleFollowUpQuestions, handleRecap: chat.handleRecap, handleBrainstorm: chat.handleBrainstorm, handleAnswerNow, handleManualSubmit: chat.handleManualSubmit, isManualRecording: audio.isManualRecording, manualTranscript: audio.manualTranscript, voiceInput: audio.voiceInput, appearance, isLightTheme, currentModel, isSettingsOpen, isMousePassthrough, setIsMousePassthrough, shortcuts, scrollContainerRef, messagesEndRef, textInputRef, contentRef, setMessages };
+    const chatProps = { messages: chat.messages, knowledgeContext: chat.knowledgeContext, attachedContext: chat.attachedContext, setAttachedContext: chat.setAttachedContext, actionButtonMode: chat.actionButtonMode, inputValue: chat.inputValue, setInputValue: chat.setInputValue, isProcessing: chat.isProcessing, responseTiming: chat.responseTiming, handleWhatToSay: chat.handleWhatToSay, handleClarify: chat.handleClarify, handleFollowUpQuestions: chat.handleFollowUpQuestions, handleRecap: chat.handleRecap, handleBrainstorm: chat.handleBrainstorm, handleAnswerNow, handleManualSubmit: chat.handleManualSubmit, isManualRecording: audio.isManualRecording, manualTranscript: audio.manualTranscript, voiceInput: audio.voiceInput, appearance, isLightTheme, currentModel, isSettingsOpen, isMousePassthrough, setIsMousePassthrough, shortcuts, scrollContainerRef, messagesEndRef, textInputRef, contentRef, setMessages };
 
     return (
         <div ref={contentRef} className={`flex flex-col items-center w-full mx-auto ${isExpanded ? 'h-screen' : 'h-fit'} min-h-0 bg-transparent meeting-frame rounded-[24px] font-sans gap-2 overlay-text-primary`}>
@@ -157,4 +158,4 @@ const PikaInterface: React.FC<PikaInterfaceProps> = ({ onEndMeeting }) => {
     );
 };
 
-export default PikaInterface;
+export default AskCueInterface;

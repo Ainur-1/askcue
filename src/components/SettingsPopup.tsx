@@ -9,7 +9,7 @@ const SettingsPopup = () => {
     const isLightTheme = useResolvedTheme() === 'light';
     const [isUndetectable, setIsUndetectable] = useState(false);
     const [useGroqFastText, setUseGroqFastText] = useState(() => {
-        return localStorage.getItem('pika_groq_fast_text') === 'true';
+        return localStorage.getItem('askcue_groq_fast_text') === 'true';
     });
     const [profileMode, setProfileMode] = useState(false);
     const [hasProfile, setHasProfile] = useState(false);
@@ -73,7 +73,7 @@ const SettingsPopup = () => {
         if (window.electronAPI?.onUndetectableChanged) {
             const unsubscribe = window.electronAPI.onUndetectableChanged((newState: boolean) => {
                 setIsUndetectable(newState);
-                localStorage.setItem('pika_undetectable', String(newState));
+                localStorage.setItem('askcue_undetectable', String(newState));
             });
             return () => unsubscribe();
         }
@@ -84,7 +84,7 @@ const SettingsPopup = () => {
         if (window.electronAPI?.onGroqFastTextChanged) {
             const unsubscribe = window.electronAPI.onGroqFastTextChanged((enabled: boolean) => {
                 setUseGroqFastText(enabled);
-                localStorage.setItem('pika_groq_fast_text', String(enabled));
+                localStorage.setItem('askcue_groq_fast_text', String(enabled));
             });
             return () => unsubscribe();
         }
@@ -105,7 +105,7 @@ const SettingsPopup = () => {
         }
 
         // Apply Groq Text Mode
-        localStorage.setItem('pika_groq_fast_text', String(useGroqFastText));
+        localStorage.setItem('askcue_groq_fast_text', String(useGroqFastText));
         try {
             // @ts-ignore - electronAPI not typed in this file yet
             window.electronAPI?.invoke('set-groq-fast-text-mode', useGroqFastText);
@@ -117,13 +117,13 @@ const SettingsPopup = () => {
     const [actionButtonMode, setActionButtonModeState] = useState<'recap' | 'brainstorm'>('recap');
 
     const [showTranscript, setShowTranscript] = useState(() => {
-        const stored = localStorage.getItem('pika_interviewer_transcript');
+        const stored = localStorage.getItem('askcue_interviewer_transcript');
         return stored !== 'false'; // Default to true if not set
     });
 
     useEffect(() => {
         const handleStorage = () => {
-            const stored = localStorage.getItem('pika_interviewer_transcript');
+            const stored = localStorage.getItem('askcue_interviewer_transcript');
             setShowTranscript(stored !== 'false');
         };
 
@@ -205,7 +205,7 @@ const SettingsPopup = () => {
                         onClick={() => {
                             const newState = !isUndetectable;
                             setIsUndetectable(newState);
-                            localStorage.setItem('pika_undetectable', String(newState));
+                            localStorage.setItem('askcue_undetectable', String(newState));
                             window.electronAPI?.setUndetectable(newState);
                         }}
                         className={`w-[30px] h-[18px] rounded-full p-[1.5px] transition-all duration-300 ease-spring active:scale-[0.92] ${isUndetectable
@@ -251,7 +251,7 @@ const SettingsPopup = () => {
                         onClick={() => {
                             const newState = !showTranscript;
                             setShowTranscript(newState);
-                            localStorage.setItem('pika_interviewer_transcript', String(newState));
+                            localStorage.setItem('askcue_interviewer_transcript', String(newState));
                             // Dispatch event for same-window listeners
                             window.dispatchEvent(new Event('storage'));
                         }}
@@ -324,11 +324,11 @@ const SettingsPopup = () => {
 
                 <div className={`h-px my-0.5 mx-2 ${dividerClass}`} />
 
-                {/* Show/Hide Pika */}
+                {/* Show/Hide AskCue */}
                 <div className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200 group interaction-base interaction-press ${itemHoverClass}`}>
                     <div className="flex items-center gap-3">
                         <MessageSquare className={`w-3.5 h-3.5 transition-colors ${iconInactiveClass}`} />
-                        <span className={`text-[12px] transition-colors ${labelInactiveClass}`}>{t("Show or hide Pika")}</span>
+                        <span className={`text-[12px] transition-colors ${labelInactiveClass}`}>{t("Show or hide AskCue")}</span>
                     </div>
                     <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                         {/* Dynamic Keys for Toggle Visibility */}

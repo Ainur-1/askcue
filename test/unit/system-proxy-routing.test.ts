@@ -52,7 +52,7 @@ t.test('HTTP switches proxy → direct → proxy without a process restart; loca
         return enabled ? `PROXY 127.0.0.1:${proxyPort}` : 'DIRECT';
     });
     t.teardown(() => { agent.resetConnections(); target.close(); proxy.close(); });
-    const url = `http://pika-proxy-test.invalid:${targetPort}/question`;
+    const url = `http://askcue-proxy-test.invalid:${targetPort}/question`;
     t.equal(await read(url, agent), 'proxy');
     enabled = false;
     agent.resetConnections();
@@ -87,7 +87,7 @@ t.test('WebSocket speech handshakes use CONNECT through the selected proxy', asy
     });
     const proxyPort = await listen(proxy);
     const agent = new SystemProxyAgent(async () => `PROXY 127.0.0.1:${proxyPort}`);
-    const socket = new WebSocket(`ws://pika-speech-test.invalid:${targetPort}`, { agent });
+    const socket = new WebSocket(`ws://askcue-speech-test.invalid:${targetPort}`, { agent });
     t.teardown(() => {
         socket.terminate();
         for (const client of websocketServer.clients) client.terminate();

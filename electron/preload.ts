@@ -108,9 +108,10 @@ interface ElectronAPI {
 
   // Intelligence Mode IPC
   generateAssist: () => Promise<{ insight: string | null }>
-  generateWhatToSay: (question?: string, imagePaths?: string[]) => Promise<{ answer: string | null; question?: string; error?: string }>
+  generateWhatToSay: (question?: string, imagePaths?: string[]) => Promise<{ answer: string | null; question?: string; error?: string; reason?: string }>
   generateFollowUp: (intent: string, userRequest?: string) => Promise<{ refined: string | null; intent: string }>
-  generateRecap: () => Promise<{ summary: string | null }>
+  generateRecap: () => Promise<{ summary: string | null; reason?: string }>
+  openAIDiagnosticsFolder: () => Promise<{ success: boolean; error?: string }>
   submitManualQuestion: (question: string) => Promise<{ answer: string | null; question: string }>
   getIntelligenceContext: () => Promise<{ context: string; lastAssistantMessage: string | null; activeMode: string }>
   resetIntelligence: () => Promise<{ success: boolean; error?: string }>
@@ -137,7 +138,7 @@ interface ElectronAPI {
   onIntelligenceManualStarted: (callback: () => void) => () => void
   onIntelligenceManualResult: (callback: (data: { answer: string; question: string }) => void) => () => void
   onIntelligenceModeChanged: (callback: (data: { mode: string }) => void) => () => void
-  onIntelligenceError: (callback: (data: { error: string; mode: string }) => void) => () => void
+  onIntelligenceError: (callback: (data: { error: string; mode: string; requestId?: string }) => void) => () => void
 
   // Model Management
   getDefaultModel: () => Promise<{ model: string }>
@@ -159,6 +160,11 @@ interface ElectronAPI {
   // Custom Providers
   saveCustomProvider: (provider: any) => Promise<{ success: boolean; id?: string; error?: string }>
   getCustomProviders: () => Promise<any[]>
+  getOpenCodeSettings: () => Promise<import('../shared/opencode').OpenCodeConnectionInfo>
+  saveOpenCodeApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>
+  importOpenCodeConnection: () => Promise<{ success: boolean; error?: string }>
+  saveOpenCodeSettings: (settings: Omit<import('../shared/opencode').OpenCodeSettings, 'password'> & { password?: string }) => Promise<{ success: boolean; error?: string }>
+  getOpenCodeModels: () => Promise<{ success: boolean; models: import('../shared/opencode').OpenCodeModel[]; error?: string }>
   deleteCustomProvider: (id: string) => Promise<{ success: boolean; error?: string }>
   getOpenAICompatibleProviders: () => Promise<Array<{ id: string; name: string; baseUrl: string; apiKey: string; preferredModel?: string }>>
   saveOpenAICompatibleProvider: (provider: { id: string; name: string; baseUrl: string; apiKey: string; preferredModel?: string }) => Promise<{ success: boolean; error?: string }>
@@ -636,6 +642,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   generateAssist: () => ipcRenderer.invoke("generate-assist"),
   generateWhatToSay: (question?: string, imagePaths?: string[]) => ipcRenderer.invoke("generate-what-to-say", question, imagePaths),
   generateClarify: () => ipcRenderer.invoke("generate-clarify"),
+  openAIDiagnosticsFolder: () => ipcRenderer.invoke('open-ai-diagnostics-folder'),
   generateCodeHint: (imagePaths?: string[], problemStatement?: string) => ipcRenderer.invoke("generate-code-hint", imagePaths, problemStatement),
   generateBrainstorm: (imagePaths?: string[], problemStatement?: string) => ipcRenderer.invoke("generate-brainstorm", imagePaths, problemStatement),
   generateFollowUp: (intent: string, userRequest?: string) => ipcRenderer.invoke("generate-follow-up", intent, userRequest),
@@ -782,7 +789,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
       ipcRenderer.removeListener("intelligence-mode-changed", subscription)
     }
   },
-  onIntelligenceError: (callback: (data: { error: string; mode: string }) => void) => {
+  onIntelligenceError: (callback: (data: { error: string; mode: string; requestId?: string }) => void) => {
     const subscription = (_: any, data: any) => callback(data)
     ipcRenderer.on("intelligence-error", subscription)
     return () => {
@@ -847,6 +854,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getCustomProviders: () => ipcRenderer.invoke('get-custom-providers'),
   deleteCustomProvider: (id: string) => ipcRenderer.invoke('delete-custom-provider', id),
   getOpenAICompatibleProviders: () => ipcRenderer.invoke('get-openai-compatible-providers'),
+  getOpenCodeSettings: () => ipcRenderer.invoke('get-opencode-settings'),
+  saveOpenCodeApiKey: (apiKey) => ipcRenderer.invoke('save-opencode-api-key', apiKey),
+  saveOpenCodeSettings: (settings) => ipcRenderer.invoke('save-opencode-settings', settings),
+  getOpenCodeModels: () => ipcRenderer.invoke('get-opencode-models'),
+  importOpenCodeConnection: () => ipcRenderer.invoke('import-opencode-connection'),
   saveOpenAICompatibleProvider: (provider: { id: string; name: string; baseUrl: string; apiKey: string; preferredModel?: string }) =>
     ipcRenderer.invoke('save-openai-compatible-provider', provider),
   deleteOpenAICompatibleProvider: (id: string) => ipcRenderer.invoke('delete-openai-compatible-provider', id),

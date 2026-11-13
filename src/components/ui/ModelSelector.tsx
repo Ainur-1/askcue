@@ -60,6 +60,10 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onSe
                     }
                 }
                 setCloudModels(cModels);
+                const openCode = await window.electronAPI?.getOpenCodeModels?.();
+                if (openCode?.success) {
+                    setCloudModels([...cModels, ...openCode.models.map(model => ({ id: model.id, name: model.name, desc: 'OpenCode', provider: 'opencode' }))]);
+                }
             } catch (e) {
                 console.error("Failed to load models:", e);
             }

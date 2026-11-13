@@ -3,6 +3,7 @@ import ChatPanel from './ChatPanel';
 import type { ShortcutConfig } from '../../hooks/useShortcuts';
 import type { Message } from '../../hooks/useMeetingChat';
 import type { getOverlayAppearance } from '../../lib/overlayAppearance';
+import type { ResponseTiming } from '../../lib/responseTiming';
 
 type KnowledgeContext = {
     matchedJDSignals: Array<{ requirement: string; relevance: number }>;
@@ -22,6 +23,7 @@ interface ChatColumnProps {
     inputValue: string;
     setInputValue: React.Dispatch<React.SetStateAction<string>>;
     isProcessing: boolean;
+    responseTiming: ResponseTiming | null;
     handleWhatToSay: () => void;
     handleClarify: () => void;
     handleFollowUpQuestions: () => void;
@@ -55,6 +57,7 @@ const ChatColumn: React.FC<ChatColumnProps> = ({
     inputValue,
     setInputValue,
     isProcessing,
+    responseTiming,
     handleWhatToSay,
     handleClarify,
     handleFollowUpQuestions,
@@ -88,6 +91,7 @@ const ChatColumn: React.FC<ChatColumnProps> = ({
             inputValue={inputValue}
             setInputValue={setInputValue}
             isProcessing={isProcessing}
+            responseTiming={responseTiming}
             handleWhatToSay={handleWhatToSay}
             handleClarify={handleClarify}
             handleFollowUpQuestions={handleFollowUpQuestions}

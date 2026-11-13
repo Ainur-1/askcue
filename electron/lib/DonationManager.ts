@@ -1,3 +1,4 @@
+import { PREVIOUS_PROFILE_NAME } from '../../shared/branding';
 import Store from 'electron-store';
 import crypto from 'crypto';
 
@@ -19,14 +20,14 @@ export class DonationManager {
 
     private constructor() {
         this.store = new Store<DonationState>({
-            name: 'pika-preferences-secure', // Different file than main config
+            name: 'askcue-preferences-secure', // Different file than main config
             defaults: {
                 hasDonated: false,
                 lastShownAt: null,
                 lifetimeShows: 0
             },
             // Encryption in v8 worked fine, keeping it for "obvious tampering" protection
-            encryptionKey: 'pika-secure-storage-key'
+            encryptionKey: `${PREVIOUS_PROFILE_NAME}-secure-storage-key`
         });
     }
 

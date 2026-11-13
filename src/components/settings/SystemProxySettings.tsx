@@ -35,7 +35,7 @@ export function SystemProxySettings() {
                 <div className="flex items-center gap-4 min-w-0">
                     <div className="w-10 h-10 shrink-0 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary"><Globe size={20}/></div>
                     <div><h3 className="text-sm font-bold text-text-primary">{t("Use system proxy")}</h3>
-                    <p className="text-xs text-text-secondary mt-0.5">{t("Use your operating system's proxy settings. Changes apply without restarting Pika.")}</p></div>
+                    <p className="text-xs text-text-secondary mt-0.5">{t("Use your operating system's proxy settings. Changes apply without restarting AskCue.")}</p></div>
                 </div>
                 <button type="button" role="switch" aria-label={t("Use system proxy")}
                     aria-checked={enabled === true} disabled={enabled === null || saving} onClick={toggle}

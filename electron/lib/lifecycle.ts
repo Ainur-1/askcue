@@ -5,9 +5,11 @@ import { SettingsManager } from "../services/SettingsManager"
 import { OllamaManager } from "../services/OllamaManager"
 import { AppState } from "../main"
 import { initializeSystemProxy } from "../services/SystemProxyManager"
+import { stopOpenCode } from '../services/OpenCodeManager';
+import { initializeAIDiagnostics } from './aiDiagnostics';
 
 export async function initializeApp() {
-  // A normal close hides Pika to the tray. A later launch must explicitly show
+  // A normal close hides AskCue to the tray. A later launch must explicitly show
   // that hidden window; focus() alone is a no-op for an invisible BrowserWindow.
   app.on('second-instance', () => {
     const appState = AppState.getInstance();
@@ -24,6 +26,7 @@ export async function initializeApp() {
 
   // 2. Wait for app to be ready
   await app.whenReady()
+  initializeAIDiagnostics()
   await initializeSystemProxy()
 
   // 2b. PRE-EMPTIVE dock hide: must happen before ANY operation that causes macOS to
@@ -153,6 +156,7 @@ export async function initializeApp() {
 
     // Kill Ollama if we started it
     OllamaManager.getInstance().stop();
+    stopOpenCode();
 
     try {
       const { CredentialsManager } = require('../services/CredentialsManager');

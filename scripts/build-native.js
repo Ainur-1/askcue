@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 
 const nativeModulePath = path.join(__dirname, '..', 'native-module');
-const buildAllMacTargets = process.env.PIKA_BUILD_ALL_MAC_ARCHES === '1';
+const buildAllMacTargets = process.env.ASKCUE_BUILD_ALL_MAC_ARCHES === '1';
 const rustupBinPath = path.join(os.homedir(), '.cargo', 'bin');
 const commandEnv = {
   ...process.env,

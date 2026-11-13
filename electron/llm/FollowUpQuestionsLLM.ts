@@ -25,6 +25,7 @@ export class FollowUpQuestionsLLM {
             yield* this.llmHelper.streamChat(context, undefined, undefined, UNIVERSAL_FOLLOW_UP_QUESTIONS_PROMPT);
         } catch (e) {
             console.error("[FollowUpQuestionsLLM] Stream Failed:", e);
+            throw e;
         }
     }
 }

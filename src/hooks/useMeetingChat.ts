@@ -3,6 +3,9 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { electronChatFetch } from '../lib/electronChatFetch';
 import { analytics } from '../lib/analytics/analytics.service';
+import { aiActionErrorMessage } from '../lib/aiActionErrors';
+import { t } from '../i18n';
+import { useResponseTimer } from './useResponseTimer';
 
 export type Message = {
   id: string;
@@ -40,7 +43,13 @@ export function useMeetingChat() {
   const [actionButtonMode, setActionButtonMode] = useState<'recap' | 'brainstorm'>('recap');
   const [conversationContext, setConversationContext] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing, setProcessingState] = useState(false);
+  const { timing: responseTiming, start: startResponse, ensureStarted: ensureResponseStarted, firstToken: markFirstToken, finish: finishResponse, reset: resetResponseTimer, resume: resumeResponse } = useResponseTimer();
+  const setIsProcessing = useCallback((processing: boolean) => {
+    if (processing) startResponse();
+    else finishResponse();
+    setProcessingState(processing);
+  }, [startResponse, finishResponse]);
   // systemMessages holds quick-action responses (WhatToSay, Clarify, Recap, etc.)
   const [systemMessages, setSystemMessages] = useState<Message[]>([]);
   const knowledgeContextTimeoutRef = useRef<number | null>(null);
@@ -60,6 +69,28 @@ export function useMeetingChat() {
   });
 
   const isChatLoading = status === 'submitted' || status === 'streaming';
+  const wasChatLoading = useRef(false);
+  useEffect(() => {
+    if (isChatLoading && !wasChatLoading.current) ensureResponseStarted();
+    if (!isChatLoading && wasChatLoading.current) finishResponse(status === 'error' ? 'error' : 'completed');
+    wasChatLoading.current = isChatLoading;
+  }, [isChatLoading, status, ensureResponseStarted, finishResponse]);
+
+  useEffect(() => {
+    const api = window.electronAPI;
+    if (!api) return;
+    const subscriptions = [
+      api.onIntelligenceSuggestedAnswerToken?.(markFirstToken), api.onIntelligenceRefinedAnswerToken?.(markFirstToken),
+      api.onIntelligenceRecapToken?.(markFirstToken), api.onIntelligenceClarifyToken?.(markFirstToken),
+      api.onIntelligenceFollowUpQuestionsToken?.(markFirstToken), api.onGeminiStreamToken?.(markFirstToken),
+      api.onRAGStreamChunk?.(markFirstToken), api.onChatStreamChunk?.(markFirstToken),
+      api.onIntelligenceError?.(() => finishResponse('error')), api.onGeminiStreamError?.(() => finishResponse('error')),
+      api.onRAGStreamError?.(() => finishResponse('error')), api.onSuggestionError?.(() => finishResponse('error')),
+      api.onIntelligenceModeChanged?.(({ mode }) => { if (mode !== 'idle' && mode !== 'assist') ensureResponseStarted(); }),
+      api.onIntelligenceManualStarted?.(ensureResponseStarted), api.onSessionReset?.(resetResponseTimer),
+    ];
+    return () => subscriptions.forEach(unsubscribe => unsubscribe?.());
+  }, [markFirstToken, finishResponse, ensureResponseStarted, resetResponseTimer]);
 
   useEffect(() => {
     window.electronAPI?.getActionButtonMode?.()
@@ -138,15 +169,16 @@ export function useMeetingChat() {
   }, [chatMessages, systemMessages, isChatLoading]);
 
   const pushSystemError = useCallback((error: unknown) => {
+    finishResponse('error');
     setSystemMessages((prev) => [
-      ...prev,
+      ...prev.filter(item => !(item.isStreaming && !item.text)).map(item => item.isStreaming ? { ...item, isStreaming: false } : item),
       {
         id: Date.now().toString(),
         role: 'system',
-        text: `Error: ${error}`,
+        text: `❌ ${error instanceof Error ? error.message : String(error)}`,
       },
     ]);
-  }, []);
+  }, [finishResponse]);
 
   // IPC response listeners — update systemMessages with streaming AI responses
   useEffect(() => {
@@ -298,9 +330,11 @@ export function useMeetingChat() {
     if (window.electronAPI.onIntelligenceError) {
       cleanups.push(window.electronAPI.onIntelligenceError((data) => {
         setIsProcessing(false);
+        const message = aiActionErrorMessage(data.error, document.documentElement.lang === 'ru' ? 'ru' : 'en');
+        const reference = data.requestId ? `\n${t('Diagnostic ID')}: ${data.requestId}` : '';
         setSystemMessages((prev) => [
-          ...prev,
-          { id: Date.now().toString(), role: 'system', text: `\u274C Error (${data.mode}): ${data.error}` },
+          ...prev.filter(item => !(item.isStreaming && !item.text)).map(item => item.isStreaming ? { ...item, isStreaming: false } : item),
+          { id: Date.now().toString(), role: 'system', text: `❌ ${message}${reference}` },
         ]);
       }));
     }
@@ -516,6 +550,8 @@ export function useMeetingChat() {
       }
 
       console.log('[submitPrompt] calling streamGeminiChat…');
+      if (!resumeResponse()) return; // A cancelled request must not start a fallback stream.
+      setProcessingState(true);
       await window.electronAPI.streamGeminiChat(
         promptText,
         currentAttachments.length > 0 ? currentAttachments.map((s) => s.path) : undefined,
@@ -524,6 +560,7 @@ export function useMeetingChat() {
       );
       console.log('[submitPrompt] streamGeminiChat invoke resolved');
     } catch (err) {
+      finishResponse('error');
       setIsProcessing(false);
       setSystemMessages((prev) => {
         const last = prev[prev.length - 1];
@@ -550,14 +587,20 @@ export function useMeetingChat() {
     ]);
     setIsProcessing(true);
     try {
-      await window.electronAPI.generateWhatToSay(
+      const result = await window.electronAPI.generateWhatToSay(
         undefined,
         imagePaths.length > 0 ? imagePaths : undefined,
       );
+      if (!result?.answer) {
+        if (result?.reason === 'cooldown' || result?.reason === 'no_context') finishResponse('skipped');
+        setSystemMessages(prev => prev.filter(item => !(item.isStreaming && !item.text && item.intent === 'what_to_answer')));
+        if (result?.reason === 'cooldown') pushSystemError(t('Please wait a few seconds before requesting another suggestion.'));
+        else if (!result?.reason || result.reason === 'no_context') pushSystemError(t('No conversation context yet. Wait for speech or attach a screenshot.'));
+      }
     } catch (err) {
       pushSystemError(err);
       setIsProcessing(false);
-    }
+    } finally { setIsProcessing(false); }
   }, [attachedContext, pushSystemError, setAttachedContext, setIsProcessing, setSystemMessages]);
 
   const handleFollowUp = useCallback(async (intent: string = 'rephrase') => {
@@ -566,6 +609,7 @@ export function useMeetingChat() {
     try {
       await window.electronAPI.generateFollowUp(intent);
     } catch (err) {
+      finishResponse('error');
       setSystemMessages((prev) => [
         ...prev,
         { id: Date.now().toString(), role: 'system', text: `Error: ${err}` },
@@ -599,6 +643,7 @@ export function useMeetingChat() {
         currentAttachments.length > 0 ? currentAttachments.map((s) => s.path) : undefined
       );
     } catch (err) {
+      finishResponse('error');
       setSystemMessages((prev) => [
         ...prev,
         { id: Date.now().toString(), role: 'system', text: `Error: ${err}` },
@@ -611,18 +656,20 @@ export function useMeetingChat() {
   const handleClarify = useCallback(async () => {
     setIsProcessing(true);
     try {
-      await window.electronAPI.generateClarify();
+      const result = await window.electronAPI.generateClarify();
+      if (!result?.clarification && !result?.reason) pushSystemError(t('The model returned no response. Try again.'));
     } catch (err) {
       pushSystemError(err);
       setIsProcessing(false);
-    }
+    } finally { setIsProcessing(false); }
   }, [pushSystemError]);
 
   const handleFollowUpQuestions = useCallback(async () => {
     setIsProcessing(true);
     try {
       const result = await window.electronAPI.generateFollowUpQuestions();
-      if (!result?.questions) {
+      if (!result?.questions && (!result?.reason || result.reason === 'no_context')) {
+        finishResponse('skipped');
         setSystemMessages((prev) => [
           ...prev,
           { id: Date.now().toString(), role: 'system', text: 'Нет контекста интервью — дождись реплики интервьюера.' },
@@ -639,7 +686,8 @@ export function useMeetingChat() {
     setIsProcessing(true);
     try {
       const result = await window.electronAPI.generateRecap();
-      if (!result?.summary) {
+      if (!result?.summary && (!result?.reason || result.reason === 'no_context')) {
+        finishResponse('skipped');
         setSystemMessages((prev) => [
           ...prev,
           { id: Date.now().toString(), role: 'system', text: 'Пока нечего суммировать: нет транскрипта интервью.' },
@@ -744,10 +792,13 @@ export function useMeetingChat() {
     inputValue,
     setInputValue,
     isProcessing: isProcessing || isChatLoading,
+    responseTiming,
+    failResponse: () => finishResponse('error'),
+    resetResponseTimer,
     setIsProcessing,
     messages,
     setSystemMessages,
-    stop,
+    stop: () => { finishResponse('cancelled'); setProcessingState(false); stop(); },
     submitPrompt,
     handleWhatToSay,
     handleFollowUp,

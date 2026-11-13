@@ -1,14 +1,14 @@
-# Pika UI/UX 设计审计报告
+# AskCue UI/UX 设计审计报告
 
 > 范围: `src/components/**`, `src/index.css`, `tailwind.config.js`
-> 方法: 静态扫描 + 关键组件逐文件审查 (PikaInterface / GlobalChatOverlay / MeetingChatOverlay / Settings / WindowControls / TopPill / Launcher)
+> 方法: 静态扫描 + 关键组件逐文件审查 (AskCueInterface / GlobalChatOverlay / MeetingChatOverlay / Settings / WindowControls / TopPill / Launcher)
 > 评分维度: 设计系统一致性 · 视觉层级 · 配色 · 间距/圆角/动效 · 交互与可访问性 · 信息密度
 
 ---
 
 ## 一、总览结论
 
-Pika 拥有**一套相当扎实的 token 基座**(surface/overlay 分层、liquid-glass 多档 blur、light/dark via `[data-theme]`、Linear 风格 shadow elevation),但落地阶段被三类问题稀释:
+AskCue 拥有**一套相当扎实的 token 基座**(surface/overlay 分层、liquid-glass 多档 blur、light/dark via `[data-theme]`、Linear 风格 shadow elevation),但落地阶段被三类问题稀释:
 
 1. **Token 普适性失守**:semantic 色 (success/error/warning/info) 缺位,导致组件回退到原生 Tailwind palette。
 2. **可访问性接近零**:44 个组件中仅 4 个使用 `aria-*` / `role`,29 处 `focus:outline-none` 几乎全无 `focus-visible` 替代。
@@ -63,8 +63,8 @@ Pika 拥有**一套相当扎实的 token 基座**(surface/overlay 分层、liqui
 | L1 | **z-index 碎片化** | z-0/10/20/40/49/50/90/100/200/2000/9999 共 11 档,出现 `z-[49]` 这种"夹缝值" | overlay/modal/toast/tooltip 叠加顺序不可推理,新增组件易冲突 |
 | L2 | **圆角等级 ≥ 9 档** | rounded / -sm / -md / -lg(145) / -xl(61) / -2xl(17) / -full(150) / -tr / -t/-b | 同一卡片内不同元素圆角参差 |
 | L3 | **间距出现奇数尺度** | `p-5(20)`、`p-7(1)`、`m-10(1)` | 偏离 4pt scale,无设计意图的 magic number |
-| L4 | **PikaInterface 693 行** + **AIProvidersSettings 1132 行** | 单文件巨型组件 | 难定位、难复用;新人改一处易破坏其他模块 |
-| L5 | **default splitter = 40 (transcript 偏左)** | `localStorage('pika_splitter_position')` clamp [20,80],默认 40 | 西方读者视觉流"左→右";AI 答案在右侧符合直觉,但 transcript 应该是次要参考,可考虑默认 60 |
+| L4 | **AskCueInterface 693 行** + **AIProvidersSettings 1132 行** | 单文件巨型组件 | 难定位、难复用;新人改一处易破坏其他模块 |
+| L5 | **default splitter = 40 (transcript 偏左)** | `localStorage('askcue_splitter_position')` clamp [20,80],默认 40 | 西方读者视觉流"左→右";AI 答案在右侧符合直觉,但 transcript 应该是次要参考,可考虑默认 60 |
 | L6 | **`#root { overflow: hidden }`** + **scrollbar `width: 0px`** | `src/index.css` | 长 transcript / 长 chat 场景下,用户失去滚动定位感;stealth 设计意图可理解,但应在 hover 时露出极细 scroll thumb (类似 macOS 默认) |
 
 **建议:Token 化 z-index**
@@ -162,7 +162,7 @@ Pika 拥有**一套相当扎实的 token 基座**(surface/overlay 分层、liqui
 - [ ] 动效 token:`duration-fast/base/slow`,清理 ease-sculpted 误用
 
 ### P2 — 一个月内
-- [ ] PikaInterface (693 lines) 拆 ChatColumn / TranscriptColumn / SplitterShell 三个 dumb component
+- [ ] AskCueInterface (693 lines) 拆 ChatColumn / TranscriptColumn / SplitterShell 三个 dumb component
 - [ ] 字体减为 2(Inter + JetBrains Mono),Space Grotesk 限品牌大字
 - [ ] Light mode shadow palette 切换为中性灰
 - [ ] hover-only scrollbar (像 macOS 默认那样)

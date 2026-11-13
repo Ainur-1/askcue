@@ -81,10 +81,10 @@ export function setUndetectable(appState: AppState, state: boolean): void {
       }
 
       if (settled) {
-        // Capture whether Pika is currently the frontmost app BEFORE
+        // Capture whether AskCue is currently the frontmost app BEFORE
         // dock.hide() — that call triggers an implicit macOS app-deactivation
         // which shifts keyboard focus to the next frontmost app (Chrome, etc.).
-        const pikaWasFocused =
+        const askcueWasFocused =
           targetFocusWindow != null &&
           !targetFocusWindow.isDestroyed() &&
           targetFocusWindow.isFocused();
@@ -93,12 +93,12 @@ export function setUndetectable(appState: AppState, state: boolean): void {
         app.dock.hide();
         hideTray(appState);
 
-        // If Pika was the focused window when the user toggled stealth,
+        // If AskCue was the focused window when the user toggled stealth,
         // restore focus to our window after dock.hide() so macOS does not
         // hand control to Chrome / whatever is behind us.
         // We use win.focus() (not app.focus()) to avoid the heavy-handed
         // [NSApp activateIgnoringOtherApps:YES] side-effect.
-        if (pikaWasFocused && targetFocusWindow && !targetFocusWindow.isDestroyed()) {
+        if (askcueWasFocused && targetFocusWindow && !targetFocusWindow.isDestroyed()) {
           targetFocusWindow.focus();
         }
       } else {
@@ -172,7 +172,7 @@ export function applyInitialDisguise(appState: AppState): void {
 export function _applyDisguise(appState: AppState, mode: 'terminal' | 'settings' | 'activity' | 'none'): void {
   const appStateInternal = appState as any;
 
-  let appName = "Pika";
+  let appName = "AskCue";
   let iconPath = "";
 
   const isWin = process.platform === 'win32';
@@ -216,11 +216,11 @@ export function _applyDisguise(appState: AppState, mode: 'terminal' | 'settings'
       }
       break;
     case 'none':
-      appName = "Pika";
+      appName = "AskCue";
       if (isMac) {
         iconPath = app.isPackaged
-          ? path.join(process.resourcesPath, "assets", "pika.icns")
-          : path.join(app.getAppPath(), "assets/pika.icns");
+          ? path.join(process.resourcesPath, "assets", "askcue.icns")
+          : path.join(app.getAppPath(), "assets/askcue.icns");
       } else if (isWin) {
         iconPath = app.isPackaged
           ? path.join(process.resourcesPath, "assets/icons/win/icon.ico")
@@ -252,7 +252,7 @@ export function _applyDisguise(appState: AppState, mode: 'terminal' | 'settings'
   // 3. Update App User Model ID (Windows Taskbar grouping)
   if (isWin) {
     // Use unique AUMID per disguise to avoid grouping with the real app
-    app.setAppUserModelId(mode === 'none' ? 'com.royisme.pika' : `com.pika.assistant.${mode}`);
+    app.setAppUserModelId(mode === 'none' ? 'app.askcue.desktop' : `com.askcue.assistant.${mode}`);
   }
 
   // 4. Update Icons

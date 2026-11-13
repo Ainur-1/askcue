@@ -29,7 +29,7 @@ export class CodeHintLLM {
             );
         } catch (error) {
             console.error("[CodeHintLLM] Stream failed:", error);
-            yield "I couldn't analyze the screenshot. Make sure your code is visible and try again.";
+            throw error;
         }
     }
 }

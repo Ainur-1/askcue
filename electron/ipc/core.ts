@@ -47,7 +47,7 @@ export function registerCoreHandlers(appState: AppState): void {
     return { success: true };
   });
   safeHandle("license:get-hardware-id", async () => {
-    return 'pika-personal-build';
+    return 'askcue-personal-build';
   });
 
   safeHandle("get-system-locale", async () => app.getSystemLocale());
@@ -106,7 +106,7 @@ export function registerCoreHandlers(appState: AppState): void {
       } else if (
         overlayWin && !overlayWin.isDestroyed() && overlayWin.webContents.id === senderWebContents.id
       ) {
-        // PikaInterface logic - Resize ONLY the overlay window using dedicated method
+        // AskCueInterface logic - Resize ONLY the overlay window using dedicated method
         appState.getWindowHelper().setOverlayDimensions(width, height)
       } else if (
         launcherWin && !launcherWin.isDestroyed() && launcherWin.webContents.id === senderWebContents.id
@@ -249,7 +249,7 @@ export function registerCoreHandlers(appState: AppState): void {
   });
 
 
-  // Generate suggestion from transcript - Pika-style text-only reasoning
+  // Generate suggestion from transcript - AskCue-style text-only reasoning
   safeHandle("generate-suggestion", async (event, context: string, lastQuestion: string) => {
     try {
       const suggestion = await appState.processingHelper.getLLMHelper().generateSuggestion(context, lastQuestion)

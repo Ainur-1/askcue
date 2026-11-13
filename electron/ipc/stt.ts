@@ -477,7 +477,7 @@ export function registerSttHandlers(appState: AppState): void {
       // Close the selector window if open
       appState.modelSelectorWindowHelper.hideWindow();
 
-      // Broadcast to all windows so PikaInterface can update its selector (session-only update)
+      // Broadcast to all windows so AskCueInterface can update its selector (session-only update)
       BrowserWindow.getAllWindows().forEach(win => {
         if (!win.isDestroyed()) {
           win.webContents.send('model-changed', modelId);
@@ -506,7 +506,7 @@ export function registerSttHandlers(appState: AppState): void {
       // Close the selector window if open
       appState.modelSelectorWindowHelper.hideWindow();
 
-      // Broadcast to all windows so PikaInterface can update its selector
+      // Broadcast to all windows so AskCueInterface can update its selector
       BrowserWindow.getAllWindows().forEach(win => {
         if (!win.isDestroyed()) {
           win.webContents.send('model-changed', modelId);

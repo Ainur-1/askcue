@@ -37,7 +37,7 @@ export function showTray(appState: AppState): void {
   trayIcon.setTemplateImage(false);
 
   state.tray = new Tray(trayIcon)
-  state.tray.setToolTip('Pika') // This tooltip might also need update if we change global shortcut, but global shortcut is removed.
+  state.tray.setToolTip('AskCue') // This tooltip might also need update if we change global shortcut, but global shortcut is removed.
   updateTrayMenu(appState);
 
   // Double-click to show window
@@ -57,7 +57,7 @@ export function updateTrayMenu(appState: AppState) {
   console.log('[Main] updateTrayMenu called. Screenshot Accelerator:', screenshotAccel);
 
   // Update tooltip for verification
-  state.tray.setToolTip('Pika');
+  state.tray.setToolTip('AskCue');
 
   // Helper to format accelerator for display (e.g. CommandOrControl+H -> Cmd+H)
   const formatAccel = (accel: string) => {
@@ -77,7 +77,7 @@ export function updateTrayMenu(appState: AppState) {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Show Pika',
+      label: 'Show AskCue',
       click: () => {
         appState.centerAndShowWindow()
       }

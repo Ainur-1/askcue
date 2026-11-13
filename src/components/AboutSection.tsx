@@ -67,7 +67,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
             <motion.div variants={fadeUp} className="pt-6 pb-10">
                 <div className="flex items-baseline gap-3">
                     <h3 className="text-xl font-bold tracking-tightest text-text-primary font-display">
-                        Pika
+                        AskCue
                     </h3>
                     <span className="text-[11px] font-mono text-text-tertiary/70 tabular-nums">
                         v{packageJson.version}
@@ -121,7 +121,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
 
                         <div className="flex-1 min-w-0">
                             <h5 className="text-[13px] font-semibold text-text-primary leading-tight">{t("Support this project")}</h5>
-                            <p className="text-xs text-text-tertiary mt-1.5 leading-relaxed max-w-[40ch]">{t("Pika is built and maintained independently. If it helps your workflow, a coffee goes a long way.")}</p>
+                            <p className="text-xs text-text-tertiary mt-1.5 leading-relaxed max-w-[40ch]">{t("AskCue is built and maintained independently. If it helps your workflow, a coffee goes a long way.")}</p>
 
                             <motion.button
                                 onClick={(e) => handleOpenLink(e, BMC_URL)}

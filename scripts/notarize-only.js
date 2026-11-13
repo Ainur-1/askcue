@@ -2,13 +2,13 @@
 //
 // Retry notarization on an already-signed .app without re-running pack/sign.
 // Use this when scripts/build-app.js fails at the notarize step (network
-// timeout, Apple service flake, etc.) — it picks up the signed Pika.app left
+// timeout, Apple service flake, etc.) — it picks up the signed AskCue.app left
 // behind by electron-builder and runs only:
 //   1. ditto-zip the .app for upload
 //   2. xcrun notarytool submit --wait   (the slow + flaky step)
-//   3. xcrun stapler staple <Pika.app>  (attaches the ticket)
-//   4. ditto-zip the stapled .app → release/Pika-<ver>-arm64-mac.zip
-//   5. hdiutil create UDZO dmg          → release/Pika-<ver>-arm64.dmg
+//   3. xcrun stapler staple <AskCue.app>  (attaches the ticket)
+//   4. ditto-zip the stapled .app → release/AskCue-<ver>-arm64-mac.zip
+//   5. hdiutil create UDZO dmg          → release/AskCue-<ver>-arm64.dmg
 //
 // Steps 4–5 deliberately bypass electron-builder so we never re-sign the app
 // (which would invalidate the freshly-stapled ticket).
@@ -22,7 +22,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 const projectDir = path.resolve(__dirname, '..');
 const releaseDir = path.join(projectDir, 'release');
 const appOutDir = path.join(releaseDir, 'mac-arm64');
-const appPath = path.join(appOutDir, 'Pika.app');
+const appPath = path.join(appOutDir, 'AskCue.app');
 
 if (!fs.existsSync(appPath)) {
     console.error(`[notarize-only] App not found: ${appPath}`);

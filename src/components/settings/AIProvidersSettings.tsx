@@ -5,6 +5,8 @@ import { Plus, Trash2, Edit2, AlertCircle, CheckCircle, Save, ChevronDown, Check
 import { STANDARD_CLOUD_MODELS, prettifyModelId } from '../../utils/modelUtils';
 import { validateCurl } from '../../lib/curl-validator';
 import { ProviderCard } from './ProviderCard';
+import { OpenCodeSettingsCard } from './OpenCodeSettingsCard';
+import { openCodeProviderForUrl, type OpenCodeModel } from '../../../shared/opencode';
 
 interface CustomProvider {
     id: string;
@@ -99,6 +101,7 @@ export const AIProvidersSettings: React.FC = () => {
     const [curlError, setCurlError] = useState<string | null>(null);
 
     const [openaiCompatibleProviders, setOpenaiCompatibleProviders] = useState<OpenAICompatibleProviderRow[]>([]);
+    const otherOpenAIProviders = openaiCompatibleProviders.filter(provider => !openCodeProviderForUrl(provider.baseUrl));
     const [isEditingOai, setIsEditingOai] = useState(false);
     const [editingOai, setEditingOai] = useState<OpenAICompatibleProviderRow | null>(null);
     const [oaiName, setOaiName] = useState('');
@@ -116,6 +119,8 @@ export const AIProvidersSettings: React.FC = () => {
 
     // --- Default Model ---
     const [defaultModel, setDefaultModel] = useState<string>('gemini-3.1-flash-lite-preview');
+    const [openCodeModels, setOpenCodeModels] = useState<OpenCodeModel[]>([]);
+    useEffect(() => window.electronAPI?.onModelChanged?.(setDefaultModel), []);
     const [fastResponseMode, setFastResponseMode] = useState(false);
 
     // --- Dynamic Model Discovery ---
@@ -179,7 +184,7 @@ export const AIProvidersSettings: React.FC = () => {
             // @ts-ignore
             const unsubscribe = window.electronAPI.onGroqFastTextChanged((enabled: boolean) => {
                 setFastResponseMode(enabled);
-                localStorage.setItem('pika_groq_fast_text', String(enabled));
+                localStorage.setItem('askcue_groq_fast_text', String(enabled));
             });
             return () => unsubscribe();
         }
@@ -189,7 +194,7 @@ export const AIProvidersSettings: React.FC = () => {
     useEffect(() => {
         if (!hasStoredKey.groq && fastResponseMode) {
             setFastResponseMode(false);
-            localStorage.setItem('pika_groq_fast_text', 'false');
+            localStorage.setItem('askcue_groq_fast_text', 'false');
             // @ts-ignore
             window.electronAPI?.setGroqFastTextMode(false);
         }
@@ -524,9 +529,10 @@ export const AIProvidersSettings: React.FC = () => {
                             }
                             customProviders.forEach(p => opts.push({ id: p.id, name: p.name }));
                             openaiCompatibleProviders.forEach(p =>
-                                opts.push({ id: p.id, name: `${p.name} (OpenAI-compatible)` })
+                                opts.push({ id: p.id, name: `${p.name} (${openCodeProviderForUrl(p.baseUrl) === 'opencode-go' ? 'OpenCode Go' : openCodeProviderForUrl(p.baseUrl) ? 'OpenCode' : 'OpenAI-compatible'})` })
                             );
                             ollamaModels.forEach(m => opts.push({ id: `ollama-${m}`, name: `${m} (Local)` }));
+                            openCodeModels.forEach(model => opts.push({ id: model.id, name: model.name }));
                             // Ensure current default model always appears
                             if (defaultModel && !opts.find(o => o.id === defaultModel)) {
                                 opts.unshift({ id: defaultModel, name: prettifyModelId(defaultModel) });
@@ -564,7 +570,7 @@ export const AIProvidersSettings: React.FC = () => {
                             }
                             const newState = !fastResponseMode;
                             setFastResponseMode(newState);
-                            localStorage.setItem('pika_groq_fast_text', String(newState));
+                            localStorage.setItem('askcue_groq_fast_text', String(newState));
                             // @ts-ignore
                             await window.electronAPI?.setGroqFastTextMode(newState);
                         }}
@@ -574,6 +580,8 @@ export const AIProvidersSettings: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            <OpenCodeSettingsCard onModelsChanged={setOpenCodeModels} />
 
             {/* Cloud Providers */}
             <div className="space-y-5">
@@ -847,12 +855,12 @@ export const AIProvidersSettings: React.FC = () => {
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        {openaiCompatibleProviders.length === 0 ? (
+                        {otherOpenAIProviders.length === 0 ? (
                             <div className="text-center py-6 bg-bg-item-surface rounded-xl border border-border-subtle border-dashed">
                                 <p className="text-xs text-text-tertiary">{t("No OpenAI-compatible endpoints yet.")}</p>
                             </div>
                         ) : (
-                            openaiCompatibleProviders.map((p) => (
+                            otherOpenAIProviders.map((p) => (
                                 <div
                                     key={p.id}
                                     className="bg-bg-item-surface rounded-xl p-4 border border-border-subtle flex items-center justify-between group"

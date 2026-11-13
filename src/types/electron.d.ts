@@ -136,13 +136,14 @@ export interface ElectronAPI {
 
   // Intelligence Mode IPC
   generateAssist: () => Promise<{ insight: string | null }>
-  generateWhatToSay: (question?: string, imagePaths?: string[]) => Promise<{ answer: string | null; question?: string; error?: string }>
-  generateClarify: () => Promise<{ clarification: string | null }>
+  generateWhatToSay: (question?: string, imagePaths?: string[]) => Promise<{ answer: string | null; question?: string; error?: string; reason?: string }>
+  generateClarify: () => Promise<{ clarification: string | null; reason?: string }>
+  openAIDiagnosticsFolder: () => Promise<{ success: boolean; error?: string }>
   generateCodeHint: (imagePaths?: string[], problemStatement?: string) => Promise<{ hint: string | null }>
   generateBrainstorm: (imagePaths?: string[], problemStatement?: string) => Promise<{ script: string | null }>
   generateFollowUp: (intent: string, userRequest?: string) => Promise<{ refined: string | null; intent: string }>
-  generateFollowUpQuestions: () => Promise<{ questions: string | null }>
-  generateRecap: () => Promise<{ summary: string | null }>
+  generateFollowUpQuestions: () => Promise<{ questions: string | null; reason?: string }>
+  generateRecap: () => Promise<{ summary: string | null; reason?: string }>
   submitManualQuestion: (question: string) => Promise<{ answer: string | null; question: string }>
   getIntelligenceContext: () => Promise<{ context: string; lastAssistantMessage: string | null; activeMode: string }>
   resetIntelligence: () => Promise<{ success: boolean; error?: string }>
@@ -180,7 +181,7 @@ export interface ElectronAPI {
   onIntelligenceManualStarted: (callback: () => void) => () => void
   onIntelligenceManualResult: (callback: (data: { answer: string; question: string }) => void) => () => void
   onIntelligenceModeChanged: (callback: (data: { mode: string }) => void) => () => void
-  onIntelligenceError: (callback: (data: { error: string, mode: string }) => void) => () => void;
+  onIntelligenceError: (callback: (data: { error: string, mode: string; requestId?: string }) => void) => () => void;
   // Session Management
   onSessionReset: (callback: () => void) => () => void;
 
@@ -210,6 +211,11 @@ export interface ElectronAPI {
   // Custom Providers
   saveCustomProvider: (provider: any) => Promise<{ success: boolean; id?: string; error?: string }>;
   getCustomProviders: () => Promise<any[]>;
+  getOpenCodeSettings: () => Promise<import('../../shared/opencode').OpenCodeConnectionInfo>;
+  saveOpenCodeApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>;
+  importOpenCodeConnection: () => Promise<{ success: boolean; error?: string }>;
+  saveOpenCodeSettings: (settings: Omit<import('../../shared/opencode').OpenCodeSettings, 'password'> & { password?: string }) => Promise<{ success: boolean; error?: string }>;
+  getOpenCodeModels: () => Promise<{ success: boolean; models: import('../../shared/opencode').OpenCodeModel[]; error?: string }>;
   deleteCustomProvider: (id: string) => Promise<{ success: boolean; error?: string }>;
   getOpenAICompatibleProviders: () => Promise<Array<{ id: string; name: string; baseUrl: string; apiKey: string; preferredModel?: string }>>;
   saveOpenAICompatibleProvider: (provider: { id: string; name: string; baseUrl: string; apiKey: string; preferredModel?: string }) => Promise<{ success: boolean; error?: string }>;

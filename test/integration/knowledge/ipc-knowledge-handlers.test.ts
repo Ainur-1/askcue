@@ -162,13 +162,13 @@ t.test('handlers return real null-orchestrator responses from knowledge.ts', asy
 
 t.test('knowledge:get-all-jds delegates to orchestrator.getAllJDs', async (t) => {
   const orchestrator = {
-    getAllJDs: () => [{ id: 1, company: 'Pika', title: 'Engineer', isActive: true, createdAt: '2025-01-01', technologies: [] }],
+    getAllJDs: () => [{ id: 1, company: 'AskCue', title: 'Engineer', isActive: true, createdAt: '2025-01-01', technologies: [] }],
   } as Partial<KnowledgeOrchestrator>;
 
   const harness = loadRegisterKnowledgeHandlers({ orchestrator });
   const result = await harness.invoke('knowledge:get-all-jds');
 
-  t.same(result, [{ id: 1, company: 'Pika', title: 'Engineer', isActive: true, createdAt: '2025-01-01', technologies: [] }]);
+  t.same(result, [{ id: 1, company: 'AskCue', title: 'Engineer', isActive: true, createdAt: '2025-01-01', technologies: [] }]);
 });
 
 t.test('knowledge:set-active-jd and knowledge:delete-jd delegate to orchestrator', async (t) => {
@@ -202,7 +202,7 @@ t.test('profile:research-company uses credentials and active JD context from the
       },
       researchCompany: async (...args: any[]) => {
         receivedArgs = args;
-        return { company: 'Pika', overview: 'AI interview copilot' };
+        return { company: 'AskCue', overview: 'AI interview copilot' };
       },
     }),
     getProfileData: () => ({
@@ -220,15 +220,15 @@ t.test('profile:research-company uses credentials and active JD context from the
   } as Partial<KnowledgeOrchestrator>;
 
   const harness = loadRegisterKnowledgeHandlers({ orchestrator, tavilyApiKey: 'tvly-live-key' });
-  const result = await harness.invoke('profile:research-company', 'Pika');
+  const result = await harness.invoke('profile:research-company', 'AskCue');
 
   t.same(result, {
     success: true,
-    dossier: { company: 'Pika', overview: 'AI interview copilot' },
+    dossier: { company: 'AskCue', overview: 'AI interview copilot' },
   });
   t.equal(receivedApiKey, 'tvly-live-key');
   t.same(receivedArgs, [
-    'Pika',
+    'AskCue',
     {
       title: 'Staff Engineer',
       location: 'Remote',

@@ -1,4 +1,4 @@
-The audio waveform in pikabaka-logo.svg is adapted from the Lucide AudioLines icon.
+The audio waveform in askcue-logo.svg is adapted from the Lucide AudioLines icon.
 
 ISC License
 

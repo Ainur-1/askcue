@@ -34,6 +34,7 @@ export class RecapLLM {
             yield* this.llmHelper.streamChat(context, undefined, undefined, UNIVERSAL_RECAP_PROMPT);
         } catch (error) {
             console.error("[RecapLLM] Streaming generation failed:", error);
+            throw error;
         }
     }
 

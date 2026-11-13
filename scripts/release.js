@@ -54,7 +54,7 @@ step('Read target version from package.json');
 const pkg = JSON.parse(fs.readFileSync(path.join(projectDir, 'package.json'), 'utf8'));
 const version = pkg.version;
 const tag = `v${version}`;
-const productName = pkg.build?.productName || 'Pika';
+const productName = pkg.build?.productName || 'AskCue';
 console.log(`  package.json version: ${version}`);
 console.log(`  expected tag:         ${tag}`);
 
@@ -84,7 +84,7 @@ const buildResult = spawnSync('node', ['scripts/build-app.js'], { stdio: 'inheri
 if (buildResult.status !== 0) {
     fail(
         'Build failed. If notarize specifically timed out, the signed .app is preserved at\n' +
-            '  release/mac-arm64/Pika.app — retry just the notarize step with:\n' +
+            '  release/mac-arm64/AskCue.app — retry just the notarize step with:\n' +
             '    pnpm run app:notarize'
     );
 }
@@ -123,5 +123,5 @@ step('Done');
 const releaseUrl = sh(`gh release view ${tag} --json url -q .url`);
 console.log(`\n✓ Released ${tag}`);
 console.log(`  ${releaseUrl}`);
-console.log(`\n  Users now download Pika-${version}-arm64.dmg, mount, drag to Applications, and run.`);
+console.log(`\n  Users now download AskCue-${version}-arm64.dmg, mount, drag to Applications, and run.`);
 console.log('  Gatekeeper validates the stapled .app offline — no xattr workaround needed.');

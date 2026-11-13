@@ -72,7 +72,7 @@ const Opening: React.FC = () => {
           letterSpacing: -1,
         }}
       >
-        Pika
+        AskCue
       </div>
 
       {/* Subtitle */}
@@ -588,7 +588,7 @@ const ScreenshotAnalysis: React.FC = () => {
 // ─── Scene 5: Stealth Mode ──────────────────────────────────────────
 
 const disguises = [
-  { name: "Pika", icon: "⚡", color: COLORS.accent },
+  { name: "AskCue", icon: "⚡", color: COLORS.accent },
   { name: "Terminal", icon: "⬛", color: "#64748b" },
   { name: "Activity Monitor", icon: "📊", color: "#22c55e" },
   { name: "Settings", icon: "⚙️", color: "#94a3b8" },
@@ -808,7 +808,7 @@ const Closing: React.FC = () => {
             boxShadow: `0 0 40px ${COLORS.accent}44`,
           }}
         >
-          Download Pika
+          Download AskCue
         </div>
         <span style={{ color: COLORS.textMuted, fontSize: 14, fontFamily: "SF Mono, monospace" }}>v2.0.8</span>
       </div>
@@ -831,7 +831,7 @@ const FadeTransition: React.FC<{ durationInFrames: number }> = ({ durationInFram
 
 // ─── Main Composition ───────────────────────────────────────────────
 
-export const PikaDemo: React.FC = () => {
+export const AskCueDemo: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: COLORS.bg }}>
       {/* Scene 1: Opening (0-90) */}

@@ -25,4 +25,4 @@ jobs:
         if: ${{ steps.release.outputs.release_created == 'true' }}
         run: |
           echo "Release created: ${{ steps.release.outputs.tag_name }}"
-          echo "Next step: locally run \`pnpm run app:build\`, then \`gh release upload ${{ steps.release.outputs.tag_name }} release/Pika-*-arm64.dmg release/Pika-*-arm64-mac.zip release/Pika-*.blockmap\` to attach signed/notarized macOS artifacts."
+          echo "Next step: locally run \`pnpm run app:build\`, then \`gh release upload ${{ steps.release.outputs.tag_name }} release/AskCue-*-arm64.dmg release/AskCue-*-arm64-mac.zip release/AskCue-*.blockmap\` to attach signed/notarized macOS artifacts."

@@ -1,7 +1,98 @@
 import { AppState } from "../main"
 import { safeHandle, broadcastOpenAICompatibleProvidersChanged } from "./safeHandle"
+import { CredentialsManager } from '../services/CredentialsManager';
+import { openCodeService, stopOpenCode } from '../services/OpenCodeManager';
+import { DEFAULT_OPENCODE_SETTINGS, OPENCODE_GO_API_URL, OPENCODE_GO_SUBSCRIPTION_URL, validateOpenCodeSettings, openCodeProviderForUrl } from '../../shared/opencode';
+import { createHash, randomUUID } from 'node:crypto';
 
 export function registerModelDiscoveryHandlers(appState: AppState): void {
+  const savedOpenCode = () => {
+    const providers = CredentialsManager.getInstance().getOpenAICompatibleProviders()
+      .filter(provider => openCodeProviderForUrl(provider.baseUrl) && provider.apiKey.trim());
+    return providers.find(provider => openCodeProviderForUrl(provider.baseUrl) === 'opencode-go') || providers[0];
+  };
+  let importedFingerprint = '';
+  let pendingImport: Promise<void> | undefined;
+  const connectSaved = async () => {
+    const saved = savedOpenCode();
+    if (!saved) return;
+    const cm = CredentialsManager.getInstance();
+    const settings = cm.getOpenCodeSettings();
+    if (settings.baseUrl !== DEFAULT_OPENCODE_SETTINGS.baseUrl) return;
+    if (!settings.enabled) cm.setOpenCodeSettings({ ...settings, enabled: true });
+    const providerID = openCodeProviderForUrl(saved.baseUrl)!;
+    const fingerprint = createHash('sha256').update(`${providerID}:${saved.apiKey}`).digest('hex');
+    if (importedFingerprint === fingerprint) return;
+    if (pendingImport) { await pendingImport; return connectSaved(); }
+    pendingImport = openCodeService.connectApiKey(providerID, saved.apiKey)
+      .then(() => { importedFingerprint = fingerprint; })
+      .finally(() => { pendingImport = undefined; });
+    await pendingImport;
+  };
+  safeHandle('get-opencode-settings', () => {
+    const { password, ...settings } = CredentialsManager.getInstance().getOpenCodeSettings();
+    const saved = savedOpenCode();
+    return {
+      ...settings, hasPassword: Boolean(password), canImport: Boolean(saved), hasApiKey: Boolean(saved),
+      providerID: saved ? openCodeProviderForUrl(saved.baseUrl)! : 'opencode-go',
+      apiUrl: saved?.baseUrl || OPENCODE_GO_API_URL, subscriptionUrl: OPENCODE_GO_SUBSCRIPTION_URL,
+    };
+  });
+  safeHandle('save-opencode-settings', async (_, value: unknown) => {
+    try {
+      const previous = CredentialsManager.getInstance().getOpenCodeSettings();
+      const settings = validateOpenCodeSettings({ ...previous, ...(value as object) });
+      stopOpenCode();
+      importedFingerprint = '';
+      CredentialsManager.getInstance().setOpenCodeSettings(settings);
+      broadcastOpenAICompatibleProvidersChanged();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : 'Invalid OpenCode settings' };
+    }
+  });
+  safeHandle('get-opencode-models', async () => {
+    try {
+      await connectSaved();
+      if (!CredentialsManager.getInstance().getOpenCodeSettings().enabled) return { success: true, models: [] };
+      return { success: true, models: await openCodeService.models() };
+    } catch (error) {
+      return { success: false, models: [], error: error instanceof Error ? error.message : 'Cannot connect to OpenCode' };
+    }
+  });
+  safeHandle('save-opencode-api-key', async (_, apiKey: unknown) => {
+    try {
+      if (typeof apiKey !== 'string' || !apiKey.trim()) throw new Error('OpenCode API token is required');
+      const cm = CredentialsManager.getInstance();
+      const saved = savedOpenCode();
+      cm.saveOpenAICompatibleProvider({
+        ...saved, id: saved?.id || randomUUID(), name: saved?.name || 'OpenCode Go',
+        baseUrl: saved?.baseUrl || OPENCODE_GO_API_URL, apiKey: apiKey.trim(),
+      });
+      if (cm.getOpenCodeSettings().baseUrl !== DEFAULT_OPENCODE_SETTINGS.baseUrl) stopOpenCode();
+      cm.setOpenCodeSettings({ ...DEFAULT_OPENCODE_SETTINGS, enabled: true });
+      await connectSaved();
+      broadcastOpenAICompatibleProvidersChanged();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : 'Cannot save OpenCode API token' };
+    }
+  });
+  safeHandle('import-opencode-connection', async () => {
+    try {
+      const saved = savedOpenCode();
+      if (!saved) throw new Error('No saved OpenCode API connection found');
+      const cm = CredentialsManager.getInstance();
+      const settings = cm.getOpenCodeSettings();
+      if (settings.baseUrl !== 'http://127.0.0.1:4096') throw new Error('Saved keys can only be imported into local OpenCode');
+      cm.setOpenCodeSettings({ ...settings, enabled: true });
+      await openCodeService.connectApiKey(openCodeProviderForUrl(saved.baseUrl)!, saved.apiKey);
+      broadcastOpenAICompatibleProvidersChanged();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : 'Cannot import OpenCode connection' };
+    }
+  });
   // ==========================================
   // Dynamic Model Discovery Handlers
   // ==========================================

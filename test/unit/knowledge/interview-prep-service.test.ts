@@ -39,7 +39,7 @@ const buildProfile = (): ProfileData => ({
 });
 
 const buildJD = (): JDData => ({
-  company: 'Pika',
+  company: 'AskCue',
   title: 'Staff Frontend Engineer',
   level: 'staff',
   requirements: ['React', 'TypeScript', 'system design', 'leadership'],

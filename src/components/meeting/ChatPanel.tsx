@@ -1,5 +1,7 @@
 import { t } from '../../i18n';
 import React from 'react';
+import { ResponseTimer } from './ResponseTimer';
+import type { ResponseTiming } from '../../lib/responseTiming';
 import type { ShortcutConfig } from '../../hooks/useShortcuts';
 import {
   Pencil,
@@ -63,6 +65,7 @@ interface ChatPanelProps {
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   isProcessing: boolean;
+  responseTiming: ResponseTiming | null;
   handleWhatToSay: () => void;
   handleClarify: () => void;
   handleFollowUpQuestions: () => void;
@@ -96,6 +99,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   inputValue,
   setInputValue,
   isProcessing,
+  responseTiming,
   handleWhatToSay,
   handleClarify,
   handleFollowUpQuestions,
@@ -453,16 +457,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
           </div>
         )}
 
-        {isProcessing && (
-          <div className="flex justify-start">
-            <div className="px-3 py-2 flex gap-1.5">
-              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-            </div>
-          </div>
-        )}
-
         {knowledgeContext && knowledgeContext.matchedJDSignals.length > 0 && (
           <div className="mx-3 mb-2 p-3.5 rounded-2xl border border-white/12 bg-[rgba(10,14,28,0.82)] shadow-[0_10px_28px_rgba(0,0,0,0.18)]">
             <div className="flex items-center gap-1.5 mb-2">
@@ -513,21 +507,22 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
+      <ResponseTimer timing={responseTiming} />
       <div className="meeting-quick-actions flex flex-wrap items-center gap-2 px-4 pb-3 pt-3.5 no-drag">
-        <button onClick={handleWhatToSay} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
+        <button onClick={handleWhatToSay} disabled={isProcessing} title={t("Suggest a ready-to-say reply using the last 3 minutes of conversation and attached screenshots.")} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
           <Pencil className="w-3 h-3 opacity-65" />{t("Подсказать")}</button>
-        <button onClick={handleClarify} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
+        <button onClick={handleClarify} disabled={isProcessing} title={t("Suggest one clarifying question about the current topic and its constraints.")} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
           <MessageSquare className="w-3 h-3 opacity-65" />{t("Уточнить")}</button>
-        <button onClick={actionButtonMode === 'brainstorm' ? handleBrainstorm : handleRecap} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
+        <button onClick={actionButtonMode === 'brainstorm' ? handleBrainstorm : handleRecap} disabled={isProcessing} title={t(actionButtonMode === 'brainstorm' ? 'Suggest 2–3 approaches to the current problem, using conversation and screenshots.' : 'Summarize the last 2 minutes of conversation in 3–5 points.')} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
           {actionButtonMode === 'brainstorm'
             ? <><Lightbulb className="w-3 h-3 opacity-65" /> Идеи</>
             : <><RefreshCw className="w-3 h-3 opacity-65" /> {t("Итоги")}</>
           }
         </button>
-        <button onClick={handleFollowUpQuestions} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
+        <button onClick={handleFollowUpQuestions} disabled={isProcessing} title={t("Suggest 3 questions you can ask about the current topic.")} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10.5px] font-medium border border-border-subtle/55 transition-colors active:scale-95 duration-200 interaction-base interaction-press whitespace-nowrap shrink-0 ${quickActionClass}`} style={appearance.chipStyle}>
           <HelpCircle className="w-3 h-3 opacity-65" />{t("Вопросы")}</button>
         <button
-          onClick={handleAnswerNow}
+          onClick={handleAnswerNow} disabled={isProcessing && !isManualRecording} title={t("Record your question from the microphone. Press Stop to generate an answer.")}
           className={`flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10.5px] font-semibold transition-colors active:scale-95 duration-200 interaction-base interaction-press min-w-[84px] whitespace-nowrap shrink-0 ${isManualRecording
             ? 'bg-state-danger-soft text-state-danger ring-1 ring-state-danger-border'
             : 'bg-accent-primary text-white hover:opacity-90'

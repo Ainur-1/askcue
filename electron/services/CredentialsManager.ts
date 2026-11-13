@@ -6,6 +6,7 @@
 import fs from 'fs';
 import { DEFAULT_TRANSCRIPT_TRANSLATION_PROMPT } from '../transcript/translationExecutor';
 import { getCredentialsJsonPath } from './configPaths';
+import { DEFAULT_OPENCODE_SETTINGS, OpenCodeSettings, validateOpenCodeSettings } from '../../shared/opencode';
 
 export interface CustomProvider {
     id: string;
@@ -31,6 +32,7 @@ export interface OpenAICompatibleProvider {
 }
 
 export interface StoredCredentials {
+    openCode?: OpenCodeSettings;
     geminiApiKey?: string;
     groqApiKey?: string;
     openaiApiKey?: string;
@@ -219,6 +221,15 @@ export class CredentialsManager {
     }
     public getDefaultModel(): string {
         return this.credentials.defaultModel || 'gemini-3.1-flash-lite-preview';
+    }
+
+    public getOpenCodeSettings(): OpenCodeSettings {
+        return { ...DEFAULT_OPENCODE_SETTINGS, ...this.credentials.openCode };
+    }
+
+    public setOpenCodeSettings(settings: OpenCodeSettings): void {
+        this.credentials.openCode = validateOpenCodeSettings(settings);
+        this.saveCredentials();
     }
 
     public getAllCredentials(): StoredCredentials {

@@ -2,6 +2,7 @@ import { app, BrowserWindow, Tray, ipcMain, screen } from "electron"
 import path from "path"
 import fs from "fs"
 import { logToFile, ensureMacMicrophoneAccess, setupConsoleOverrides } from "./lib/logging"
+import { getAIActionId } from './lib/aiDiagnostics';
 
 if (!app.isPackaged) {
   require('dotenv').config();
@@ -1087,7 +1088,7 @@ export class AppState {
 
     this.intelligenceManager.on('error', (error: Error, mode: string) => {
       console.error(`[IntelligenceManager] Error in ${mode}:`, error)
-      sendToChatWindows('intelligence-error', { error: error.message, mode })
+      sendToChatWindows('intelligence-error', { error: error.message, mode, requestId: getAIActionId() })
     })
   }
 

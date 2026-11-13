@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStreamBuffer } from '../hooks/useStreamBuffer';
 import { X, Copy, Check, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import pikaIcon from '../../assets/icon.png';
+import askcueIcon from '../../assets/icon.png';
 
 // ============================================
 // Types
@@ -340,7 +340,7 @@ const GlobalChatOverlay: React.FC<GlobalChatOverlayProps> = ({
                     >
                         <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle shrink-0">
                             <div className="flex items-center gap-2 text-text-tertiary">
-                                <img src={pikaIcon} className="w-3.5 h-3.5 opacity-50 object-contain drop-shadow-sm" alt="logo" />
+                                <img src={askcueIcon} className="w-3.5 h-3.5 opacity-50 object-contain drop-shadow-sm" alt="logo" />
                                 <span className="text-[13px] font-medium">{t("Search all meetings")}</span>
                             </div>
                             <button

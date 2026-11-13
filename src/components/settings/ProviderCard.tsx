@@ -144,7 +144,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
         <div className="provider-card min-w-0 bg-bg-item-surface rounded-xl p-5 border border-border-subtle">
             <div className="mb-2 flex items-center justify-between">
                 <label className="flex items-center text-xs font-medium text-text-primary uppercase tracking-wide">
-                    {providerName}{t("API Key")}{hasStoredKey && <span className="ml-2 text-state-success normal-case">{t("✓ Saved")}</span>}
+                    <span className="provider-key-label">{providerName}{' '}{t("API Key")}</span>{hasStoredKey && <span className="ml-2 text-state-success normal-case">{t("✓ Saved")}</span>}
                 </label>
                 <button
                     onClick={() => {

@@ -1,8 +1,39 @@
-import { BrowserWindow, dialog } from "electron"
+import { BrowserWindow, dialog, shell } from "electron"
 import { AppState } from "../main"
-import { safeHandle } from "./safeHandle"
+import { safeHandle as registerHandle } from "./safeHandle"
+import { getAIDiagnosticsDirectory, getAIActionIssue, recordAIEvent, traceAIAction } from '../lib/aiDiagnostics';
+import fs from 'node:fs';
 
 export function registerIntelligenceHandlers(appState: AppState): void {
+  const actions: Record<string, string> = {
+    'generate-assist': 'assist', 'generate-what-to-say': 'what_to_say', 'generate-clarify': 'clarify',
+    'generate-code-hint': 'code_hint', 'generate-brainstorm': 'brainstorm', 'generate-follow-up': 'follow_up',
+    'generate-recap': 'recap', 'generate-follow-up-questions': 'follow_up_questions', 'submit-manual-question': 'manual',
+  };
+  const safeHandle: typeof registerHandle = (channel, listener) => registerHandle(channel, async (event, ...args) => {
+    if (!actions[channel]) return listener(event, ...args);
+    const manager = appState.getIntelligenceManager();
+    const seconds = ['generate-recap', 'generate-follow-up-questions', 'submit-manual-question'].includes(channel) ? 120 : 180;
+    const context = manager.getFormattedContext(seconds);
+    const turns = manager.getContext(seconds);
+    const health = appState.getNativeAudioStatus();
+    return traceAIAction({ action: actions[channel], emitter: manager, metadata: {
+      channel, model: appState.processingHelper.getLLMHelper().getCurrentModel(),
+      sessionStartedAt: manager.getSessionStartTime(), contextWindowSeconds: seconds,
+      contextChars: context.length, contextTurns: turns.length,
+      interviewerTurns: turns.filter(turn => turn.role === 'interviewer').length,
+      hasRecentInterviewerTranscript: health.hasRecentInterviewerTranscript,
+      hasRecentSystemAudio: health.hasRecentSystemAudioChunk,
+      lastInterviewerTranscriptAt: health.lastInterviewerTranscriptAt,
+      explicitQuestionChars: typeof args[0] === 'string' ? args[0].length : 0,
+    } }, async () => listener(event, ...args));
+  });
+  safeHandle('open-ai-diagnostics-folder', async () => {
+    const directory = getAIDiagnosticsDirectory();
+    fs.mkdirSync(directory, { recursive: true });
+    const error = await shell.openPath(directory);
+    return error ? { success: false, error } : { success: true };
+  });
   // ==========================================
   // Intelligence Mode Handlers
   // ==========================================
@@ -24,12 +55,9 @@ export function registerIntelligenceHandlers(appState: AppState): void {
       const intelligenceManager = appState.getIntelligenceManager();
       // Question and imagePaths are now optional - IntelligenceManager infers from transcript
       const answer = await intelligenceManager.runWhatShouldISay(question, 0.8, imagePaths);
-      return { answer, question: question || 'inferred from context' };
+      return { answer, question: question || 'inferred from context', reason: getAIActionIssue() };
     } catch (error: any) {
-      // Return graceful fallback instead of throwing
-      return {
-        question: question || 'unknown'
-      };
+      throw error;
     }
   });
 
@@ -37,13 +65,7 @@ export function registerIntelligenceHandlers(appState: AppState): void {
     try {
       const intelligenceManager = appState.getIntelligenceManager();
       const clarification = await intelligenceManager.runClarify();
-      // If null returned without throwing, the engine already set mode to idle.
-      // We must still ensure the frontend un-sticks — emit an error so onIntelligenceError fires.
-      if (clarification === null) {
-        const win = appState.getMainWindow();
-        win?.webContents.send('intelligence-error', { error: 'Could not generate a clarifying question. Try again after some audio context is available.', mode: 'clarify' });
-      }
-      return { clarification };
+      return { clarification, reason: getAIActionIssue() };
     } catch (error: any) {
       throw error;
     }
@@ -59,6 +81,7 @@ export function registerIntelligenceHandlers(appState: AppState): void {
           : appState.getScreenshotQueue();
 
       console.log(`[IPC] generate-code-hint: using ${resolvedImagePaths.length} image(s) (${imagePaths?.length ? 'explicit' : 'queue fallback'})`);
+      recordAIEvent('context.images', { count: resolvedImagePaths.length, source: imagePaths?.length ? 'attachment' : 'screenshot_queue' });
 
       const intelligenceManager = appState.getIntelligenceManager();
       const hint = await intelligenceManager.runCodeHint(
@@ -81,6 +104,7 @@ export function registerIntelligenceHandlers(appState: AppState): void {
           : appState.getScreenshotQueue();
 
       console.log(`[IPC] generate-brainstorm: using ${resolvedImagePaths.length} image(s) (${imagePaths?.length ? 'explicit' : 'queue fallback'})`);
+      recordAIEvent('context.images', { count: resolvedImagePaths.length, source: imagePaths?.length ? 'attachment' : 'screenshot_queue' });
 
       const intelligenceManager = appState.getIntelligenceManager();
       const script = await intelligenceManager.runBrainstorm(
@@ -130,7 +154,7 @@ export function registerIntelligenceHandlers(appState: AppState): void {
     try {
       const intelligenceManager = appState.getIntelligenceManager();
       const summary = await intelligenceManager.runRecap();
-      return { summary };
+      return { summary, reason: getAIActionIssue() };
     } catch (error: any) {
       throw error;
     }
@@ -141,7 +165,7 @@ export function registerIntelligenceHandlers(appState: AppState): void {
     try {
       const intelligenceManager = appState.getIntelligenceManager();
       const questions = await intelligenceManager.runFollowUpQuestions();
-      return { questions };
+      return { questions, reason: getAIActionIssue() };
     } catch (error: any) {
       throw error;
     }

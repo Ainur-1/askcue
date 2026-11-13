@@ -7,9 +7,9 @@
 ## 上一轮已完成（本会话）
 
 ### 1. Answer 按钮语义改造
-- **改动前**：`PikaInterface.handleAnswerNow` 是 push-to-talk 录麦克风 → 拼 mic STT → 调 `streamGeminiChat`。空音频时弹 "No speech detected"。
+- **改动前**：`AskCueInterface.handleAnswerNow` 是 push-to-talk 录麦克风 → 拼 mic STT → 调 `streamGeminiChat`。空音频时弹 "No speech detected"。
 - **改动后**：`handleAnswerNow = () => chat.handleWhatToSay()` —— 直接走 transcript-based 回答。
-- **File**: `src/components/PikaInterface.tsx:58`
+- **File**: `src/components/AskCueInterface.tsx:58`
 - **副作用**：按钮永远显示 "Answer"（不再切 Stop）；`isManualRecording` / `audio.voiceInputRef` / `finalizeMicSTT` 这些字段仍被 `useMeetingAudio` 维护未清理，可后续 dead-code 删除。
 
 ### 2. Gemini stream tokens 不显示在 UI
@@ -17,15 +17,15 @@
 - **修复**：`src/hooks/useMeetingChat.ts` 新增 `onGeminiStreamToken / onGeminiStreamDone / onGeminiStreamError` 监听器，把 token 追加到最近的 `isStreaming` 占位 system message。
 
 ### 3. 窗口 resize 不自适应
-- **根因**：overlay 窗口尺寸由 PikaInterface ResizeObserver 上报内容尺寸驱动 → main 用 `setOverlayDimensions` 强行覆盖窗口尺寸，撤销用户拖拽。同时根容器 `h-fit` 不会跟随窗口长大。
+- **根因**：overlay 窗口尺寸由 AskCueInterface ResizeObserver 上报内容尺寸驱动 → main 用 `setOverlayDimensions` 强行覆盖窗口尺寸，撤销用户拖拽。同时根容器 `h-fit` 不会跟随窗口长大。
 - **修复**：
-  - `src/components/PikaInterface.tsx`：展开态下 `updateContentDimensions` 直接 return；根 div 切到 `h-screen`；motion.div 加 `flex-1 min-h-0`
+  - `src/components/AskCueInterface.tsx`：展开态下 `updateContentDimensions` 直接 return；根 div 切到 `h-screen`；motion.div 加 `flex-1 min-h-0`
   - `src/components/meeting/SplitterShell.tsx`：外壳加 `flex-1 min-h-0`
 
 ### 4. 布局从左右切到上下
 - `src/components/ui/ResizableSplitter.tsx`：新增 `orientation: 'vertical' | 'horizontal'` prop；horizontal 模式用 clientY/rect.height、`cursor-row-resize`、横向条样式
 - `src/components/meeting/SplitterShell.tsx`：容器改 `flex-col`；上块 `height: ${splitterPosition}%`、下块 `flex-1`；splitter 传 `orientation="horizontal"`
-- localStorage `pika_splitter_position` 复用（值由"宽度%"变"高度%"，默认 40 = transcript 占 40%）
+- localStorage `askcue_splitter_position` 复用（值由"宽度%"变"高度%"，默认 40 = transcript 占 40%）
 
 ### 5. 默认窗口尺寸 + 视觉分区
 - `electron/helpers/WindowHelper.ts`：overlay 默认/重置宽度 `1000 → 600`（行 199, 459）；overlay `minWidth: 600 → 380`

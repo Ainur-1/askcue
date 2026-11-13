@@ -237,7 +237,7 @@ export class SessionTracker {
     addAssistantMessage(text: string): void {
         console.log(`[SessionTracker] addAssistantMessage called with:`, text.substring(0, 50));
 
-        // Pika-style filtering
+        // AskCue-style filtering
         if (!text) return;
 
         const cleanText = text.trim();

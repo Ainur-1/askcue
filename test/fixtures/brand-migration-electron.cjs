@@ -1,0 +1,48 @@
+const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
+if (!process.versions.electron) {
+  const env = { ...process.env }; delete env.ELECTRON_RUN_AS_NODE;
+  const result = require('node:child_process').spawnSync(require('electron'), [__filename], { env, encoding: 'utf8', windowsHide: true, timeout: 45000 });
+  process.stdout.write(result.stdout || ''); process.stderr.write(result.stderr || ''); process.exit(result.status ?? 1);
+}
+const { app } = require('electron');
+const base = fs.mkdtempSync(path.resolve('temp/brand-migration-'));
+app.setPath('userData', path.join(base, 'askcue'));
+app.whenReady().then(async () => {
+  const { PREVIOUS_PROFILE_NAME } = require('../../dist-electron/shared/branding');
+  const { migrateProfileDirectory } = require('../../dist-electron/electron/services/profileMigration');
+  const old = path.join(base, PREVIOUS_PROFILE_NAME), next = path.join(base, 'askcue');
+  fs.mkdirSync(old, { recursive: true });
+  const Database = require('better-sqlite3');
+  const original = new Database(path.join(old, `${PREVIOUS_PROFILE_NAME}.db`));
+  original.pragma('journal_mode = WAL'); original.pragma('wal_autocheckpoint = 0');
+  original.exec("CREATE TABLE meetings (id TEXT PRIMARY KEY, title TEXT); INSERT INTO meetings VALUES ('history', 'Preserved meeting');");
+  const Store = require('electron-store');
+  const preferences = new Store({ cwd: old, name: `${PREVIOUS_PROFILE_NAME}-preferences-secure`, encryptionKey: `${PREVIOUS_PROFILE_NAME}-secure-storage-key` });
+  preferences.set('hasDonated', true);
+  fs.writeFileSync(path.join(old, 'credentials.json'), '{"provider":"test-only"}');
+  await migrateProfileDirectory(old, next);
+  const migrated = new Database(path.join(next, 'askcue.db'));
+  assert.equal(migrated.prepare('SELECT title FROM meetings').pluck().get(), 'Preserved meeting');
+  migrated.exec("INSERT INTO meetings VALUES ('new', 'New conversation');"); migrated.close();
+  await migrateProfileDirectory(old, next);
+  const repeated = new Database(path.join(next, 'askcue.db'));
+  assert.equal(repeated.prepare('SELECT count(*) FROM meetings').pluck().get(), 2); repeated.close();
+  const { DonationManager } = require('../../dist-electron/electron/lib/DonationManager');
+  assert.equal(DonationManager.getInstance().getDonationState().hasDonated, true);
+  assert.equal(fs.readFileSync(path.join(next, 'credentials.json'), 'utf8'), '{"provider":"test-only"}');
+  assert.ok(fs.existsSync(path.join(old, `${PREVIOUS_PROFILE_NAME}.db`)));
+  original.close();
+  const { migrateDemoBranding } = require('../../dist-electron/electron/db/brandMigration');
+  const guide = new Database(':memory:');
+  guide.exec('CREATE TABLE meetings(id TEXT,title TEXT,summary_json TEXT); CREATE TABLE transcripts(meeting_id TEXT,speaker TEXT,content TEXT); CREATE TABLE ai_interactions(meeting_id TEXT,user_query TEXT,ai_response TEXT,metadata_json TEXT); CREATE TABLE chunks(meeting_id TEXT,speaker TEXT,cleaned_text TEXT); CREATE TABLE chunk_summaries(meeting_id TEXT,summary_text TEXT);');
+  guide.prepare('INSERT INTO meetings VALUES (?,?,?)').run('demo-meeting', `${PREVIOUS_PROFILE_NAME} guide`, JSON.stringify({ overview: `Hello ${PREVIOUS_PROFILE_NAME}`, link: `https://github.com/royisme/${PREVIOUS_PROFILE_NAME}baka` }));
+  guide.prepare('INSERT INTO meetings VALUES (?,?,?)').run('customer', 'Original title', JSON.stringify({ overview: `We discussed ${PREVIOUS_PROFILE_NAME}` }));
+  migrateDemoBranding(guide);
+  assert.equal(guide.prepare('SELECT title FROM meetings WHERE id=?').pluck().get('demo-meeting'), 'AskCue guide');
+  assert.match(guide.prepare('SELECT summary_json FROM meetings WHERE id=?').pluck().get('demo-meeting'), /Hello AskCue/);
+  assert.ok(guide.prepare('SELECT summary_json FROM meetings WHERE id=?').pluck().get('demo-meeting').includes(`https://github.com/royisme/${PREVIOUS_PROFILE_NAME}baka`));
+  assert.ok(guide.prepare('SELECT summary_json FROM meetings WHERE id=?').pluck().get('customer').includes(PREVIOUS_PROFILE_NAME));
+  guide.close();
+  console.log('PASS AskCue profile migration: SQLite WAL snapshot, history, credentials, encrypted preferences, idempotence and retained original.');
+  app.quit();
+}).catch(error => { console.error(error); app.exit(1); });

@@ -18,7 +18,7 @@ interface GeneratedSuggestion {
 }
 
 /**
- * Pika-style suggestion overlay component
+ * AskCue-style suggestion overlay component
  * Displays real-time transcripts and AI-generated suggestions
  */
 export const SuggestionOverlay: React.FC<SuggestionOverlayProps> = ({ className }) => {

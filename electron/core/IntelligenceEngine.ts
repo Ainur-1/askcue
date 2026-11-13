@@ -5,6 +5,7 @@
 import { EventEmitter } from 'events';
 import { LLMHelper } from './LLMHelper';
 import { SessionTracker, TranscriptSegment, SuggestionTrigger, ContextItem } from './SessionTracker';
+import { recordAIEvent } from '../lib/aiDiagnostics';
 import {
     AnswerLLM, AssistLLM, BrainstormLLM, ClarifyLLM, CodeHintLLM, FollowUpLLM, RecapLLM,
     FollowUpQuestionsLLM, WhatToAnswerLLM,
@@ -223,6 +224,7 @@ export class IntelligenceEngine extends EventEmitter {
         const now = Date.now();
 
         if (now - this.lastTriggerTime < this.triggerCooldown) {
+            recordAIEvent('action.skipped', { reason: 'cooldown', retryAfterMs: this.triggerCooldown - (now - this.lastTriggerTime) });
             return null;
         }
 
@@ -277,6 +279,12 @@ export class IntelligenceEngine extends EventEmitter {
             }));
 
             const preparedTranscript = prepareTranscriptForWhatToAnswer(transcriptTurns, 12);
+            recordAIEvent('context.prepared', { transcriptTurns: transcriptTurns.length, transcriptChars: preparedTranscript.length, imageCount: imagePaths?.length || 0, interimIncluded: Boolean(lastInterim) });
+            if (!preparedTranscript.trim() && !question?.trim() && !imagePaths?.length) {
+                recordAIEvent('action.skipped', { reason: 'no_context' });
+                this.setMode('idle');
+                return null;
+            }
 
             const temporalContext = buildTemporalContext(
                 contextItems,
@@ -297,7 +305,9 @@ export class IntelligenceEngine extends EventEmitter {
             let fullAnswer = "";
             // RC-03 fix: hold a reference to the generator so we can call .return()
             // to properly terminate the network request when a new generation starts.
-            const stream = this.whatToAnswerLLM.generateStream(preparedTranscript, temporalContext, intentResult, imagePaths);
+            const requestTranscript = question?.trim()
+                ? `LATEST QUESTION:\n${question.trim()}\n\nRECENT CONVERSATION:\n${preparedTranscript}` : preparedTranscript;
+            const stream = this.whatToAnswerLLM.generateStream(requestTranscript, temporalContext, intentResult, imagePaths);
             let streamAborted = false;
 
             for await (const token of stream) {
@@ -319,9 +329,7 @@ export class IntelligenceEngine extends EventEmitter {
                 return null;
             }
 
-            if (!fullAnswer || fullAnswer.trim().length < 5) {
-                fullAnswer = "Could you repeat that? I want to make sure I address your question properly.";
-            }
+            if (!fullAnswer.trim()) throw new Error('The model returned an empty response');
 
             this.session.addAssistantMessage(fullAnswer);
 
@@ -342,7 +350,7 @@ export class IntelligenceEngine extends EventEmitter {
         } catch (error) {
             this.emit('error', error as Error, 'what_to_say');
             this.setMode('idle');
-            return "Could you repeat that? I want to make sure I address your question properly.";
+            return null;
         }
     }
 
@@ -442,6 +450,7 @@ export class IntelligenceEngine extends EventEmitter {
             const context = this.session.getFormattedContext(120);
             if (!context) {
                 console.warn('[IntelligenceEngine] No context available for recap');
+                recordAIEvent('action.skipped', { reason: 'no_context' });
                 this.setMode('idle');
                 return null;
             }
@@ -567,6 +576,7 @@ export class IntelligenceEngine extends EventEmitter {
             const context = this.session.getFormattedContext(120);
             if (!context) {
                 console.warn('[IntelligenceEngine] No context available for follow-up questions');
+                recordAIEvent('action.skipped', { reason: 'no_context' });
                 this.setMode('idle');
                 return null;
             }
@@ -698,9 +708,7 @@ export class IntelligenceEngine extends EventEmitter {
                 fullHint += token;
             }
 
-            if (!fullHint || fullHint.trim().length < 5) {
-                fullHint = "I couldn't detect any code in the screenshot. Try screenshotting your code editor directly.";
-            }
+            if (!fullHint.trim()) throw new Error('The model returned an empty response');
 
             this.session.addAssistantMessage(fullHint);
             this.session.pushUsage({
@@ -776,9 +784,7 @@ export class IntelligenceEngine extends EventEmitter {
                 return null;
             }
 
-            if (!fullResult || fullResult.trim().length < 5) {
-                fullResult = "I couldn't generate brainstorm approaches. Make sure your question is visible and try again.";
-            }
+            if (!fullResult.trim()) throw new Error('The model returned an empty response');
 
             this.session.addAssistantMessage(fullResult);
             this.session.pushUsage({

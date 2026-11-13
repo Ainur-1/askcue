@@ -7,7 +7,7 @@ export function useMeetingTranscript() {
   const [currentInterviewerPartial, setCurrentInterviewerPartial] = useState('');
   const [transcriptDisplayMode, setTranscriptDisplayMode] = useState<TranscriptDisplayMode>('original');
   const [showTranscript, setShowTranscript] = useState(() => {
-    const stored = localStorage.getItem('pika_interviewer_transcript');
+    const stored = localStorage.getItem('askcue_interviewer_transcript');
     return stored !== 'false';
   });
   const speakingTimeoutRef = useRef<number | null>(null);
@@ -23,12 +23,12 @@ export function useMeetingTranscript() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('pika_interviewer_transcript', String(showTranscript));
+    localStorage.setItem('askcue_interviewer_transcript', String(showTranscript));
   }, [showTranscript]);
 
   useEffect(() => {
     const handleStorage = () => {
-      const stored = localStorage.getItem('pika_interviewer_transcript');
+      const stored = localStorage.getItem('askcue_interviewer_transcript');
       setShowTranscript(stored !== 'false');
     };
 

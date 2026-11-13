@@ -1,5 +1,5 @@
 {
-  "name": "pika",
+  "name": "askcue",
   "version": "2.3.0",
   "main": "dist-electron/electron/bootstrap.js",
   "description": "Open-source AI interview copilot and meeting assistant. Real-time transcription, AI-suggested answers, and screenshot reasoning — bring your own LLM key or run fully offline with Ollama.",
@@ -20,8 +20,12 @@
     "lint": "eslint src electron test --no-inline-config",
     "test": "tap --node-arg=--import=tsx \"test/**/*.test.ts\"",
     "test:ui": "node scripts/test-interface.cjs",
+    "test:opencode": "node scripts/test-opencode.cjs",
+    "test:branding": "node scripts/check-branding.cjs",
+    "test:branding:built": "node scripts/check-branding.cjs --built",
+    "test:migration": "node test/fixtures/brand-migration-electron.cjs",
     "test:proxy": "node scripts/test-system-proxy.cjs",
-    "verify": "pnpm run lint && pnpm run test",
+    "verify": "pnpm run test:branding && pnpm run lint && pnpm run test",
     "build:web:raw": "pnpm run clean && tsc && vite build",
     "build": "pnpm run verify && pnpm run build:web:raw",
     "build:electron:raw": "tsc -p electron/tsconfig.json",
@@ -34,7 +38,7 @@
     "electron:build": "pnpm run verify && pnpm run build:electron:raw && cross-env NODE_ENV=production electron .",
     "app:dev": "concurrently \"pnpm run dev -- --port 5180 --strictPort\" \"wait-on http://localhost:5180 && pnpm run build:electron:raw && cross-env NODE_ENV=development electron .\"",
     "app:prod": "pnpm run verify && pnpm run build:web:raw && pnpm run build:electron:raw && pnpm run build:native:raw && cross-env NODE_ENV=production electron .",
-    "app:build": "pnpm run verify && pnpm run build:web:raw && pnpm run build:electron:raw && pnpm run build:native:raw && node scripts/build-app.js",
+    "app:build": "pnpm run verify && pnpm run build:web:raw && pnpm run build:electron:raw && pnpm run test:branding:built && pnpm run build:native:raw && node scripts/build-app.js",
     "app:notarize": "node scripts/notarize-only.js",
     "release": "node scripts/release.js",
     "watch": "tsc -p electron/tsconfig.json --watch",
@@ -44,9 +48,9 @@
   },
   "build": {
     "generateUpdatesFilesForAllChannels": true,
-    "appId": "com.royisme.pika",
+    "appId": "app.askcue.desktop",
     "afterPack": "./scripts/ad-hoc-sign.js",
-    "productName": "Pika",
+    "productName": "AskCue",
     "files": [
       "dist",
       "dist-electron",
@@ -61,6 +65,7 @@
       "!**/node_modules/.package-lock.json"
     ],
     "asarUnpack": [
+      "**/opencode-ai/bin/**",
       "**/*.node",
       "**/*.dylib",
       "**/@img/**"
@@ -95,7 +100,7 @@
           ]
         }
       ],
-      "icon": "assets/pika.icns",
+      "icon": "assets/askcue.icns",
       "identity": "shaoqing zhu (UL5T9WXYJT)",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
@@ -208,6 +213,7 @@
     "@google/genai": "^1.44.0",
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
+    "@opencode-ai/sdk": "1.19.5",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-toast": "^1.2.2",
@@ -236,6 +242,7 @@
     "lucide-react": "^0.460.0",
     "mammoth": "^1.11.0",
     "openai": "^6.22.0",
+    "opencode-ai": "1.19.5",
     "pdf-parse": "^2.4.5",
     "react": "^18.3.1",
     "react-code-blocks": "^0.1.6",

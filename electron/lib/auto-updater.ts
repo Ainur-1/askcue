@@ -3,6 +3,7 @@ import path from "path"
 import { autoUpdater } from "electron-updater"
 import { ReleaseNotesManager } from "../update/ReleaseNotesManager"
 import type { AppState } from "../main"
+import packageJson from '../../package.json'
 
 export function setupAutoUpdater(appState: AppState): void {
   autoUpdater.autoDownload = false
@@ -58,6 +59,10 @@ export function setupAutoUpdater(appState: AppState): void {
     appState.broadcast("update-downloaded", info)
   })
 
+  // Local builds have no update feed. In particular, do not automatically
+  // replace a renamed installation with a release from the upstream project.
+  if (!packageJson.build.publish) return;
+
   // Start checking for updates with a 10-second delay
   setTimeout(() => {
     if (process.env.NODE_ENV === "development") {
@@ -77,6 +82,10 @@ export async function checkForUpdatesManual(appState: AppState): Promise<void> {
     // Fetch latest release
     const notes = await releaseManager.fetchReleaseNotes('latest');
 
+    if (!notes) {
+      appState.broadcast('update-error', 'No AskCue releases are available in the configured repository yet.');
+      return;
+    }
     if (notes) {
       const currentVersion = app.getVersion();
       const latestVersionTag = notes.version; // e.g., "v1.2.0" or "1.2.0"
@@ -110,6 +119,7 @@ export async function checkForUpdatesManual(appState: AppState): Promise<void> {
     }
   } catch (err) {
     console.error('[AutoUpdater] Manual update check failed:', err);
+    appState.broadcast('update-error', err instanceof Error ? err.message : String(err));
   }
 }
 
@@ -136,7 +146,7 @@ export async function quitAndInstallUpdate(appState: AppState): Promise<void> {
   // Workaround: Open the folder containing the downloaded update so user can install manually
   if (process.platform === 'darwin') {
     try {
-      // Get the downloaded update file path (e.g., .../Pika-1.0.9-mac.zip)
+      // Get the downloaded update file path (e.g., .../AskCue-1.0.9-mac.zip)
       const updateFile = (autoUpdater as any).downloadedUpdateHelper?.file
       console.log('[AutoUpdater] Downloaded update file:', updateFile)
 

@@ -343,7 +343,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
     }, [isThemeDropdownOpen, isAiLangDropdownOpen]);
 
     const [showTranscript, setShowTranscript] = useState(() => {
-        const stored = localStorage.getItem('pika_interviewer_transcript');
+        const stored = localStorage.getItem('askcue_interviewer_transcript');
         return stored !== 'false';
     });
 
@@ -489,7 +489,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
     // Sync transcript setting
     useEffect(() => {
         const handleStorage = () => {
-            const stored = localStorage.getItem('pika_interviewer_transcript');
+            const stored = localStorage.getItem('askcue_interviewer_transcript');
             setShowTranscript(stored !== 'false');
         };
         window.addEventListener('storage', handleStorage);
@@ -1157,8 +1157,8 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                             <Power size={20} />
                                                         </div>
                                                         <div>
-                                                            <h3 className="text-sm font-bold text-text-primary">{t("Open Pika when you log in")}</h3>
-                                                            <p className="text-xs text-text-secondary mt-0.5">{t("Pika will open automatically when you log in to your computer")}</p>
+                                                            <h3 className="text-sm font-bold text-text-primary">{t("Open AskCue when you log in")}</h3>
+                                                            <p className="text-xs text-text-secondary mt-0.5">{t("AskCue will open automatically when you log in to your computer")}</p>
                                                         </div>
                                                     </div>
                                                     <div
@@ -1182,6 +1182,8 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                         <div>
                                                             <h3 className="text-sm font-bold text-text-primary">{t("Verbose debug logging")}</h3>
                                                             <p className="text-xs text-text-secondary mt-0.5">{t("Print detailed audio, STT, and pipeline diagnostics to the terminal")}</p>
+                                                            <button type="button" className="mt-2 text-xs text-accent-primary hover:underline" onClick={() => window.electronAPI.openAIDiagnosticsFolder()}>{t('Open AI action logs')}</button>
+                                                            <p className="text-xs text-text-secondary mt-1">{t('AI action diagnostics are always recorded locally, without conversation text or API tokens.')}</p>
                                                         </div>
                                                     </div>
                                                     <div
@@ -1211,7 +1213,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                         onClick={() => {
                                                             const newState = !showTranscript;
                                                             setShowTranscript(newState);
-                                                            localStorage.setItem('pika_interviewer_transcript', String(newState));
+                                                            localStorage.setItem('askcue_interviewer_transcript', String(newState));
                                                             window.dispatchEvent(new Event('storage'));
                                                         }}
                                                         className={`w-11 h-6 rounded-full relative transition-colors ${showTranscript ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}
@@ -1277,7 +1279,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                             <div className="flex items-center gap-2">
                                                 <h3 className="text-lg font-bold text-text-primary">{t("Process Disguise")}</h3>
                                             </div>
-                                            <p className="text-xs text-text-secondary">{t("Disguise Pika as another application to prevent detection during screen sharing.")}<span className="block mt-1 text-text-tertiary">{t("Select a disguise to be automatically applied when Undetectable mode is on.")}</span>
+                                            <p className="text-xs text-text-secondary">{t("Disguise AskCue as another application to prevent detection during screen sharing.")}<span className="block mt-1 text-text-tertiary">{t("Select a disguise to be automatically applied when Undetectable mode is on.")}</span>
                                             </p>
                                         </div>
 
@@ -1490,7 +1492,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="max-w-2xl">
                                             <h3 className="text-lg font-bold text-text-primary mb-1">{t("Shortcuts")}</h3>
-                                            <p className="text-xs text-text-secondary leading-relaxed">{t("Customize how you trigger Pika.")}</p>
+                                            <p className="text-xs text-text-secondary leading-relaxed">{t("Customize how you trigger AskCue.")}</p>
                                         </div>
                                         <button
                                             onClick={resetShortcuts}
@@ -1501,7 +1503,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
 
                                     <div className="bg-bg-card border border-border-subtle rounded-2xl p-4 md:p-5">
                                         {[
-                                            { id: 'toggleVisibility', label: 'Show or hide Pika' },
+                                            { id: 'toggleVisibility', label: 'Show or hide AskCue' },
                                             { id: 'whatToAnswer', label: 'What should I answer?' },
                                             { id: 'captureAndProcess', label: 'Capture screen and ask AI' },
                                             { id: 'processScreenshots', label: 'Process current screenshots' },
@@ -1874,7 +1876,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
 
                                     <div>
                                         <h3 className="text-lg font-bold text-text-primary mb-1">{t("Transcript Segmentation")}</h3>
-                                        <p className="text-xs text-text-secondary mb-5">{t("Choose how patiently Pika buffers final speech segments before translation.")}</p>
+                                        <p className="text-xs text-text-secondary mb-5">{t("Choose how patiently AskCue buffers final speech segments before translation.")}</p>
 
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                             {TRANSCRIPT_ASSEMBLER_PROFILE_OPTIONS.map((option) => {

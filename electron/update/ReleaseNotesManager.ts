@@ -17,8 +17,7 @@ export interface ParsedReleaseNotes {
 export class ReleaseNotesManager {
     private static instance: ReleaseNotesManager;
     private cachedNotes: ParsedReleaseNotes | null = null;
-    private readonly repoOwner = "royisme";
-    private readonly repoName = "pika";
+    private readonly repoUrl = "https://api.github.com/repos/royisme/pikabaka";
 
     private constructor() { }
 
@@ -48,10 +47,10 @@ export class ReleaseNotesManager {
             // Otherwise, fetch by tag
             let url = "";
             if (version === 'latest') {
-                url = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/releases/latest`;
+                url = `${this.repoUrl}/releases/latest`;
             } else {
                 const tag = version.startsWith('v') ? version : `v${version}`;
-                url = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/releases/tags/${tag}`;
+                url = `${this.repoUrl}/releases/tags/${tag}`;
             }
 
             const response = await this.makeRequest(url);
@@ -62,6 +61,9 @@ export class ReleaseNotesManager {
             }
 
             const data = JSON.parse(response);
+            // Repository links can continue to point at the upstream project,
+            // but a renamed installation must only accept its own release assets.
+            if (!Array.isArray(data.assets) || !data.assets.some((asset: { name?: string }) => asset.name?.startsWith('AskCue-'))) return null;
             const body = data.body || "";
             const htmlUrl = data.html_url || "";
             const tagName = data.tag_name || version; // Use tag_name from API if available

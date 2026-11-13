@@ -25,7 +25,7 @@ export class AnswerLLM {
 
         } catch (error) {
             console.error("[AnswerLLM] Generation failed:", error);
-            return "";
+            throw error;
         }
     }
 }

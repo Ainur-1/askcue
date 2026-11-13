@@ -15,10 +15,10 @@ t.test('parseLLMJson parses fenced json blocks', (t) => {
 
 t.test('parseLLMJson extracts embedded json object from surrounding text', (t) => {
   const result = parseLLMJson<{ company: string; title: string }>(
-    'Here is the analysis you requested:\n{"company":"Pika","title":"Engineer"}\nUse it well.',
+    'Here is the analysis you requested:\n{"company":"AskCue","title":"Engineer"}\nUse it well.',
   );
 
-  t.same(result, { company: 'Pika', title: 'Engineer' });
+  t.same(result, { company: 'AskCue', title: 'Engineer' });
   t.end();
 });
 

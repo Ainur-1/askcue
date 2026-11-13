@@ -30,7 +30,7 @@ const SplitterShell: React.FC<SplitterShellProps> = ({
     appearance,
     overlayPanelClass,
 }) => {
-    const [layout, setLayout] = useState(() => localStorage.getItem('pika_meeting_layout') || 'columns');
+    const [layout, setLayout] = useState(() => localStorage.getItem('askcue_meeting_layout') || 'columns');
     const [wide, setWide] = useState(window.innerWidth >= 740);
     useEffect(() => {
         const resize = () => setWide(window.innerWidth >= 740);
@@ -41,7 +41,7 @@ const SplitterShell: React.FC<SplitterShellProps> = ({
     const focus = layout === 'focus';
     const cycleLayout = () => {
         const next = layout === 'columns' ? 'rows' : layout === 'rows' ? 'focus' : 'columns';
-        setLayout(next); localStorage.setItem('pika_meeting_layout', next);
+        setLayout(next); localStorage.setItem('askcue_meeting_layout', next);
     };
     return (
         <div

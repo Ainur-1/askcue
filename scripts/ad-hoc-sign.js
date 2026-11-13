@@ -17,7 +17,7 @@ const HELPER_SUFFIXES = ['', ' (GPU)', ' (Renderer)', ' (Plugin)'];
 
 /**
  * Update the display names inside each helper's Info.plist so Activity Monitor
- * shows "CoreServices Helper" instead of "Pika Helper".
+ * shows "CoreServices Helper" instead of "AskCue Helper".
  *
  * IMPORTANT: We only modify CFBundleDisplayName and CFBundleName.
  * We do NOT rename the .app folders or the executable binaries — doing so

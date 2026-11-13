@@ -5,12 +5,12 @@ const net = require('node:net');
 const { once } = require('node:events');
 const fs = require('node:fs');
 // configPaths also uses os.homedir on macOS/Linux. Keep that inside the fixture.
-require('node:os').homedir = () => process.env.PIKA_PROXY_TEST_PROFILE;
+require('node:os').homedir = () => process.env.ASKCUE_PROXY_TEST_PROFILE;
 require('tsx/cjs');
 
-app.setPath('userData', process.env.PIKA_PROXY_TEST_PROFILE);
+app.setPath('userData', process.env.ASKCUE_PROXY_TEST_PROFILE);
 app.on('window-all-closed', () => {});
-app.commandLine.appendSwitch('host-resolver-rules', 'MAP pika-proxy-test.invalid 127.0.0.1');
+app.commandLine.appendSwitch('host-resolver-rules', 'MAP askcue-proxy-test.invalid 127.0.0.1');
 const { initializeSystemProxy, setSystemProxyEnabled, getSystemProxyEnabled } = require('../../electron/services/SystemProxyManager.ts');
 const { systemProxyAgent } = require('../../electron/network/ProxyRouting.ts');
 const { getSettingsJsonPath } = require('../../electron/services/configPaths.ts');
@@ -23,7 +23,7 @@ async function listen(server) {
 
 async function main() {
     await app.whenReady();
-    const initialDirect = process.env.PIKA_PROXY_TEST_START_DIRECT === '1';
+    const initialDirect = process.env.ASKCUE_PROXY_TEST_START_DIRECT === '1';
     fs.writeFileSync(getSettingsJsonPath(), '\uFEFF' + JSON.stringify({ verboseLogging: false, actionButtonMode: 'recap',
         ...(initialDirect ? { useSystemProxy: false } : {}) }));
     await initializeSystemProxy();
@@ -67,7 +67,7 @@ async function main() {
     });
     const proxyPort = await listen(proxy);
     const useTestProxy = () => session.defaultSession.setProxy({ mode: 'fixed_servers', proxyRules: `127.0.0.1:${proxyPort}` });
-    const url = `http://pika-proxy-test.invalid:${port}`;
+    const url = `http://askcue-proxy-test.invalid:${port}`;
     await useTestProxy();
     assert.equal((await (await fetch(url)).json()).route, 'proxy');
     console.log('PASS Electron fetch uses proxy');
@@ -111,7 +111,7 @@ async function main() {
     const grpcPort = await new Promise((resolve, reject) => grpcServer.bindAsync('127.0.0.1:0', grpc.ServerCredentials.createInsecure(),
         (error, value) => error ? reject(error) : resolve(value)));
     const Client = grpc.makeGenericClientConstructor({ ping: method }, 'Proxy');
-    const client = new Client(`pika-grpc-test.invalid:${grpcPort}`, grpc.credentials.createInsecure());
+    const client = new Client(`askcue-grpc-test.invalid:${grpcPort}`, grpc.credentials.createInsecure());
     assert.equal(await new Promise((resolve, reject) => client.ping('speech', { deadline: Date.now() + 15_000 },
         (error, value) => error ? reject(error) : resolve(value))), 'speech');
     client.close(); grpcServer.forceShutdown();
@@ -140,7 +140,7 @@ async function main() {
     // Exercise the actual React switch through the actual context-isolated preload and IPC.
     const path = require('node:path');
     const esbuild = require(require.resolve('esbuild', { paths: [require.resolve('vite')] }));
-    const preload = path.join(process.env.PIKA_PROXY_TEST_PROFILE, 'preload.cjs');
+    const preload = path.join(process.env.ASKCUE_PROXY_TEST_PROFILE, 'preload.cjs');
     esbuild.buildSync({ entryPoints: [path.resolve(__dirname, '../../electron/preload.ts')],
         bundle: true, platform: 'node', format: 'cjs', external: ['electron'], outfile: preload });
     const ui = esbuild.buildSync({ stdin: {
@@ -181,7 +181,7 @@ async function main() {
     console.log('PASS UI keeps the applied setting and shows an error on failure');
 
     // Optional, unauthenticated connectivity check through the actual OS proxy.
-    if (process.env.PIKA_PROXY_TEST_EXTERNAL === '1') {
+    if (process.env.ASKCUE_PROXY_TEST_EXTERNAL === '1') {
         await session.defaultSession.setProxy({ mode: 'system' });
         const result = await fetch('https://api.openai.com/v1/models', { signal: AbortSignal.timeout(10_000) });
         assert.equal(result.status, 401);

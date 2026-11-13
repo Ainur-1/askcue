@@ -133,8 +133,8 @@ export class WindowHelper {
         if (mode === 'none') {
           if (isMac) {
             return app.isPackaged
-              ? path.join(process.resourcesPath, "assets", "pika.icns")
-              : path.resolve(app.getAppPath(), "assets/pika.icns");
+              ? path.join(process.resourcesPath, "assets", "askcue.icns")
+              : path.resolve(app.getAppPath(), "assets/askcue.icns");
           } else if (isWin) {
             return app.isPackaged
               ? path.join(process.resourcesPath, "assets/icons/win/icon.ico")
@@ -411,7 +411,7 @@ export class WindowHelper {
     if (this.isWindowVisible) {
       this.hideMainWindow()
     } else {
-      // Always show without stealing focus — Pika is a ghost overlay.
+      // Always show without stealing focus — AskCue is a ghost overlay.
       // The user is in another app; show the window on top but leave OS focus alone.
       // They can click the window to focus it if they need to type.
       this.showMainWindow(true)

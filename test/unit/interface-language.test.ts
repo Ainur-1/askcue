@@ -15,7 +15,7 @@ t.test('interface defaults to the OS locale and supports explicit Russian or Eng
 });
 
 t.test('both languages cover core settings and workspace navigation', t => {
-  for (const label of ['Use system proxy', 'Mouse Passthrough', 'Open Pika when you log in', 'App behavior', 'Interface language', 'Theme', 'Meeting history', 'Materials', 'Settings']) {
+  for (const label of ['Use system proxy', 'Mouse Passthrough', 'Open AskCue when you log in', 'App behavior', 'Interface language', 'Theme', 'Meeting history', 'Materials', 'Settings']) {
     t.type(englishToRussian[label], 'string', label);
     t.type(russianToEnglish[englishToRussian[label]], 'string', 'reverse translation');
   }

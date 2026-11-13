@@ -10,7 +10,7 @@ export class AudioTestService {
   start(deviceId?: string): Promise<{ fallbackUsed: boolean }> {
     this.stop();
     return new Promise((resolve, reject) => {
-      const child = utilityProcess.fork(path.join(__dirname, 'audio-test-worker.js'), [app.getAppPath(), deviceId || ''], { serviceName: 'Pika microphone test', stdio: 'pipe' });
+      const child = utilityProcess.fork(path.join(__dirname, 'audio-test-worker.js'), [app.getAppPath(), deviceId || ''], { serviceName: 'AskCue microphone test', stdio: 'pipe' });
       child.stdout?.resume();
       child.stderr?.resume();
       this.child = child;

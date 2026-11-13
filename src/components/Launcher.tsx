@@ -1,4 +1,4 @@
-import brandLogo from '../../assets/pikabaka-logo.svg';
+import brandLogo from '../../assets/askcue-logo.svg';
 import { t } from '../i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { AlertCircle, ArrowRight, Briefcase, Calendar, CheckCircle, DownloadCloud, Link as LinkIcon, RefreshCw, Zap, History, BookOpen, Settings, MessageSquarePlus, AudioLines, Mic, FileText } from 'lucide-react';
@@ -200,7 +200,7 @@ const Launcher: React.FC<LauncherProps> = ({
         <div className="workbench text-text-primary">
           <div className="workbench-row">
             <aside className="workbench-sidebar paper-texture">
-              <div className="workbench-brand"><img src={brandLogo} alt=""/><span>Pikabaka</span></div>
+              <div className="workbench-brand"><img src={brandLogo} alt=""/><span>AskCue</span></div>
               <nav className="workbench-nav" aria-label={t("Разделы")}>
                 <button title={t("Новый разговор")} aria-current={page === 'session' ? 'page' : undefined} onClick={() => { setPage('session'); setSelectedMeeting(null); }}><MessageSquarePlus size={18}/><span>{isMeetingActive ? t("Текущий разговор") : t("Новый разговор")}</span></button>
                 <button title={t("История встреч")} aria-current={page === 'history' ? 'page' : undefined} onClick={() => { setPage('history'); setSelectedMeeting(null); }}><History size={18}/><span>{t("История встреч")}</span></button>

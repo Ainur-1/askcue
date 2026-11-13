@@ -99,6 +99,14 @@ const ModelSelectorWindow = () => {
                 localStorage.setItem('cached-models', JSON.stringify(models));
                 setAvailableModels(models);
 
+                // OpenCode owns model discovery and provider authentication.
+                const openCode = await window.electronAPI?.getOpenCodeModels?.();
+                if (openCode?.success) {
+                    models.push(...openCode.models.map(model => ({ id: model.id, name: model.name, type: 'cloud' as const, provider: 'opencode' })));
+                    setAvailableModels([...models]);
+                    localStorage.setItem('cached-models', JSON.stringify(models));
+                }
+
                 // 4. Get Current Active Model
                 const config = await window.electronAPI?.getCurrentLlmConfig?.(); // Get runtime model
                 if (config && config.model) {
@@ -115,6 +123,7 @@ const ModelSelectorWindow = () => {
 
         loadModels();
         window.addEventListener('focus', loadModels);
+        const unsubscribeProviders = window.electronAPI?.onOpenAICompatibleProvidersChanged?.(loadModels);
 
         // Listen for changes
         const unsubscribe = window.electronAPI?.onModelChanged?.((modelId: string) => {
@@ -122,6 +131,7 @@ const ModelSelectorWindow = () => {
         });
         return () => {
             unsubscribe?.();
+            unsubscribeProviders?.();
             window.removeEventListener('focus', loadModels);
         };
     }, []);

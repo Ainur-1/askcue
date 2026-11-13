@@ -33,6 +33,7 @@ export class ClarifyLLM {
             yield* this.llmHelper.streamChat(context, undefined, undefined, CLARIFY_MODE_PROMPT);
         } catch (error) {
             console.error("[ClarifyLLM] Streaming generation failed:", error);
+            throw error;
         }
     }
 }

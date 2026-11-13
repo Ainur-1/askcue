@@ -1,11 +1,11 @@
 {
-  "name": "pika-demo",
+  "name": "askcue-demo",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "npx remotion studio",
-    "build": "npx remotion render PikaDemo out/pika-demo.mp4",
-    "still": "npx remotion still PikaDemo out/pika-thumbnail.png"
+    "build": "npx remotion render AskCueDemo out/askcue-demo.mp4",
+    "still": "npx remotion still AskCueDemo out/askcue-thumbnail.png"
   },
   "dependencies": {
     "@remotion/cli": "4.0.265",

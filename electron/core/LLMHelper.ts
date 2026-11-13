@@ -23,6 +23,9 @@ import { createProviderRateLimiters, RateLimiter } from '../services/RateLimiter
 import { buildTranscriptTranslationPrompt } from '../transcript/translationExecutor';
 import { classifyApiError } from '../utils/apiErrors';
 import { systemProxyAgent } from '../network/ProxyRouting';
+import { openCodeService } from '../services/OpenCodeManager';
+import { parseOpenCodeModelId } from '../../shared/opencode';
+import { recordAIEvent } from '../lib/aiDiagnostics';
 const execAsync = promisify(exec);
 
 function isOpenAICompatibleProvider(
@@ -249,8 +252,31 @@ export class LLMHelper {
   // ---------------------------
 
   private currentModelId: string = GEMINI_FLASH_MODEL;
+  private activeOpenCodeModel: string | null = null;
+
+  private async openCodeImages(imagePaths: string[] = []) {
+    return Promise.all(imagePaths.map(async imagePath => {
+      const image = await this.processImage(imagePath);
+      return { mime: image.mimeType, url: `data:${image.mimeType};base64,${image.data}` };
+    }));
+  }
+
+  private async chatWithOpenCode(message: string, system?: string, imagePaths?: string[]): Promise<string> {
+    return openCodeService.complete(this.activeOpenCodeModel!, message, system, await this.openCodeImages(imagePaths));
+  }
 
   public setModel(modelId: string, customProviders: (CustomProvider | CurlProvider | OpenAICompatibleProvider)[] = []) {
+    if (modelId.startsWith('opencode:')) {
+      parseOpenCodeModelId(modelId);
+      this.useOllama = false;
+      this.customProvider = null;
+      this.activeCurlProvider = null;
+      this.activeOpenAICompatibleProvider = null;
+      this.activeOpenCodeModel = modelId;
+      this.currentModelId = modelId;
+      return;
+    }
+    this.activeOpenCodeModel = null;
     // Map UI short codes to internal Model IDs
     let targetModelId = modelId;
     if (modelId === 'gemini') targetModelId = GEMINI_FLASH_MODEL;
@@ -308,6 +334,7 @@ export class LLMHelper {
   }
 
   public switchToCurl(provider: CurlProvider) {
+    this.activeOpenCodeModel = null;
     this.useOllama = false;
     this.customProvider = null;
     this.activeOpenAICompatibleProvider = null;
@@ -850,7 +877,7 @@ CRITICAL RULES:
   }
 
   /**
-   * Generate a suggestion based on conversation transcript - Pika-style
+   * Generate a suggestion based on conversation transcript - AskCue-style
    * This uses Gemini Flash to reason about what the user should say
    * @param context - The full conversation transcript
    * @param lastQuestion - The most recent question from the interviewer
@@ -1045,6 +1072,9 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       };
 
       // GROQ FAST TEXT OVERRIDE (Text-Only)
+      if (this.activeOpenCodeModel) {
+        return await this.chatWithOpenCode(userContent, skipSystemPrompt ? undefined : this.injectLanguageInstruction(CUSTOM_SYSTEM_PROMPT), imagePaths);
+      }
       if (this.groqFastTextMode && !isMultimodal && this.groqClient) {
         console.log(`[LLMHelper] ⚡️ Groq Fast Text Mode Active. Routing to Groq...`);
         try {
@@ -1227,6 +1257,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
    * NOTE: Does NOT mutate this.geminiModel — calls Gemini Pro directly to avoid race conditions.
    */
   public async generateContentStructured(message: string): Promise<string> {
+    if (this.activeOpenCodeModel) return this.chatWithOpenCode(message);
     type ProviderAttempt = { name: string; execute: () => Promise<string> };
     const providers: ProviderAttempt[] = [];
 
@@ -1747,6 +1778,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
    * After all cloud tiers: Custom Provider -> cURL Provider -> Ollama
    */
   private async generateWithVisionFallback(systemPrompt: string, userPrompt: string, imagePaths: string[] = []): Promise<string> {
+    if (this.activeOpenCodeModel) return this.chatWithOpenCode(userPrompt, systemPrompt, imagePaths);
     type ProviderAttempt = { name: string; execute: () => Promise<string> };
     const isMultimodal = imagePaths.length > 0;
 
@@ -2182,6 +2214,11 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     // logic: if override provided, use it. otherwise use HARD_SYSTEM_PROMPT (which is the universal base)
     const baseSystemPrompt = systemPromptOverride || HARD_SYSTEM_PROMPT;
     const finalSystemPrompt = this.injectLanguageInstruction(baseSystemPrompt);
+    recordAIEvent('llm.request', {
+      selectedModel: this.getCurrentModel(), messageChars: message.length, contextChars: context?.length || 0,
+      systemChars: finalSystemPrompt.length, imageCount: imagePaths?.length || 0,
+      groqFastOverride: !this.activeOpenCodeModel && this.groqFastTextMode && !isMultimodal && Boolean(this.groqClient),
+    });
 
     // Helper to build combined user message
     const userContent = context
@@ -2189,6 +2226,10 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       : message;
 
     // GROQ FAST TEXT OVERRIDE (Text-Only)
+    if (this.activeOpenCodeModel) {
+      yield* openCodeService.stream(this.activeOpenCodeModel, userContent, finalSystemPrompt, await this.openCodeImages(imagePaths));
+      return;
+    }
     if (this.groqFastTextMode && !isMultimodal && this.groqClient) {
       console.log(`[LLMHelper] ⚡️ Groq Fast Text Mode Active (Streaming). Routing to Groq...`);
       try {
@@ -2855,7 +2896,8 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     }
   }
 
-  public getCurrentProvider(): "ollama" | "gemini" | "custom" {
+  public getCurrentProvider(): "ollama" | "gemini" | "custom" | "opencode" {
+    if (this.activeOpenCodeModel) return 'opencode';
     if (this.customProvider) return "custom";
     return this.useOllama ? "ollama" : "gemini";
   }
@@ -3111,6 +3153,8 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       return '';
     }
 
+    if (this.activeOpenCodeModel) return this.chatWithOpenCode(context, systemPrompt);
+
     // Helper: Estimate tokens (crude approximation: 4 chars = 1 token)
     const estimateTokens = (text: string) => Math.ceil(text.length / 4);
     const tokenCount = estimateTokens(context);
@@ -3224,6 +3268,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
   }
 
   public async switchToOllama(model?: string, url?: string): Promise<void> {
+    this.activeOpenCodeModel = null;
     this.useOllama = true;
     if (url) this.ollamaUrl = url;
 
@@ -3238,6 +3283,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
   }
 
   public async switchToGemini(apiKey?: string, modelId?: string): Promise<void> {
+    this.activeOpenCodeModel = null;
     if (modelId) {
       this.geminiModel = modelId;
     }
@@ -3258,6 +3304,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
   }
 
   public async switchToCustom(provider: CustomProvider): Promise<void> {
+    this.activeOpenCodeModel = null;
     this.customProvider = provider;
     this.useOllama = false;
     this.client = null;

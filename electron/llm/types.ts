@@ -1,5 +1,5 @@
 // electron/llm/types.ts
-// Shared types for the Pika LLM system
+// Shared types for the AskCue LLM system
 
 import { GoogleGenAI } from "@google/genai";
 

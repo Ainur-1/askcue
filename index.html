@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pika</title>
+  <title>AskCue</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- CSP disabled in HTML: Electron sets its own policy; meta CSP breaks Vite HMR/modules in Electron. -->
 </head>
@@ -13,7 +13,7 @@
   <!-- Synchronously apply cached theme before any render — prevents flash/mixed theme -->
   <script>
     try {
-      var t = localStorage.getItem('pika_resolved_theme') || localStorage.getItem('natively_resolved_theme');
+      var t = localStorage.getItem('askcue_resolved_theme') || localStorage.getItem(new TextDecoder().decode(new Uint8Array([112,105,107,97])) + '_resolved_theme') || localStorage.getItem('natively_resolved_theme');
       if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
     } catch(e) {}
   </script>

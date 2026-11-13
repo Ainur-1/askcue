@@ -176,7 +176,7 @@ export const SupportToaster: React.FC<SupportToasterProps> = ({ className }) => 
                                 {/* Headline */}
                                 <h3 className="text-[26px] font-[600] leading-[1.2] text-[#F3F3F3] tracking-[-0.01em] mb-[12px] antialiased">{t("Built by one.")}<br />{t("Used by thousands.")}</h3>
                                 {/* Body */}
-                                <p className="text-[14px] leading-[1.6] text-white/60 max-w-[480px] font-medium antialiased">{t("Pika is built and maintained by one developer.")}<br />{t("If it’s part of your daily workflow, your support keeps")}<br />{t("it moving forward.")}</p>
+                                <p className="text-[14px] leading-[1.6] text-white/60 max-w-[480px] font-medium antialiased">{t("AskCue is built and maintained by one developer.")}<br />{t("If it’s part of your daily workflow, your support keeps")}<br />{t("it moving forward.")}</p>
                             </div>
                         </div>
 

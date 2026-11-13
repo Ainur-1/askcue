@@ -14,7 +14,7 @@
 
 **Option A**:新增第三个 profile `coherent`,在 Settings 加三选一切换。**默认仍是 `sentence_bias`**(保持向后兼容)。
 
-不选 Option B/C 的原因:Pika 是面试副驾驶,默认行为不能为长句完整性牺牲实时反应速度;让用户自己按场景挑。
+不选 Option B/C 的原因:AskCue 是面试副驾驶,默认行为不能为长句完整性牺牲实时反应速度;让用户自己按场景挑。
 
 ## 阈值设计
 

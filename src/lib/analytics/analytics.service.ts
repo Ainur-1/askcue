@@ -140,10 +140,10 @@ class AnalyticsService {
 
         this.trackEvent('app_opened');
 
-        const hasLaunched = localStorage.getItem('pika_has_launched');
+        const hasLaunched = localStorage.getItem('askcue_has_launched');
         if (!hasLaunched) {
             this.trackEvent('first_launch');
-            localStorage.setItem('pika_has_launched', 'true');
+            localStorage.setItem('askcue_has_launched', 'true');
         }
     }
 

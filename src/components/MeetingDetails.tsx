@@ -5,7 +5,7 @@ import { ArrowUp, Copy, Check, Languages, Loader2, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MeetingChatOverlay from './MeetingChatOverlay';
 import EditableTextBlock from './EditableTextBlock';
-import pikaLogo from '../../assets/icon.png';
+import askcueLogo from '../../assets/icon.png';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -485,7 +485,7 @@ ${meeting.detailedSummary.keyPoints?.map(item => `- ${item}`).join('\n') || 'Non
                                         {interaction.answer && (
                                             <div className="flex items-start gap-4">
                                                 <div className="mt-1 w-6 h-6 rounded-full bg-bg-input flex items-center justify-center border border-border-subtle shrink-0">
-                                                    <img src={pikaLogo} alt="AI" className="w-4 h-4 opacity-50 object-contain drop-shadow-sm" />
+                                                    <img src={askcueLogo} alt="AI" className="w-4 h-4 opacity-50 object-contain drop-shadow-sm" />
                                                 </div>
                                                 <div>
                                                     <div className="text-[11px] text-text-tertiary mb-1.5 font-medium">{formatTime(interaction.timestamp)}</div>
