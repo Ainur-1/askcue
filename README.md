@@ -11,6 +11,7 @@ Live transcription. Contextual answers. Your choice of models.
 [![Version](https://img.shields.io/badge/version-0.0.1-315e4f)](package.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-grey)](#platforms)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-support-FFDD00?logo=buymeacoffee&logoColor=000)](https://buymeacoffee.com/ainur)
 
 [Website](https://ainur-1.github.io/askcue/) · [Getting started](#getting-started) · [Features](#features) · [Development](#development) · [Issues](https://github.com/Ainur-1/askcue/issues)
 
@@ -144,6 +145,10 @@ The interface uses React, TypeScript, Vite, and Tailwind CSS. Electron owns desk
 Bug reports, documentation improvements, and focused pull requests are welcome. Search [existing issues](https://github.com/Ainur-1/askcue/issues) before opening a report, and include your operating system, AskCue version, reproduction steps, and redacted diagnostic details.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations. Report security concerns according to [SECURITY.md](SECURITY.md).
+
+## Support
+
+If AskCue is useful to you, you can [buy the maintainer a coffee](https://buymeacoffee.com/ainur) to support continued development. Thank you!
 
 ## Acknowledgments and license
 

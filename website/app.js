@@ -43,6 +43,7 @@ const english = {
   q5: 'How can I contribute?', a5: 'Report an issue, suggest an improvement, or open a pull request. The repository has a guide for contributors.',
   contribute: 'Get involved ↗', footerTagline: 'Less noise. More meaning.', footerGit: 'Let’s make it better together',
   based: 'Built on the open-source work of', feedback: 'Share feedback ↗',
+  supportHeading: 'Help AskCue grow.', supportText: 'If the project has been useful, you can buy the maintainer a coffee. Thank you for your support!',
 };
 const localizedElements = [...document.querySelectorAll('[data-i18n]')];
 const russian = Object.fromEntries(localizedElements.map(element => [
