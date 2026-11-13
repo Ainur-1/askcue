@@ -17,14 +17,13 @@ if (process.platform === 'darwin') {
     }
 }
 
-const builderBin = path.resolve(
-    __dirname,
-    '..',
-    'node_modules',
-    '.bin',
-    process.platform === 'win32' ? 'electron-builder.cmd' : 'electron-builder'
-);
+// Invoke JavaScript directly: Windows cannot spawn a .cmd shim without a shell.
+const builderCli = require.resolve('electron-builder/out/cli/cli.js');
 
 const args = ['--publish', 'never', ...process.argv.slice(2)];
-const result = spawnSync(builderBin, args, { stdio: 'inherit', env: process.env });
+// Packaging reads the already verified dependency tree; nested pnpm exec calls
+// must not run an install and change native bindings underneath the build.
+const buildEnv = { ...process.env, pnpm_config_verify_deps_before_run: 'false' };
+const result = spawnSync(process.execPath, [builderCli, ...args], { stdio: 'inherit', env: buildEnv, windowsHide: true });
+if (result.error) console.error('[build-app]', result.error.message);
 process.exit(result.status ?? 1);

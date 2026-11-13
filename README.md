@@ -8,7 +8,7 @@
 
 Live transcription. Contextual answers. Your choice of models.
 
-[![Version](https://img.shields.io/badge/version-0.0.1-315e4f)](package.json)
+[![Version](https://img.shields.io/badge/version-0.2.1-315e4f)](package.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-grey)](#platforms)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-support-FFDD00?logo=buymeacoffee&logoColor=000)](https://buymeacoffee.com/ainur)
@@ -19,13 +19,14 @@ Live transcription. Contextual answers. Your choice of models.
 
 AskCue brings a live transcript, AI assistance, and meeting history into one desktop workspace. Capture your microphone and system audio, ask questions about the conversation, and include screenshots when visual context matters. Connect your own AI providers, use OpenCode, or run a language model locally with Ollama.
 
-**Project status:** `0.0.1` is the starting version of the independent AskCue fork. Expect changes to the interface, configuration, and packaging as the project develops. This version number does not imply that a downloadable release has been published.
+**Project status:** `0.2.1` adds downloadable local speech models and separates AI, recognition, and sound settings. Windows x64 installer and portable builds can be produced locally; check GitHub Releases for published downloads.
 
 ## Features
 
 | Capability | What you can do |
 | --- | --- |
-| Live transcription | Capture microphone and system audio separately and follow the conversation in real time. |
+| Live transcription | Capture microphone and system audio separately, using a cloud provider or a downloaded local speech model. |
+| Local speech models | Download Zipformer or Whisper, pause/resume downloads, and compare installed models on a local WAV recording. |
 | Contextual AI actions | Draft a reply, ask a clarifying question, recap the conversation, brainstorm, or suggest follow-up questions. |
 | Screenshot analysis | Add a full-screen or region capture to a request using a model that supports images. |
 | OpenCode integration | Discover connected providers, search models, select a default, and stream responses through the official SDK. |
@@ -64,16 +65,16 @@ Dependency installation downloads the bundled embedding model and rebuilds nativ
 
 ### Configure your first session
 
-1. Open **Settings → AI Providers**, connect a provider, and select a model.
-2. Configure a speech recognition provider and recognition language in Settings. Model access and speech recognition are separate services and may require separate credentials.
-3. Select your microphone and audio capture settings. Grant the microphone and screen or system audio permissions requested by your operating system.
+1. Open **Settings → AI suggestions**, connect a provider, and select a model.
+2. Open **Settings → Recognition** and download a local model or configure an API provider. Speech recognition and AI replies have independent model settings and credentials.
+3. Select your microphone and computer audio under **Settings → Sound**. Grant the microphone and screen or system audio permissions requested by your operating system.
 4. Start a meeting, check that the transcript is arriving, and use the AI actions or chat to work with the conversation.
 
 For screenshot requests, choose a model with image support. If a provider rejects a request, check its credentials, available quota, and the error shown in AskCue.
 
 ### Use OpenCode
 
-In **Settings → AI Providers → OpenCode**, use an existing connection or save your Go/Zen API token, refresh the model list, and choose a default. AskCue uses the official OpenCode SDK and CLI for provider discovery and inference.
+In **Settings → AI suggestions → API and services → OpenCode**, use an existing connection or save your Go/Zen API token, refresh the model list, and choose a default. AskCue uses the official OpenCode SDK and CLI for provider discovery and inference.
 
 See [OpenCode integration](docs/OPENCODE.md) for configuration, model selection, and connection behavior.
 
@@ -82,11 +83,11 @@ See [OpenCode integration](docs/OPENCODE.md) for configuration, model selection,
 | Purpose | Supported integrations |
 | --- | --- |
 | Language models | OpenCode, OpenAI, Anthropic Claude, Google Gemini, Groq, Ollama, and custom OpenAI-compatible endpoints |
-| Speech recognition | Google Cloud Speech, Deepgram, Soniox, OpenAI, Groq, ElevenLabs, Azure Speech, and IBM Watson |
+| Speech recognition | Local Zipformer/Whisper ONNX, Google Cloud Speech, Deepgram, Soniox, OpenAI, Groq, ElevenLabs, Azure Speech, and IBM Watson |
 
 Available models and features depend on the connected provider and your account. AskCue does not include third-party subscriptions, API credits, or model access.
 
-Ollama can run language model inference on your machine. The bundled speech recognition integrations use cloud services; choosing a local language model alone does not make the entire transcription pipeline offline.
+Ollama runs language model inference locally; downloaded Zipformer and Whisper models run speech recognition locally. Choose both separately if you want local processing for both roles. Local speech models produce completed phrases rather than cloud-style interim text. Translation and AI actions use their own configured connections. See [local speech recognition](docs/LOCAL_SPEECH.md) for model sizes, formats, and testing.
 
 ## Data and privacy
 

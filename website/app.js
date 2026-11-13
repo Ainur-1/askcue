@@ -37,7 +37,7 @@ const english = {
   sourceSetup: 'RUN FROM SOURCE', buildGuide: 'Full setup guide', copy: 'Copy commands',
   faqEyebrow: 'A FEW GOOD QUESTIONS', faqHeading: 'No fine print.',
   q1: 'Is it free?', a1: 'AskCue is open source under MIT. The app does not require an AskCue subscription. Cloud AI and speech recognition services are billed under your chosen provider’s terms.',
-  q2: 'Where does my data go?', a2: 'Meeting history is stored locally. Cloud services receive the audio, text, or screenshots needed for your requests. In version 0.0.1, API keys are stored in a local plaintext credentials.json file, rather than an OS keychain.',
+  q2: 'Where does my data go?', a2: 'Meeting history is stored locally. Cloud services receive the audio, text, or screenshots needed for your requests. API keys are stored in a local plaintext credentials.json file, rather than an OS keychain.',
   q3: 'Can I use it completely offline?', a3: 'Ollama lets you run a language model locally. The built-in speech recognition integrations use cloud services, so a local AI model alone does not make the whole pipeline offline.',
   q4: 'Which systems are supported?', a4: 'Windows is the current development and validation environment. macOS code is included, but builds need validation on target hardware; the default packaging targets Apple Silicon. Linux support is not yet validated.',
   q5: 'How can I contribute?', a5: 'Report an issue, suggest an improvement, or open a pull request. The repository has a guide for contributors.',

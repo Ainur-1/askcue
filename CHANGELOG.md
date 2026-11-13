@@ -6,6 +6,21 @@
 
 - Adopt the MIT License for AskCue, retaining attribution to the original project and its contributors. Third-party components retain their own licenses.
 
+## 0.2.1 (2026-11-13)
+
+### Features
+
+- Separate AI suggestions, speech recognition, and audio devices in settings.
+- Download and verify local Zipformer and Whisper ONNX models, with pause/resume and removal.
+- Transcribe speech locally without automatic cloud fallback; switch recognition providers without restarting.
+- Compare installed models on a local WAV recording with measured processing time, process memory, and reference-text word errors.
+- Preserve OpenCode, API providers, Ollama, translation, and microphone checks.
+- Add a system-audio capture switch and project support links.
+
+### Build & Release
+
+- Prepare Windows x64 installer and portable builds for AskCue 0.2.1.
+
 ## 0.0.1 (2026-11-13)
 
 Initial AskCue fork baseline. This entry describes the source version; packaged release availability is listed on GitHub Releases.

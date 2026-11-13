@@ -1,6 +1,6 @@
 {
   "name": "askcue",
-  "version": "0.0.1",
+  "version": "0.2.1",
   "main": "dist-electron/electron/bootstrap.js",
   "description": "Open-source desktop meeting assistant with live transcription, contextual AI answers, screenshot analysis, and OpenCode integration.",
   "homepage": "https://github.com/Ainur-1/askcue#readme",
@@ -69,6 +69,7 @@
       "**/sherpa-onnx-*/**",
       "**/*.node",
       "**/*.dylib",
+      "**/*.dll",
       "**/@img/**"
     ],
     "directories": {
