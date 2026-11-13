@@ -9,7 +9,7 @@
 Live transcription. Contextual answers. Your choice of models.
 
 [![Version](https://img.shields.io/badge/version-0.0.1-315e4f)](package.json)
-[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-grey)](#platforms)
 
 [Getting started](#getting-started) · [Features](#features) · [Development](#development) · [Issues](https://github.com/Ainur-1/askcue/issues)
@@ -149,4 +149,4 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and [CODE_O
 
 AskCue is an independently maintained fork of [the original project by royisme](https://github.com/royisme/pikabaka). The upstream project and its contributors provided the foundation for this application. AskCue adds its own interface, localization, OpenCode integration, AI action diagnostics, and response timing.
 
-The project is distributed under the [GNU Affero General Public License v3](LICENSE). Third-party components retain their respective licenses; see [the icon attribution](assets/ICON-LICENSE.txt) for the logo's source artwork.
+The project is distributed under the [MIT License](LICENSE). Third-party components retain their respective licenses; see [the icon attribution](assets/ICON-LICENSE.txt) for the logo's source artwork.

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Project
+
+- Adopt the MIT License for AskCue, retaining attribution to the original project and its contributors. Third-party components retain their own licenses.
+
 ## 0.0.1 (2026-11-13)
 
 Initial AskCue fork baseline. This entry describes the source version; packaged release availability is listed on GitHub Releases.
