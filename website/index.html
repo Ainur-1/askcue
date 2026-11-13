@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f1e7">
+<meta name="description" content="AskCue — открытый AI-помощник для встреч и разговоров. Живая расшифровка, ответы с учётом контекста и ваши любимые модели.">
+<meta property="og:title" content="AskCue — Stay in the conversation."><meta property="og:description" content="Live transcription, contextual AI answers, and your choice of models. An open-source desktop meeting assistant."><meta property="og:type" content="website">
+<title>AskCue — Главное в разговоре</title>
+<link rel="icon" href="./assets/mark.svg" type="image/svg+xml"><link rel="stylesheet" href="./styles.css"><script src="./app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">К содержанию</a>
+<svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+<symbol id="external" viewBox="0 0 24 24"><path d="M6 18 18 6M6 6h12v12"/></symbol>
+<symbol id="spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
+<symbol id="mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8"/></symbol>
+<symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 8V4H4v11h4"/></symbol>
+<symbol id="git" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2-6-2m12 5v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.9A5.4 5.4 0 0 0 18.8 5a5 5 0 0 0-.1-3.6s-1.2-.4-3.8 1.4a13 13 0 0 0-6.9 0C5.4 1 4.2 1.4 4.2 1.4A5 5 0 0 0 4.1 5a5.4 5.4 0 0 0-1.4 3.7c0 5.4 3.2 6.5 6.2 6.9A3.4 3.4 0 0 0 8 18.1V22"/></symbol>
+</defs></svg>
+<header class="header wrap">
+<a class="brand" href="#" aria-label="AskCue"><img src="./assets/mark.svg" width="35" height="35" alt=""><span>AskCue<span class="brand-period">.</span></span></a>
+<nav aria-label="Основная навигация" data-i18n-aria="nav"><a href="#features" data-i18n="navFeatures">Возможности</a><a href="#workflow" data-i18n="navWorkflow">Как работает</a><a href="#faq" data-i18n="navFaq">Вопросы</a></nav>
+<div class="header-actions"><button id="language" type="button" aria-label="Switch to English">EN ↗</button><a class="source-link" href="https://github.com/Ainur-1/askcue"><svg class="icon"><use href="#git"/></svg><span>GitHub</span><svg class="icon small"><use href="#external"/></svg></a></div>
+</header>
+<main id="main">
+<section class="hero wrap">
+<div class="hero-copy"><div class="eyebrow"><span class="status-dot"></span><span data-i18n="eyebrow">ОТКРЫТЫЙ КОД. ЖИВОЙ РАЗГОВОР.</span></div>
+<h1><span data-i18n="headline1">Будь в разговоре.</span><br><em data-i18n="headline2">Ответ найдётся.</em></h1>
+<p class="hero-description" data-i18n="heroDescription">Слушай собеседника, а не ищи нужные слова. AskCue собирает контекст встречи и помогает сформулировать то, что ты хочешь сказать.</p>
+<div class="hero-buttons"><a class="button primary" href="#start"><span data-i18n="try">Попробовать AskCue</span><svg class="icon"><use href="#arrow"/></svg></a><a class="text-link" href="#preview"><span data-i18n="see">Посмотреть в действии</span><span aria-hidden="true">↓</span></a></div>
+<p class="hero-meta"><span data-i18n="desktop">Для Windows и macOS</span><span class="separator">/</span><span>MIT</span><span class="separator">/</span><span data-i18n="ownKeys">Свои API-ключи</span></p></div>
+<div class="hero-art" aria-hidden="true"><div class="art-grid"></div><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-caption top">SIGNAL / CONTEXT / CLARITY</div><div class="waveform"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="art-axis"></div><div class="art-seal">A<span>C</span></div><div class="art-caption bottom">LESS NOISE. MORE MEANING.</div></div>
+</section>
+<section class="preview-section wrap" id="preview" aria-labelledby="preview-heading">
+<div class="section-caption"><h2 id="preview-heading" data-i18n="previewHeading">Разговор — в центре внимания</h2><span><span class="status-dot"></span><span data-i18n="demoLabel">ИНТЕРАКТИВНОЕ ДЕМО · ВЫМЫШЛЕННЫЕ ДАННЫЕ</span></span></div>
+<div class="app-window"><div class="window-bar"><div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div><span>AskCue</span><span class="window-mode" data-i18n="workspace">Рабочая область</span></div>
+<div class="meeting-bar"><div><span class="live-dot"></span><strong data-i18n="meetingName">Обсуждение проекта</strong><span class="meeting-time">12:48</span></div><span class="meeting-model"><span class="model-square">O</span> OpenCode</span></div>
+<div class="app-body"><div class="transcript"><div class="pane-label"><span data-i18n="transcript">ТРАНСКРИПТ</span><svg class="icon small"><use href="#mic"/></svg></div>
+<div class="transcript-row"><div class="speaker"><span class="speaker-dot other"></span><span data-i18n="them">Собеседник</span><time>12:32</time></div><p data-i18n="line1">Мы хотим запустить первую версию в этом месяце. Как думаешь, на чём лучше сфокусироваться?</p></div>
+<div class="transcript-row"><div class="speaker"><span class="speaker-dot"></span><span data-i18n="you">Вы</span><time>12:39</time></div><p data-i18n="line2">Я бы начал с основного сценария и собрал обратную связь от первых пользователей.</p></div>
+<div class="transcript-row highlighted"><div class="speaker"><span class="speaker-dot other"></span><span data-i18n="them">Собеседник</span><time>12:46</time></div><p data-i18n="line3">Хорошо. А как поймём, что этот сценарий действительно работает?</p><span class="listening"><span></span><span></span><span></span></span></div></div>
+<div class="answer-pane"><div class="pane-label"><span><svg class="icon small"><use href="#spark"/></svg><span data-i18n="assistant">ВАША ПОДСКАЗКА</span></span><span class="context-tag" data-i18n="context">Из контекста встречи</span></div>
+<div id="demo-response" aria-live="polite" aria-atomic="true"><div class="answer-kicker" id="answer-kicker">МОЖНО ОТВЕТИТЬ ТАК</div><p class="answer-text" id="answer-text">«Давай проверим весь путь: от первого запуска до полезного результата. Посмотрим, где люди останавливаются, и спросим, что им помогло. Это даст нам основу для следующей итерации».</p><div class="answer-footnote"><span class="checkmark">✓</span><span id="answer-timing">Ответ готов · 1,8 с</span></div></div>
+<div class="demo-actions" role="group" aria-label="Действия демо" data-i18n-aria="demoActions"><button type="button" class="demo-action active" data-demo="reply" aria-pressed="true"><svg class="icon small"><use href="#spark"/></svg><span data-i18n="reply">Подсказать</span></button><button type="button" class="demo-action" data-demo="clarify" aria-pressed="false" data-i18n="clarify">Уточнить</button><button type="button" class="demo-action" data-demo="recap" aria-pressed="false" data-i18n="recap">Итоги</button></div></div></div>
+<div class="app-status"><span><span class="status-dot"></span><span data-i18n="audio">Микрофон + системный звук</span></span><span data-i18n="previewNote">Пример интерфейса, без записи звука</span></div></div>
+<div class="preview-bottom"><span class="hand-note" data-i18n="demoHint">Попробуй кнопки — каждой свой ответ ↗</span><span class="small-note" data-i18n="demoDisclaimer">Содержание и время ответа приведены для примера.</span></div>
+</section>
+<section class="features-section wrap" id="features"><div class="section-heading"><p class="eyebrow" data-i18n="featuresEyebrow">ЧУТЬ МЕНЬШЕ НАГРУЗКИ НА ТЕБЯ</p><h2 data-i18n="featuresHeading">Всё, что помогает<br>не терять нить.</h2><p data-i18n="featuresDescription">Для рабочих встреч, обсуждения идей и подготовки к собеседованиям. В одном спокойном пространстве.</p></div>
+<div class="feature-grid">
+<article><span class="feature-number">01 /</span><h3 data-i18n="f1title">Слушай, а не записывай</h3><p data-i18n="f1text">Живая расшифровка микрофона и системного звука. Вернись к нужной реплике, пока разговор идёт дальше.</p></article>
+<article><span class="feature-number">02 /</span><h3 data-i18n="f2title">От контекста — к ответу</h3><p data-i18n="f2text">Готовая реплика, уточняющий вопрос, краткие итоги или новые идеи. Выбирай действие под момент.</p></article>
+<article><span class="feature-number">03 /</span><h3 data-i18n="f3title">Покажи, что имеешь в виду</h3><p data-i18n="f3text">Добавь скриншот экрана или области. Модель с поддержкой изображений поможет разобраться в деталях.</p></article>
+<article><span class="feature-number">04 /</span><h3 data-i18n="f4title">Выбирай свои модели</h3><p data-i18n="f4text">OpenCode, облачные провайдеры, совместимые API или локальная модель через Ollama. Твой выбор, твои ключи.</p></article>
+<article><span class="feature-number">05 /</span><h3 data-i18n="f5title">Возвращайся к важному</h3><p data-i18n="f5text">История встреч и поиск по расшифровкам. Прошлые разговоры остаются под рукой в локальной базе.</p></article>
+<article><span class="feature-number">06 /</span><h3 data-i18n="f6title">Видишь, что происходит</h3><p data-i18n="f6text">Время до первого текста, длительность ответа и понятные ошибки. Меньше догадок, больше ясности.</p></article>
+</div></section>
+<section class="model-section"><div class="wrap model-layout"><div><p class="eyebrow" data-i18n="modelsEyebrow">ПОМОЩНИК ТВОЙ. МОДЕЛЬ ТОЖЕ.</p><h2 data-i18n="modelsHeading">Хороший разговор<br>не привязан к одному AI.</h2><p data-i18n="modelsText">Подключай привычный сервис или пробуй новый. Через OpenCode — с поиском моделей и потоковыми ответами прямо в AskCue.</p><a class="light-link" href="https://github.com/Ainur-1/askcue/blob/main/docs/OPENCODE.md"><span data-i18n="modelsLink">Как устроена интеграция</span><svg class="icon"><use href="#external"/></svg></a></div>
+<div class="provider-list" aria-label="AI providers"><div class="provider-featured"><span class="provider-mark">O</span><span>OpenCode</span><span class="provider-label" data-i18n="integrated">ВСТРОЕННАЯ ИНТЕГРАЦИЯ</span></div><div><span>OpenAI</span><span>Claude</span><span>Gemini</span></div><div><span>Groq</span><span>Ollama</span><span data-i18n="yourApi">Твой API ↗</span></div><p data-i18n="providerNote">Доступ к моделям и стоимость запросов определяет провайдер. Для распознавания речи настраивается отдельный сервис.</p></div></div></section>
+<section class="workflow-section wrap" id="workflow"><div class="section-heading horizontal"><div><p class="eyebrow" data-i18n="workflowEyebrow">БЕЗ ЛИШНЕГО РИТУАЛА</p><h2 data-i18n="workflowHeading">Подключи. Слушай. Говори.</h2></div><p data-i18n="workflowText">AskCue берёт на себя контекст.<br>Ты остаёшься в разговоре.</p></div>
+<div class="steps"><article><span>01</span><h3 data-i18n="step1title">Настрой подключение</h3><p data-i18n="step1text">Выбери AI-модель и сервис распознавания речи. Подключи свои API-ключи в настройках.</p></article><article><span>02</span><h3 data-i18n="step2title">Начни встречу</h3><p data-i18n="step2text">Выбери микрофон, включи системный звук и проверь первые строки расшифровки.</p></article><article><span>03</span><h3 data-i18n="step3title">Обратись за подсказкой</h3><p data-i18n="step3text">В нужный момент нажми кнопку действия или задай свой вопрос в чате.</p></article></div></section>
+<section class="start-section wrap" id="start"><div class="start-copy"><span class="version-stamp">v0.0.1 <span data-i18n="early">EARLY STAGE</span></span><h2 data-i18n="startHeading">Твой следующий<br>разговор. С AskCue.</h2><p data-i18n="startText">Проект в начале пути. Пробуй, делись впечатлениями и помогай сделать помощника, которым хочется пользоваться.</p><a class="button primary" href="https://github.com/Ainur-1/askcue/releases"><span data-i18n="releases">Смотреть релизы</span><svg class="icon"><use href="#external"/></svg></a><p class="release-note" data-i18n="releaseNote">Готовые сборки — по мере публикации. Пока их нет, можно запустить приложение из исходников.</p></div>
+<div class="terminal"><div class="terminal-top"><span data-i18n="sourceSetup">ЗАПУСК ИЗ ИСХОДНИКОВ</span><span>01—05</span></div>
+<pre id="install-command"><code><span class="code-comment"># Node.js 22 · pnpm 11 · Rust</span>
+git clone https://github.com/Ainur-1/askcue.git
+cd askcue
+pnpm install --frozen-lockfile
+pnpm run build:native
+pnpm run app:dev</code></pre>
+<div class="terminal-bottom"><a href="https://github.com/Ainur-1/askcue#build-from-source"><span data-i18n="buildGuide">Полная инструкция</span><span aria-hidden="true">↗</span></a><button type="button" id="copy-command"><svg class="icon small"><use href="#copy"/></svg><span data-i18n="copy">Копировать</span></button></div><p class="copy-status" id="copy-status" role="status"></p></div></section>
+<section class="faq-section wrap" id="faq"><div class="section-heading"><p class="eyebrow" data-i18n="faqEyebrow">ПАРА ВАЖНЫХ ВОПРОСОВ</p><h2 data-i18n="faqHeading">Без мелкого шрифта.</h2></div>
+<div class="faq-list">
+<details><summary><span data-i18n="q1">Это бесплатно?</span><span class="faq-plus" aria-hidden="true">+</span></summary><p data-i18n="a1">Код AskCue открыт под MIT. Использование приложения не требует подписки AskCue. Облачные AI-сервисы и распознавание речи оплачиваются по условиям выбранного провайдера.</p></details>
+<details><summary><span data-i18n="q2">Где хранятся мои данные?</span><span class="faq-plus" aria-hidden="true">+</span></summary><p data-i18n="a2">История встреч хранится локально. При выборе облачных сервисов аудио, текст или скриншоты передаются соответствующему провайдеру. В версии 0.0.1 API-ключи находятся в локальном plaintext-файле credentials.json, а не в системном хранилище ключей.</p></details>
+<details><summary><span data-i18n="q3">Можно работать полностью офлайн?</span><span class="faq-plus" aria-hidden="true">+</span></summary><p data-i18n="a3">Ollama позволяет запускать языковую модель локально. Однако встроенные сервисы распознавания речи используют облако. Локальная AI-модель сама по себе не делает весь процесс офлайн.</p></details>
+<details><summary><span data-i18n="q4">Какие системы поддерживаются?</span><span class="faq-plus" aria-hidden="true">+</span></summary><p data-i18n="a4">Текущая среда разработки и проверки — Windows. Код для macOS включён, но сборки требуют проверки на целевом устройстве; стандартная конфигурация ориентирована на Apple Silicon. Поддержка Linux пока не подтверждена.</p></details>
+<details><summary><span data-i18n="q5">Как помочь проекту?</span><span class="faq-plus" aria-hidden="true">+</span></summary><p><span data-i18n="a5">Расскажи об ошибке, предложи улучшение или отправь pull request. Инструкции для разработчиков есть в репозитории.</span> <a href="https://github.com/Ainur-1/askcue/blob/main/CONTRIBUTING.md" data-i18n="contribute">Участвовать ↗</a></p></details>
+</div></section>
+</main>
+<footer class="footer wrap"><div class="footer-top"><a class="brand" href="#"><img src="./assets/mark.svg" width="32" height="32" alt=""><span>AskCue<span class="brand-period">.</span></span></a><p data-i18n="footerTagline">Меньше шума. Больше смысла.</p><a class="text-link" href="https://github.com/Ainur-1/askcue"><span data-i18n="footerGit">Сделаем лучше вместе</span><svg class="icon"><use href="#external"/></svg></a></div><div class="footer-bottom"><span>© 2026 AskCue contributors · <a href="https://github.com/Ainur-1/askcue/blob/main/LICENSE">MIT License</a></span><span><span data-i18n="based">На основе открытого проекта</span> <a href="https://github.com/royisme/pikabaka">royisme ↗</a></span><a href="https://github.com/Ainur-1/askcue/issues" data-i18n="feedback">Обратная связь ↗</a></div></footer>
+</body></html>
