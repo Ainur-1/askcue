@@ -12,7 +12,7 @@ Live transcription. Contextual answers. Your choice of models.
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-grey)](#platforms)
 
-[Getting started](#getting-started) · [Features](#features) · [Development](#development) · [Issues](https://github.com/Ainur-1/askcue/issues)
+[Website](https://ainur-1.github.io/askcue/) · [Getting started](#getting-started) · [Features](#features) · [Development](#development) · [Issues](https://github.com/Ainur-1/askcue/issues)
 
 </div>
 
