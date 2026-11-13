@@ -1,0 +1,56 @@
+name: AskCue website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/website.yml'
+  pull_request:
+    paths:
+      - 'website/**'
+      - '.github/workflows/website.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: askcue-pages-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate landing page
+        run: |
+          node --check website/app.js
+          node website/check.mjs
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload landing page
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: website
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
