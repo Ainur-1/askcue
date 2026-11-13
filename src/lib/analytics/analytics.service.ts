@@ -2,6 +2,8 @@
 // Works in Electron by dynamically loading the gtag script into the renderer DOM
 // Only requires the public Measurement ID — no API secrets needed
 
+import { version as APP_VERSION } from '../../../package.json';
+
 // --- Types ---
 
 export type ModelProviderType = 'cloud' | 'local';
@@ -47,7 +49,6 @@ interface SessionDurationPayload {
 // --- Configuration ---
 
 const GA4_MEASUREMENT_ID = '';
-const APP_VERSION = "1.1.3";
 
 // Extend window to include gtag/dataLayer
 declare global {

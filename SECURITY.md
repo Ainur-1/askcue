@@ -4,8 +4,8 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.1.x   | :white_check_mark: |
-| < 1.1.0 | :x:                |
+| 0.0.1   | :white_check_mark: |
+| Upstream releases | Maintained by the upstream project |
 
 ## Reporting a Vulnerability
 
@@ -15,7 +15,7 @@ We take the security of our software seriously. If you have found a security vul
 
 ## Disclosure Process
 
-1.  Please submit a private report at **https://github.com/royisme/pikabaka/security/advisories/new**.
+1.  Use [private vulnerability reporting](https://github.com/Ainur-1/askcue/security/advisories/new) when available. If it is unavailable, contact the repository maintainer through their GitHub profile to arrange private disclosure. Do not include sensitive details in public issues.
 2.  In your report, please include:
     *   The type of issue (e.g., buffer overflow, SQL injection, cross-site scripting, etc.).
     *   Full paths of source file(s) related to the manifestation of the issue.
@@ -24,7 +24,7 @@ We take the security of our software seriously. If you have found a security vul
     *   Step-by-step instructions to reproduce the issue.
     *   Proof-of-concept or exploit code if possible.
     *   Impact of the issue, including how an attacker might exploit the issue.
-3.  We will acknowledge receipt of your vulnerability report within **72 hours**.
+3.  The maintainer will review the report and acknowledge it when possible; this early-stage project has no guaranteed response time.
 4.  We will investigate the report and may ask for further information.
 5.  Once the issue is resolved, we will release a patch and publish a security advisory.
 

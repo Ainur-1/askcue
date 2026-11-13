@@ -1,17 +1,17 @@
 {
   "name": "askcue",
-  "version": "2.3.0",
+  "version": "0.0.1",
   "main": "dist-electron/electron/bootstrap.js",
-  "description": "Open-source AI interview copilot and meeting assistant. Real-time transcription, AI-suggested answers, and screenshot reasoning — bring your own LLM key or run fully offline with Ollama.",
-  "homepage": "https://github.com/royisme/pikabaka#readme",
+  "description": "Open-source desktop meeting assistant with live transcription, contextual AI answers, screenshot analysis, and OpenCode integration.",
+  "homepage": "https://github.com/Ainur-1/askcue#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/royisme/pikabaka.git"
+    "url": "git+https://github.com/Ainur-1/askcue.git"
   },
   "bugs": {
-    "url": "https://github.com/royisme/pikabaka/issues"
+    "url": "https://github.com/Ainur-1/askcue/issues"
   },
-  "license": "ISC",
+  "license": "AGPL-3.0",
   "author": "",
   "keywords": [],
   "scripts": {

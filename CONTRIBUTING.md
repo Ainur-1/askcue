@@ -60,7 +60,7 @@ Enhancement suggestions are tracked as GitHub issues. When you are creating an e
 
 ### Prerequisites
 
-- Node.js (v20+ recommended)
+- Node.js 22 and pnpm 11
 - Git
 - Rust (required for native audio capture compilation)
 
@@ -68,9 +68,12 @@ Enhancement suggestions are tracked as GitHub issues. When you are creating an e
 
 1. Fork the repo and create your branch from `main`.
 2. Clone your fork locally: `git clone https://github.com/YOUR_USERNAME/askcue.git`
-3. Install dependencies: `npm install`
-4. Set up your `.env` file (refer to the README for template).
-5. Start the development server: `npm start`
+3. Install dependencies: `pnpm install --frozen-lockfile`.
+4. Build the native audio module: `pnpm run build:native`.
+5. Start the desktop application: `pnpm run app:dev`.
+6. Configure your AI and speech recognition providers in Settings.
+
+Run `pnpm run verify` before submitting a pull request. See the [README](README.md#development) for build and interface verification commands.
 
 If you've added code that should be tested, add tests.
 If you've changed APIs, update the documentation.

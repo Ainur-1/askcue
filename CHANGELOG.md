@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.0.1 (2026-11-13)
+
+Initial AskCue fork baseline. This entry describes the source version; packaged release availability is listed on GitHub Releases.
+
+### Features
+
+- AskCue branding, updated desktop workspace, light and dark themes, and English/Russian interface localization.
+- Official OpenCode SDK integration with provider discovery, model search and selection, and streamed responses.
+- AI action diagnostics and clearer handling of provider failures.
+- Response timing with elapsed time and time to first text.
+- Windows startup, window sizing, system proxy routing, and meeting history search improvements.
+
+### Project
+
+- Start independent AskCue versioning at `0.0.1`.
+- Rewrite the README around verified capabilities, setup instructions, and data handling.
+- Align repository metadata and the package license field with this fork and its existing license.
+
+## Upstream history
+
+The entries below are retained from the original project and use its version numbering.
+
 ## [2.3.0](https://github.com/royisme/pikabaka/compare/v2.2.0...v2.3.0) (2026-07-14)
 
 

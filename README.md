@@ -1,181 +1,152 @@
 <div align="center">
 
+<img src="assets/askcue-logo.svg" alt="AskCue" width="80" />
+
 # AskCue
 
-**The open-source AI interview copilot & meeting assistant.**
-Real-time transcription, AI-suggested answers, and screenshot reasoning — running on your machine.
+**A desktop AI assistant for meetings, conversations, and interview practice.**
 
-[![Latest Release](https://img.shields.io/github/v/release/royisme/pikabaka?display_name=tag&color=4f46e5)](https://github.com/royisme/pikabaka/releases/latest)
-[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey)](#system-requirements)
-[![GitHub Stars](https://img.shields.io/github/stars/royisme/pikabaka?style=social)](https://github.com/royisme/pikabaka/stargazers)
+Live transcription. Contextual answers. Your choice of models.
 
-[Download](https://github.com/royisme/pikabaka/releases/latest) · [Demo](#demo) · [Features](#features) · [Why AskCue](#why-askcue) · [FAQ](#faq)
+[![Version](https://img.shields.io/badge/version-0.0.1-315e4f)](package.json)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-grey)](#platforms)
+
+[Getting started](#getting-started) · [Features](#features) · [Development](#development) · [Issues](https://github.com/Ainur-1/askcue/issues)
 
 </div>
 
----
+AskCue brings a live transcript, AI assistance, and meeting history into one desktop workspace. Capture your microphone and system audio, ask questions about the conversation, and include screenshots when visual context matters. Connect your own AI providers, use OpenCode, or run a language model locally with Ollama.
 
-AskCue listens to your meetings, transcribes both sides of the conversation in under 500 ms, and quietly suggests answers powered by the LLM you choose — OpenAI, Claude, Gemini, Groq, or fully offline with Ollama. Bring your own API key, keep your audio on your machine, and customize every shortcut.
-
-If you've been looking for an **open-source alternative to Cluely, Granola, or Otter** that respects your privacy and your wallet, AskCue is built for you.
-
-## Demo
-
-The demo composition lives in [`demo/src/AskCueDemo.tsx`](demo/src/AskCueDemo.tsx) and can be rendered with [Remotion](https://www.remotion.dev/).
-
-## Why AskCue
-
-|                                       | **AskCue** | Cluely | Granola | Otter |
-| ------------------------------------- | :------: | :----: | :-----: | :---: |
-| Open source                           |    ✓ AGPL-3.0    |   —    |    —    |   —   |
-| Bring your own API key                |    ✓     |   —    |    —    |   —   |
-| 100% offline option (Ollama)          |    ✓     |   —    |    —    |   —   |
-| Real-time AI answer suggestions       |    ✓     |   ✓    |    —    |   —   |
-| Stealth overlay (hidden in screen-share) |  ✓     |   ✓    |    —    |   —   |
-| Local RAG memory across past meetings |    ✓     |   —    |    —    |   —   |
-| Custom global keyboard shortcuts      |    ✓     |   ✓    | partial |   —   |
-| Audio never leaves your device        |    ✓\*   |   —    |    —    |   —   |
-
-\* When using Ollama for LLM and a local STT engine. With cloud providers, audio is sent only to the provider you configured.
-
-## Built for
-
-- **Interview practice & prep** — rehearse with realistic AI-suggested answers, not generic flashcards.
-- **Sales & customer success calls** — surface objection handlers, pricing, and product facts in real time.
-- **Customer support** — instant context from your past tickets via on-device vector search.
-- **Lectures & research** — live transcribe, summarize, and ask follow-up questions on what you just heard.
-- **Accessibility** — live captions for hearing-impaired users with provider-agnostic STT.
+**Project status:** `0.0.1` is the starting version of the independent AskCue fork. Expect changes to the interface, configuration, and packaging as the project develops. This version number does not imply that a downloadable release has been published.
 
 ## Features
 
-- **Sub-500 ms transcription** powered by a Rust native audio module (cpal + WebRTC VAD + rubato resampling).
-- **Dual-channel capture** — system audio (the meeting) and your microphone are streamed independently for clean attribution.
-- **Any LLM, any STT** — switch providers at runtime: OpenAI, Anthropic Claude, Google Gemini, Groq, Ollama, or any OpenAI-compatible endpoint.
-- **Local RAG memory** — past meetings indexed with `sqlite-vec`; search and recall without sending data anywhere.
-- **Screenshot reasoning** — capture full screen or a region, pipe it to a vision model, get an answer in seconds.
-- **Stealth overlay** — disguise the process name and hide the window from screen-sharing.
-- **Configurable everything** — every shortcut, every provider, every key in your OS keychain.
-- **Cross-platform** — macOS (Apple Silicon + Intel) and Windows 10/11.
+| Capability | What you can do |
+| --- | --- |
+| Live transcription | Capture microphone and system audio separately and follow the conversation in real time. |
+| Contextual AI actions | Draft a reply, ask a clarifying question, recap the conversation, brainstorm, or suggest follow-up questions. |
+| Screenshot analysis | Add a full-screen or region capture to a request using a model that supports images. |
+| OpenCode integration | Discover connected providers, search models, select a default, and stream responses through the official SDK. |
+| Response timing | See elapsed response time, time to the first text, and completion or error status. |
+| Meeting history | Store sessions locally, search transcripts, and use past meetings as context. |
+| Transcript translation | Translate recognized speech with a separately configured language model. |
+| Desktop workspace | Switch between workspace and compact overlay views, light and dark themes, and English or Russian interface text. |
+| Diagnostics | Inspect AI action outcomes and timing in a local diagnostic log. |
 
-## Install
+Response quality and latency depend on your selected models, provider availability, network connection, and hardware.
 
-### Download a release (recommended)
+## Getting started
 
-Grab the latest signed build from [GitHub Releases](https://github.com/royisme/pikabaka/releases/latest).
+### Install
 
-> **macOS unsigned warning**: If macOS reports the app as unverified, clear quarantine:
-> ```bash
-> xattr -cr "/Applications/AskCue.app"
-> ```
+Check [AskCue Releases](https://github.com/Ainur-1/askcue/releases) for published builds and platform-specific installation notes. If a suitable build is unavailable, follow the source setup below. Signing and notarization status depend on the individual build.
 
 ### Build from source
 
+You will need:
+
+- **Node.js 22** and **pnpm 11**, matching the build workflow.
+- **Git** and the **Rust toolchain**.
+- **Windows:** Visual Studio Build Tools with the Desktop development with C++ workload and a Windows SDK.
+- **macOS:** Xcode Command Line Tools and a compatible macOS SDK.
+
 ```bash
-git clone https://github.com/royisme/pikabaka.git askcue
+git clone https://github.com/Ainur-1/askcue.git
 cd askcue
-pnpm install            # also rebuilds native modules for Electron ABI
-pnpm run build:native   # compile Rust audio module
-pnpm run app:dev        # Vite + Electron in dev mode
-pnpm run dist           # production build via electron-builder
+pnpm install --frozen-lockfile
+pnpm run build:native
+pnpm run app:dev
 ```
 
-**Prerequisites**: Node.js 20+, pnpm, Rust toolchain (for the native audio module), Git.
+Dependency installation downloads the bundled embedding model and rebuilds native database modules for Electron. The Rust audio module is built separately by `build:native`.
 
-## Configure AI Providers
+### Configure your first session
 
-You only need **one** LLM provider and **one** STT provider to get started. All keys are stored in your OS keychain.
+1. Open **Settings → AI Providers**, connect a provider, and select a model.
+2. Configure a speech recognition provider and recognition language in Settings. Model access and speech recognition are separate services and may require separate credentials.
+3. Select your microphone and audio capture settings. Grant the microphone and screen or system audio permissions requested by your operating system.
+4. Start a meeting, check that the transcript is arriving, and use the AI actions or chat to work with the conversation.
 
-### LLM Providers
+For screenshot requests, choose a model with image support. If a provider rejects a request, check its credentials, available quota, and the error shown in AskCue.
 
-| Provider     | Best for                       | Notes                                |
-| ------------ | ------------------------------ | ------------------------------------ |
-| Google Gemini | Cost + huge context window    | Recommended default for most users   |
-| OpenAI       | General quality, GPT-4o, o3    | Strong at chained reasoning          |
-| Anthropic Claude | Coding interviews          | Best Claude tier for technical depth |
-| Groq         | Sub-second inference, vision   | Cheapest fast tier                   |
-| Ollama       | Fully offline, no key required | Run Llama/Qwen/etc. on your machine  |
-| Custom       | Any OpenAI-compatible endpoint | Self-hosted vLLM, LM Studio, etc.    |
+### Use OpenCode
 
-### STT Providers
+In **Settings → AI Providers → OpenCode**, use an existing connection or save your Go/Zen API token, refresh the model list, and choose a default. AskCue uses the official OpenCode SDK and CLI for provider discovery and inference.
 
-Google Cloud Speech (default), Deepgram Nova-3, Soniox, OpenAI Whisper, Groq Whisper, ElevenLabs Scribe, Azure Speech, IBM Watson. Auto-fallback to Google on failure.
+See [OpenCode integration](docs/OPENCODE.md) for configuration, model selection, and connection behavior.
 
-## Architecture
+## Providers
 
-Three-process Electron app:
+| Purpose | Supported integrations |
+| --- | --- |
+| Language models | OpenCode, OpenAI, Anthropic Claude, Google Gemini, Groq, Ollama, and custom OpenAI-compatible endpoints |
+| Speech recognition | Google Cloud Speech, Deepgram, Soniox, OpenAI, Groq, ElevenLabs, Azure Speech, and IBM Watson |
 
-1. **Main process** (`electron/`) — window orchestration, IPC, credential storage, provider routing.
-2. **Renderer** (`src/`) — React 18 + TypeScript + Tailwind CSS + React Query.
-3. **Native module** (`native-module/`) — Rust (NAPI-RS) for low-latency audio capture; CoreAudio/ScreenCaptureKit on macOS, WASAPI on Windows.
+Available models and features depend on the connected provider and your account. AskCue does not include third-party subscriptions, API credits, or model access.
 
+Ollama can run language model inference on your machine. The bundled speech recognition integrations use cloud services; choosing a local language model alone does not make the entire transcription pipeline offline.
+
+## Data and privacy
+
+Meeting records are stored in a local SQLite database. Requests to cloud speech providers transmit audio; requests to cloud language models transmit the context needed for the selected action, which can include transcript text, screenshots, or retrieved material. The selected provider's data policies apply to those requests.
+
+**Credentials are currently stored in a local plaintext `credentials.json` file.** They are not protected by an OS keychain in this version. Treat the configuration directory as sensitive and exclude it from shared backups, bug reports, and source control. OpenCode also manages its own provider authentication.
+
+| Data | Windows | macOS |
+| --- | --- | --- |
+| Configuration and credentials | `%APPDATA%\askcue\` | `~/.config/askcue/` |
+| Meeting database and app data | `%APPDATA%\askcue\` | `~/Library/Application Support/askcue/` |
+
+The AI action diagnostic log records request metadata, timing, and outcomes without transcript text or API tokens. Open it from **Settings → General → Open AI action log**. Other application logs may contain additional context; review them before sharing. See [AI action diagnostics](docs/AI_ACTION_DIAGNOSTICS.md).
+
+Use recording, transcription, and AI assistance with the consent and permissions appropriate to your conversation.
+
+## Platforms
+
+- **Windows:** the current development and validation environment; native audio capture uses WASAPI.
+- **macOS:** native capture and packaging code are included. Builds require validation on the target hardware; the default packaging configuration targets Apple Silicon.
+- **Linux:** packaging configuration exists, but end-to-end audio capture and application support are not validated for this version.
+
+An overlay content-protection setting is available. Its behavior depends on the operating system and capture software; do not assume it hides a window from every recording or screen-sharing tool.
+
+## Development
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm run app:dev` | Start Vite and Electron for development |
+| `pnpm run verify` | Check branding, lint the source, and run the test suite |
+| `pnpm run build:web:raw` | Compile the renderer without running the full verification suite |
+| `pnpm run build:electron:raw` | Compile the Electron main process and preload bridge |
+| `pnpm run test:ui` | Check the built interface with test fixtures |
+| `pnpm run test:opencode` | Check the bundled OpenCode lifecycle after compiling Electron |
+| `pnpm run dist` | Verify, compile, and package the app into `release/` |
+
+Build both the renderer and Electron code before running the interface checks. macOS packaging currently includes signing and notarization settings inherited from upstream; adapt these to your own signing identity before distributing a macOS build.
+
+### Repository layout
+
+```text
+electron/       Desktop lifecycle, IPC, AI providers, audio services, and storage
+src/            React interface, meeting workspace, settings, and localization
+native-module/  Rust native audio capture module
+shared/         Shared branding and OpenCode types
+test/           Unit and integration tests
+scripts/        Build, packaging, and verification tools
+docs/           Integration notes and implementation documentation
+demo/           Remotion demo source
 ```
-            ┌─────────────────────────────────────┐
-            │ Electron Main (Node + native deps)  │
-            │  IPC · keychain · provider routing  │
-            └────────────┬────────────────────────┘
-              IPC bridge │
-            ┌────────────┴───────────┐    ┌──────────────────┐
-            │ Renderer (React/Vite)  │    │ Rust (NAPI-RS)   │
-            │ Overlay · Settings · UI│    │ Audio capture    │
-            └────────────────────────┘    └──────────────────┘
-```
 
-Local data lives in `~/Library/Application Support/askcue` (macOS) or `%APPDATA%\askcue` (Windows). Provider credentials remain in the local configuration directory. Existing profiles are copied on first launch without overwriting newer settings.
-
-## System Requirements
-
-- macOS 12+ (Apple Silicon or Intel) **or** Windows 10/11.
-- 4 GB RAM minimum, 8 GB recommended.
-- 16 GB+ if running Ollama locally.
-
-## Roadmap
-
-- [ ] Linux build (Wayland audio capture)
-- [ ] Plugin / extension API
-- [ ] iOS companion for cross-device handoff
-- [ ] More languages in the bundled embedding model
-- [ ] Hosted cloud sync (opt-in, end-to-end encrypted)
-
-Track progress in [GitHub Issues](https://github.com/royisme/pikabaka/issues).
-
-## FAQ
-
-**Is AskCue free?**
-Yes — AGPL-3.0. Free for personal use, study, and open-source projects. Commercial / proprietary integrations should review the AGPL terms or reach out about a commercial license.
-
-**Does my audio leave my machine?**
-Only if you choose a cloud STT/LLM provider. Pair Ollama with a local STT engine (or system-only transcription) for a fully offline pipeline.
-
-**Where are my API keys stored?**
-In your OS keychain — Keychain Access on macOS, Credential Manager on Windows. Never in plaintext config files.
-
-**How is AskCue different from Cluely?**
-Open source under AGPL-3.0, no subscription, you bring your own API key, and you can run completely offline with Ollama. Every shortcut and provider is configurable.
-
-**Why "stealth mode"?**
-The overlay can be hidden from screen-sharing tools so private notes during a sales demo don't show on the customer's screen. It's a privacy feature, not a permission to break rules — please use AskCue ethically and respect any policies that apply to your conversations.
-
-**Can I use AskCue during a coding interview?**
-Use it for **prep and rehearsal** before the interview — that's the legitimate use case. Real interviews almost always have explicit rules about external assistance; respect them.
-
-**Does it work on Linux?**
-Not yet. Tracking on the [roadmap](#roadmap).
+The interface uses React, TypeScript, Vite, and Tailwind CSS. Electron owns desktop integration and provider access. Rust handles native audio capture; SQLite and `sqlite-vec` provide local persistence and vector search.
 
 ## Contributing
 
-Pull requests welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). For security issues, see [SECURITY.md](SECURITY.md).
+Bug reports, documentation improvements, and focused pull requests are welcome. Search [existing issues](https://github.com/Ainur-1/askcue/issues) before opening a report, and include your operating system, AskCue version, reproduction steps, and redacted diagnostic details.
 
-## License
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations. Report security concerns according to [SECURITY.md](SECURITY.md).
 
-[AGPL-3.0](LICENSE) — see file for details.
+## Acknowledgments and license
 
----
+AskCue is an independently maintained fork of [the original project by royisme](https://github.com/royisme/pikabaka). The upstream project and its contributors provided the foundation for this application. AskCue adds its own interface, localization, OpenCode integration, AI action diagnostics, and response timing.
 
-<div align="center">
-
-If AskCue is useful to you, [give it a star](https://github.com/royisme/pikabaka) — it helps others discover the project.
-
-**Keywords**: AI interview copilot, AI meeting assistant, real-time transcription, open source Cluely alternative, local AI assistant, Electron AI app, BYO API key meeting tool, privacy-first AI copilot, screenshot AI assistant, RAG meeting memory.
-
-</div>
+The project is distributed under the [GNU Affero General Public License v3](LICENSE). Third-party components retain their respective licenses; see [the icon attribution](assets/ICON-LICENSE.txt) for the logo's source artwork.
