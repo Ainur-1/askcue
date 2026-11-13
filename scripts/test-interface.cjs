@@ -73,6 +73,47 @@ async function main(){
   await run(`window.__uitest.emit('onAudioTestError','Microphone test stopped unexpectedly. Try another input device.')`);await wait(100);
   assert.match(await run(`document.querySelector('[role="alert"]').textContent`),/микрофона/);
   assert.match(await run(`document.querySelector('[data-testid="microphone-test"]').textContent`),/Проверить/);
+  await run(`document.querySelector('#settings-tab-speech').click()`);await wait(200);
+  assert.ok(await run(`!!document.querySelector('[data-testid="speech-api-settings"]')`));
+  assert.equal(await run(`!!document.querySelector('[data-testid="microphone-test"]')`),false,'Recognition has no device controls');
+  assert.equal(await run(`document.querySelector('#settings-tab-ai-providers svg').classList.contains('lucide-bot-message-square')`),true,'approved AI icon');
+  await run(`document.querySelector('.model-source-switch button').click()`);await wait(150);
+  assert.equal(await run(`window.__uitest.calls.some(c=>c.name==='setSttProvider')`),false,'browsing local models does not activate a provider');
+  await run(`document.querySelector('[data-speech-model="zipformer-ru"] .speech-button').click()`);await wait(150);
+  assert.match(await run(`document.querySelector('.speech-current').textContent`),/Zipformer small RU/);
+  assert.equal(await run(`window.__uitest.calls.some(c=>c.name==='setDefaultModel')`),false,'local speech does not change AI model');
+  await run(`document.querySelector('[data-speech-model="whisper-tiny"] .speech-button').click()`);await wait(120);
+  assert.ok(await run(`!!document.querySelector('[data-speech-model="whisper-tiny"] [role="progressbar"]')`));
+  await run(`document.querySelector('[aria-label="Приостановить Whisper tiny"]').click()`);await wait(120);
+  assert.match(await run(`document.querySelector('[data-speech-model="whisper-tiny"]').textContent`),/На паузе/);
+  await run(`document.querySelector('[aria-label="Отменить загрузку Whisper tiny"]').click()`);await wait(120);
+  assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='removeSpeechModel'&&c.args[0]==='whisper-tiny')`));
+  await run(`document.querySelector('.speech-catalog-toolbar button').click()`);await wait(100);
+  await run(`document.querySelector('.speech-test-audio button').click();document.querySelector('.speech-model-checks input').click()`);await wait(120);
+  await run(`document.querySelector('.speech-test-run .speech-primary').click()`);await wait(150);
+  assert.match(await run(`document.querySelector('.speech-result-text').textContent`),/Проверка локального/);
+  await shot('askcue-recognition-local-test');
+  await run(`document.querySelector('.speech-catalog-toolbar button').click()`);await wait(100);
+  await shot('askcue-recognition-local');
+  await run(`document.querySelectorAll('.model-source-switch button')[1].click()`);await wait(120);
+  assert.match(await run(`document.querySelector('.speech-current').textContent`),/Zipformer/,'browsing API retains local processing');
+  await run(`document.querySelector('[data-testid="speech-api-settings"] .speech-primary').click()`);await wait(150);
+  assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='setSttProvider'&&c.args[0]==='groq')`));
+  await shot('askcue-recognition-api');
+  await run(`document.querySelector('#settings-tab-audio').click()`);await wait(150);
+  assert.equal(await run(`!!document.querySelector('.model-source-switch, .speech-model-list')`),false,'Sound only contains devices and routing');
+  await run(`document.querySelector('[role="switch"][aria-label="Звук компьютера"]').click()`);await wait(120);
+  assert.ok(await run(`window.__uitest.calls.some(c=>c.name==='setSystemAudioCapture'&&c.args[0]===false)`));
+  assert.equal(await run(`document.querySelector('[role="switch"][aria-label="Звук компьютера"]').getAttribute('aria-checked')`),'false');
+  assert.equal(await run(`getComputedStyle(document.querySelector('[role="switch"][aria-label="Звук компьютера"]')).borderRadius`),'9999px');
+  await shot('askcue-audio-devices');
+  for(const area of ['speech','audio']) {
+    await run(`document.querySelector('#settings-tab-${area}').click()`);await wait(120);
+    win.setContentSize(520,650);await wait(150);
+    assert.equal(await run(`document.documentElement.scrollWidth>innerWidth`),false,`${area} has no horizontal overflow`);
+    if(area==='speech') { await run(`document.querySelector('.model-source-switch button').click()`);await wait(100);await shot('askcue-recognition-mobile'); }
+  }
+  win.setContentSize(1200,860);await wait(120);
   await run(`document.querySelector('#settings-tab-ai-providers').click()`);await wait(450);
   assert.ok(await run(`!!document.querySelector('.models-settings')`));
   assert.ok(await run(`!!document.querySelector('[data-testid="opencode-settings"]')`));
@@ -113,6 +154,10 @@ async function main(){
   assert.ok(menu.left>=0 && menu.right<=menu.width,JSON.stringify(menu));
   await shot('askcue-models-small');
   await run(`document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`);await wait(150);
+  await run(`document.querySelector('.model-source-switch button').click()`);await wait(100);
+  assert.equal(await run(`document.querySelector('[data-testid="opencode-settings"]').closest('[hidden]')!==null`),true,'API connections hidden in local AI');
+  assert.match(await run(`document.querySelector('.models-settings').innerText`),/Ollama/);
+  await run(`document.querySelectorAll('.model-source-switch button')[1].click()`);await wait(100);
   await run(`document.querySelector('#settings-tab-general').click()`);await wait(150);
 
   for (const [width,height] of [[1200,718],[960,600],[600,500]]) {

@@ -8,10 +8,15 @@ import {
     RotateCcw, Eye, Layout, MessageSquare,
     ChevronDown, ChevronUp, ChevronRight, Check, BadgeCheck, Power, Palette, Ghost, Sun, Moon, RefreshCw, Info, Globe, FlaskConical, Terminal, Settings, Activity, ExternalLink, Trash2,
     Pencil, MapPin, HelpCircle, Zap, SlidersHorizontal, PointerOff,
-    AlertCircle, Loader2, Shield
+    AlertCircle, Loader2, Shield, BotMessageSquare, AudioLines
 } from 'lucide-react';
 import { analytics } from '../lib/analytics/analytics.service';
 import { AboutSection } from './AboutSection';
+import { ModelSourceSwitch } from './settings/ModelSourceSwitch';
+import { LocalSpeechSettings } from './settings/LocalSpeechSettings';
+import { useLocalSpeech } from '../hooks/useLocalSpeech';
+import { SPEECH_MODELS } from '../../shared/localSpeech';
+import '../styles/model-settings.css';
 import { AIProvidersSettings } from './settings/AIProvidersSettings';
 import AppearanceSettings from './settings/AppearanceSettings';
 import { SystemProxySettings } from './settings/SystemProxySettings';
@@ -61,7 +66,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ label, icon, value, options
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const selectedLabel = options.find(o => o.deviceId === value)?.label || placeholder;
+    const selectedLabel = options.find(o => o.deviceId === value)?.label || t(placeholder);
 
     return (
         <div className="bg-bg-card rounded-xl p-4 border border-border-subtle" ref={containerRef}>
@@ -516,6 +521,18 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
     const [useExperimentalSck, setUseExperimentalSck] = useState(false);
 
     // STT Provider settings
+    const {state: localSpeech, error: localSpeechError} = useLocalSpeech();
+    const [speechSource, setSpeechSource] = useState<'local' | 'api'>('api');
+    const [activeAIModel, setActiveAIModel] = useState('');
+    const settingsScroll = React.useRef<HTMLDivElement>(null);
+    useEffect(() => { settingsScroll.current?.scrollTo({top:0}); }, [activeTab]);
+    useEffect(() => {
+        window.electronAPI.getDefaultModel().then(value => setActiveAIModel(value.model)).catch(console.error);
+        return window.electronAPI.onModelChanged(setActiveAIModel);
+    }, []);
+    useEffect(() => {
+        window.electronAPI.getSttProvider().then(value => setSpeechSource(value === 'local' ? 'local' : 'api')).catch(console.error);
+    }, []);
     const [sttProvider, setSttProvider] = useState<'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox'>('google');
     const [transcriptAssemblerProfile, setTranscriptAssemblerProfile] = useState<TranscriptAssemblerProfile>('sentence_bias');
     const [groqSttModel, setGroqSttModel] = useState('whisper-large-v3-turbo');
@@ -582,7 +599,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                 // @ts-ignore
                 const creds = await window.electronAPI?.getStoredCredentials?.();
                 if (creds) {
-                    setSttProvider(creds.sttProvider || 'google');
+                    setSttProvider(creds.sttProvider === 'local' ? 'google' : (creds.sttProvider || 'google'));
                     if (creds.groqSttModel) setGroqSttModel(creds.groqSttModel);
                     setGoogleServiceAccountPath(creds.googleServiceAccountPath);
                     setHasStoredSttGroqKey(creds.hasSttGroqKey);
@@ -686,9 +703,11 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
         setSttTestError('');
         try {
             // @ts-ignore
-            await window.electronAPI?.setSttProvider?.(provider);
+            const result = await window.electronAPI?.setSttProvider?.(provider);
+            if (!result?.success) throw new Error(result?.error || 'Could not change recognition provider');
         } catch (e) {
-            console.error('Failed to set STT provider:', e);
+            setSttTestStatus('error'); setSttTestError(e instanceof Error ? e.message : String(e));
+            return;
         }
         // If switching to a provider that doesn't support multi-language detection
         // and the current STT language is "auto", fall back to a sensible default.
@@ -1083,8 +1102,9 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                           <nav role="tablist" aria-label={t("Настройки")}>
                             {[
                               {id:'general',label:'Общие',Icon:Monitor},
-                              {id:'ai-providers',label:'Модели',Icon:FlaskConical},
-                              {id:'audio',label:'Звук',Icon:Mic},
+                              {id:'ai-providers',label:'AI-подсказки',Icon:BotMessageSquare},
+                              {id:'speech',label:'Распознавание',Icon:AudioLines},
+                              {id:'audio',label:'Звук',Icon:Speaker},
                               {id:'keybinds',label:'Клавиши',Icon:Keyboard},
                               {id:'profile',label:'Материалы',Icon:BookOpen},
                               {id:'about',label:'О приложении',Icon:Info},
@@ -1093,7 +1113,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                         </div>}
 
                         {/* Content */}
-                        <div id="settings-content" role="tabpanel" aria-labelledby={`settings-tab-${activeTab}`} className="settings-content flex-1 min-h-0 overflow-y-auto bg-bg-main p-8">
+                        <div id="settings-content" ref={settingsScroll} role="tabpanel" aria-labelledby={`settings-tab-${activeTab}`} className="settings-content flex-1 min-h-0 overflow-y-auto bg-bg-main p-8">
                             {activeTab === 'general' && (
                                 <div className="space-y-6 animated fadeIn">
                                     <AppearanceSettings themeMode={themeMode} onThemeChange={handleSetTheme} />
@@ -1195,74 +1215,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                         className={`w-11 h-6 rounded-full relative transition-colors ${verboseLogging ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}
                                                     >
                                                         <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${verboseLogging ? 'translate-x-5' : 'translate-x-0'}`} />
-                                                    </div>
-                                                </div>
-
-                                                {/* Interviewer Transcript */}
-                                                <div className="flex items-center justify-between px-4 py-3">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary">
-                                                            <MessageSquare size={20} />
-                                                        </div>
-                                                        <div>
-                                                            <h3 className="text-sm font-bold text-text-primary">{t("Interviewer Transcript")}</h3>
-                                                            <p className="text-xs text-text-secondary mt-0.5">{t("Show real-time transcription of the interviewer")}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        onClick={() => {
-                                                            const newState = !showTranscript;
-                                                            setShowTranscript(newState);
-                                                            localStorage.setItem('askcue_interviewer_transcript', String(newState));
-                                                            window.dispatchEvent(new Event('storage'));
-                                                        }}
-                                                        className={`w-11 h-6 rounded-full relative transition-colors ${showTranscript ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}
-                                                    >
-                                                        <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${showTranscript ? 'translate-x-5' : 'translate-x-0'}`} />
-                                                    </div>
-                                                </div>
-
-
-                                                {/* AI Response Language */}
-                                                <div className="flex items-center justify-between px-4 py-3">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary">
-                                                            <Globe size={20} />
-                                                        </div>
-                                                        <div>
-                                                            <h3 className="text-sm font-bold text-text-primary">{t("AI Response Language")}</h3>
-                                                            <p className="text-xs text-text-secondary mt-0.5">{t("Language for AI suggestions and notes")}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="relative" ref={aiLangDropdownRef}>
-                                                        <button
-                                                            onClick={() => setIsAiLangDropdownOpen(!isAiLangDropdownOpen)}
-                                                            className="bg-bg-component hover:bg-bg-elevated border border-border-subtle text-text-primary pl-4 pr-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 min-w-[110px] justify-between"
-                                                        >
-                                                            <span className="capitalize text-ellipsis overflow-hidden whitespace-nowrap">
-                                                                {aiResponseLanguage}
-                                                            </span>
-                                                            <ChevronDown size={12} className={`shrink-0 transition-transform ${isAiLangDropdownOpen ? 'rotate-180' : ''}`} />
-                                                        </button>
-
-                                                        {/* Dropdown Menu */}
-                                                        {isAiLangDropdownOpen && (
-                                                            <div className="absolute right-0 top-full mt-1 min-w-full w-max bg-bg-elevated border border-border-subtle rounded-lg shadow-xl overflow-hidden z-20 p-1 animated fadeIn select-none max-h-60 overflow-y-auto custom-scrollbar">
-                                                                {availableAiLanguages.map((option) => (
-                                                                    <button
-                                                                        key={option.code}
-                                                                        onClick={() => {
-                                                                            handleAiLanguageChange(option.code);
-                                                                            setIsAiLangDropdownOpen(false);
-                                                                        }}
-                                                                        className={`w-full text-left px-2 py-1.5 rounded-md text-xs flex items-center gap-2 transition-colors ${aiResponseLanguage === option.code ? 'text-text-primary bg-bg-item-active/50' : 'text-text-secondary hover:bg-bg-input hover:text-text-primary'}`}
-                                                                    >
-                                                                        <span className="font-medium">{t(option.label)}</span>
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        )}
                                                     </div>
                                                 </div>
 
@@ -1485,7 +1437,50 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                 </div>
                             )}
                             {activeTab === 'ai-providers' && (
-                                <AIProvidersSettings />
+                                <div className="space-y-5"><AIProvidersSettings />                                                {/* AI Response Language */}
+                                                <div className="flex items-center justify-between px-4 py-3">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary">
+                                                            <Globe size={20} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-sm font-bold text-text-primary">{t("AI Response Language")}</h3>
+                                                            <p className="text-xs text-text-secondary mt-0.5">{t("Language for AI suggestions and notes")}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="relative" ref={aiLangDropdownRef}>
+                                                        <button
+                                                            onClick={() => setIsAiLangDropdownOpen(!isAiLangDropdownOpen)}
+                                                            className="bg-bg-component hover:bg-bg-elevated border border-border-subtle text-text-primary pl-4 pr-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 min-w-[110px] justify-between"
+                                                        >
+                                                            <span className="capitalize text-ellipsis overflow-hidden whitespace-nowrap">
+                                                                {aiResponseLanguage}
+                                                            </span>
+                                                            <ChevronDown size={12} className={`shrink-0 transition-transform ${isAiLangDropdownOpen ? 'rotate-180' : ''}`} />
+                                                        </button>
+
+                                                        {/* Dropdown Menu */}
+                                                        {isAiLangDropdownOpen && (
+                                                            <div className="absolute right-0 top-full mt-1 min-w-full w-max bg-bg-elevated border border-border-subtle rounded-lg shadow-xl overflow-hidden z-20 p-1 animated fadeIn select-none max-h-60 overflow-y-auto custom-scrollbar">
+                                                                {availableAiLanguages.map((option) => (
+                                                                    <button
+                                                                        key={option.code}
+                                                                        onClick={() => {
+                                                                            handleAiLanguageChange(option.code);
+                                                                            setIsAiLangDropdownOpen(false);
+                                                                        }}
+                                                                        className={`w-full text-left px-2 py-1.5 rounded-md text-xs flex items-center gap-2 transition-colors ${aiResponseLanguage === option.code ? 'text-text-primary bg-bg-item-active/50' : 'text-text-secondary hover:bg-bg-input hover:text-text-primary'}`}
+                                                                    >
+                                                                        <span className="font-medium">{t(option.label)}</span>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+</div>
                             )}
                             {activeTab === 'keybinds' && (
                                 <div className="space-y-3 animated fadeIn select-text pb-4">
@@ -1582,14 +1577,18 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                 </div>
                             )}
 
-                            {activeTab === 'audio' && (
+                            {activeTab === 'speech' && (
                                 <div className="space-y-6 animated fadeIn">
+                                    <div className="settings-role-heading"><h2>{t('Speech recognition')}</h2><p>{t('Models that turn your conversation into text.')}</p></div>
+                                    <ModelSourceSwitch value={speechSource} onChange={setSpeechSource}/>
+                                    {localSpeechError && <p role="alert" className="speech-error">{localSpeechError}</p>}
+                                    <div hidden={speechSource !== 'local'}><LocalSpeechSettings state={localSpeech}/></div>
                                     {/* ── Speech Provider Section ── */}
                                     <div>
-                                        <h3 className="text-lg font-bold text-text-primary mb-1">{t("Speech Provider")}</h3>
-                                        <p className="text-xs text-text-secondary mb-5">{t("Choose the engine that transcribes audio to text.")}</p>
+
 
                                         <div className="space-y-4">
+                                            <div hidden={speechSource !== 'api'} className="space-y-4" data-testid="speech-api-settings">
                                             <div className="bg-bg-card rounded-xl border border-border-subtle p-4 space-y-3">
                                                 <label className="text-xs font-medium text-text-secondary block">{t("Speech Provider")}</label>
                                                 <div className="relative">
@@ -1830,6 +1829,13 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                 </div>
                                             )}
 
+                                                <button type="button" className="speech-button speech-primary" disabled={localSpeech?.busy || localSpeech?.activeProvider === sttProvider} onClick={() => handleSttProviderChange(sttProvider)}>{t('Use this API provider')}</button>
+                                            </div>
+                                            </div>
+                                    </div>
+                                    <div className="speech-current"><span>{t('Recognition in use')}:</span><strong>{localSpeech?.activeProvider === 'local' ? SPEECH_MODELS.find(model => model.id === localSpeech.activeModel)?.name || t('Local model') : localSpeech?.activeProvider || sttProvider}</strong><span className="speech-tag">{t(localSpeech?.activeProvider === 'local' ? 'Local' : 'Via API')}</span></div>
+                                    <details className="speech-common-options"><summary>{t('Transcription settings')}</summary>
+                                    {localSpeech?.activeProvider === 'local' && localSpeech.activeModel === 'zipformer-ru' ? <p className="speech-note">{t('This model recognizes Russian. Select Whisper for other languages.')}</p> : <>
                                             {/* Recognition Language Family */}
                                             <CustomSelect
                                                 label="Language"
@@ -1871,8 +1877,31 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                         : 'Select the primary language being spoken in the meeting. Choose Auto for multilingual meetings.'}
                                                 </p>
                                             </div>
-                                        </div>
-                                    </div>
+                                    </>}
+                                                {/* Interviewer Transcript */}
+                                                <div className="flex items-center justify-between px-4 py-3">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 bg-bg-item-surface rounded-lg border border-border-subtle flex items-center justify-center text-text-tertiary">
+                                                            <MessageSquare size={20} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-sm font-bold text-text-primary">{t("Interviewer Transcript")}</h3>
+                                                            <p className="text-xs text-text-secondary mt-0.5">{t("Show real-time transcription of the interviewer")}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        onClick={() => {
+                                                            const newState = !showTranscript;
+                                                            setShowTranscript(newState);
+                                                            localStorage.setItem('askcue_interviewer_transcript', String(newState));
+                                                            window.dispatchEvent(new Event('storage'));
+                                                        }}
+                                                        className={`w-11 h-6 rounded-full relative transition-colors ${showTranscript ? 'bg-accent-primary' : 'bg-bg-toggle-switch border border-border-muted'}`}
+                                                    >
+                                                        <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${showTranscript ? 'translate-x-5' : 'translate-x-0'}`} />
+                                                    </div>
+                                                </div>
+
 
                                     <div>
                                         <h3 className="text-lg font-bold text-text-primary mb-1">{t("Transcript Segmentation")}</h3>
@@ -2093,8 +2122,11 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                         </div>
                                     </div>
 
-                                    <div className="h-px bg-border-subtle" />
-
+                                    </details>
+                                </div>
+                            )}
+                            {activeTab === 'audio' && (
+                                <div className="space-y-6 animated fadeIn">
                                     {/* ── Audio Configuration Section ── */}
                                     <div>
                                         <h3 className="text-lg font-bold text-text-primary mb-1">{t("Audio Configuration")}</h3>
@@ -2133,6 +2165,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                             {micTestError && <p role="alert" className="text-xs text-state-danger">{t(micTestError)}</p>}
                                             <div className="h-px bg-border-subtle my-2" />
 
+                                            <div className="sound-route-row"><div><strong>{t('Computer audio')}</strong><small>{t('Capture the other person from meeting apps.')}</small></div><button type="button" role="switch" aria-label={t('Computer audio')} aria-checked={localSpeech?.systemAudioEnabled !== false} className="settings-switch w-11 h-6 rounded-full relative shrink-0" style={{background:localSpeech?.systemAudioEnabled !== false ? 'var(--accent-fill)' : 'var(--bg-toggle-switch)'}} onClick={async () => {const result=await window.electronAPI.setSystemAudioCapture(localSpeech?.systemAudioEnabled === false);if(!result.success)setMicTestError(result.error || 'Operation failed');}}><span className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" style={{transform:localSpeech?.systemAudioEnabled !== false ? 'translateX(20px)' : undefined}}/></button></div>
                                             <CustomSelect
                                                 label="Output Device"
                                                 icon={<Speaker size={16} />}
@@ -2182,6 +2215,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
 
                                                             oscillator.start();
                                                             oscillator.stop(ctx.currentTime + 1.0);
+                                                            oscillator.onended = () => { void ctx.close(); };
                                                         } catch (e) {
                                                             console.error("Error playing test sound", e);
                                                         }
@@ -2194,7 +2228,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                             <div className="h-px bg-border-subtle my-2" />
 
                                             {/* SCK Backend Toggle */}
-                                            <div className="bg-state-warning-soft rounded-xl border border-state-warning-border p-4">
+                                            {window.electronAPI.platform === 'darwin' && <div className="bg-state-warning-soft rounded-xl border border-state-warning-border p-4">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-start gap-3">
                                                         <div className="mt-0.5 p-1.5 rounded-lg bg-state-warning-soft text-state-warning">
@@ -2219,9 +2253,13 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, init
                                                         <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${useExperimentalSck ? 'translate-x-5' : 'translate-x-0'}`} />
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>}
                                         </div>
                                     </div>
+                                    <section className="sound-routing"><h3>{t('Conversation processing')}</h3>
+                                        <div className="sound-route-row"><div><small>{t('Speech to text')}</small><strong>{localSpeech?.activeProvider === 'local' ? SPEECH_MODELS.find(model => model.id === localSpeech.activeModel)?.name : localSpeech?.activeProvider || sttProvider}</strong></div><button type="button" className="speech-text-button" onClick={() => setActiveTab('speech')}>{t('Configure')} →</button></div>
+                                        <div className="sound-route-row"><div><small>{t('AI suggestions')}</small><strong>{activeAIModel}</strong></div><button type="button" className="speech-text-button" onClick={() => setActiveTab('ai-providers')}>{t('Configure')} →</button></div>
+                                    </section>
                                 </div>
                             )}
 

@@ -1,7 +1,8 @@
+import type { LocalSpeechAPI, LocalSpeechState } from '../shared/localSpeech';
 import { contextBridge, ipcRenderer } from "electron"
 
 // Types for the exposed Electron API
-interface ElectronAPI {
+interface ElectronAPI extends LocalSpeechAPI {
   updateContentDimensions: (dimensions: {
     width: number
     height: number
@@ -65,7 +66,7 @@ interface ElectronAPI {
   translateTranscriptSegment: (segment: { segmentId: string; text: string; speaker?: 'interviewer' | 'user'; speakerLabel?: string; timestamp?: number }) => Promise<{ success: boolean; error?: string }>
 
   // STT Provider Management
-  setSttProvider: (provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox') => Promise<{ success: boolean; error?: string }>
+  setSttProvider: (provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local') => Promise<{ success: boolean; error?: string }>
   getSttProvider: () => Promise<string>
   getTranscriptAssemblerProfile: () => Promise<'sentence_bias' | 'low_latency' | 'coherent'>
   setTranscriptAssemblerProfile: (profile: 'sentence_bias' | 'low_latency' | 'coherent') => Promise<{ success: boolean; error?: string }>
@@ -341,6 +342,18 @@ export const PROCESSING_EVENTS = {
 
 // Expose the Electron API to the renderer process
 contextBridge.exposeInMainWorld("electronAPI", {
+  getLocalSpeechState: () => ipcRenderer.invoke('local-speech:state'),
+  downloadSpeechModel: (id: string) => ipcRenderer.invoke('local-speech:download', id),
+  pauseSpeechModel: (id: string) => ipcRenderer.invoke('local-speech:pause', id),
+  removeSpeechModel: (id: string) => ipcRenderer.invoke('local-speech:remove', id),
+  activateSpeechModel: (id: string) => ipcRenderer.invoke('local-speech:activate', id),
+  chooseSpeechTestAudio: () => ipcRenderer.invoke('local-speech:choose-audio'),
+  testSpeechModels: (ids: string[]) => ipcRenderer.invoke('local-speech:test', ids),
+  cancelSpeechTest: () => ipcRenderer.invoke('local-speech:cancel-test'),
+  setSystemAudioCapture: (enabled: boolean) => ipcRenderer.invoke('audio:set-system-capture', enabled),
+  onLocalSpeechChanged: (callback) => { const listener = (_event: Electron.IpcRendererEvent, state: LocalSpeechState) => callback(state); ipcRenderer.on('local-speech-changed', listener); return () => { ipcRenderer.removeListener('local-speech-changed', listener); }; },
+  onSttProviderChanged: (callback) => { const listener = (_event: Electron.IpcRendererEvent, provider: string) => callback(provider); ipcRenderer.on('stt-provider-changed', listener); return () => { ipcRenderer.removeListener('stt-provider-changed', listener); }; },
+
   updateContentDimensions: (dimensions: { width: number; height: number }) =>
     ipcRenderer.invoke("update-content-dimensions", dimensions),
   getRecognitionLanguages: () => ipcRenderer.invoke("get-recognition-languages"),
@@ -561,7 +574,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("translate-transcript-segment", segment),
 
   // STT Provider Management
-  setSttProvider: (provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox') => ipcRenderer.invoke("set-stt-provider", provider),
+  setSttProvider: (provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local') => ipcRenderer.invoke("set-stt-provider", provider),
   getSttProvider: () => ipcRenderer.invoke("get-stt-provider"),
   getTranscriptAssemblerProfile: () => ipcRenderer.invoke("get-transcript-assembler-profile"),
   setTranscriptAssemblerProfile: (profile: 'sentence_bias' | 'low_latency' | 'coherent') => ipcRenderer.invoke("set-transcript-assembler-profile", profile),

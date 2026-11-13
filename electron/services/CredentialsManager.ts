@@ -43,7 +43,7 @@ export interface StoredCredentials {
     openaiCompatibleProviders?: OpenAICompatibleProvider[];
     defaultModel?: string;
     // STT Provider settings
-    sttProvider?: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox';
+    sttProvider?: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local';
     groqSttApiKey?: string;
     groqSttModel?: string;
     openAiSttApiKey?: string;
@@ -127,7 +127,7 @@ export class CredentialsManager {
         return this.credentials.customProviders || [];
     }
 
-    public getSttProvider(): 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' {
+    public getSttProvider(): 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local' {
         return this.credentials.sttProvider || 'google';
     }
 
@@ -270,7 +270,7 @@ export class CredentialsManager {
         console.log('[CredentialsManager] Google Service Account path updated');
     }
 
-    public setSttProvider(provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox'): void {
+    public setSttProvider(provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local'): void {
         this.credentials.sttProvider = provider;
         this.saveCredentials();
         console.log(`[CredentialsManager] STT Provider set to: ${provider}`);

@@ -768,12 +768,15 @@ export class AppState {
 
     // Reinitialize the pipeline (will pick up the new provider from CredentialsManager)
     this.setupSystemAudioPipeline();
+    if (!this.googleSTT || !this.googleSTT_User) {
+      throw new Error(this.lastAudioPipelineError || 'Could not initialize speech recognition');
+    }
 
     // Restart audio captures and new STT instances if a meeting is active
     if (this.isMeetingActive) {
-      this.systemAudioCapture?.start();
+      if (SettingsManager.getInstance().get('systemAudioEnabled') !== false) this.systemAudioCapture?.start();
       this.microphoneCapture?.start();
-      this.googleSTT?.start();
+      if (SettingsManager.getInstance().get('systemAudioEnabled') !== false) this.googleSTT?.start();
       this.googleSTT_User?.start();
     }
 
@@ -866,8 +869,8 @@ export class AppState {
         this.setupSystemAudioPipeline();
 
         // Start System Audio
-        this.systemAudioCapture?.start();
-        this.googleSTT?.start();
+        if (SettingsManager.getInstance().get('systemAudioEnabled') !== false) this.systemAudioCapture?.start();
+        if (SettingsManager.getInstance().get('systemAudioEnabled') !== false) this.googleSTT?.start();
 
         // Start Microphone
         this.microphoneCapture?.start();

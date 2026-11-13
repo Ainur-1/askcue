@@ -9,6 +9,9 @@ import { DeepgramStreamingSTT } from "../audio/DeepgramStreamingSTT"
 import { SonioxStreamingSTT } from "../audio/SonioxStreamingSTT"
 import { ElevenLabsStreamingSTT } from "../audio/ElevenLabsStreamingSTT"
 import { OpenAIStreamingSTT } from "../audio/OpenAIStreamingSTT"
+import { LocalSTT } from '../audio/LocalSTT';
+import { getSpeechModelStore } from '../services/localSpeech';
+import { SettingsManager } from '../services/SettingsManager';
 import {
   TranscriptSpeaker,
   bufferFinalTranscriptChunk,
@@ -18,7 +21,7 @@ import {
   normalizeTranscriptText,
 } from "./transcript-assembler"
 
-export type STTProvider = (GoogleSTT | RestSTT | DeepgramStreamingSTT | SonioxStreamingSTT | ElevenLabsStreamingSTT | OpenAIStreamingSTT) & {
+export type STTProvider = (GoogleSTT | RestSTT | DeepgramStreamingSTT | SonioxStreamingSTT | ElevenLabsStreamingSTT | OpenAIStreamingSTT | LocalSTT) & {
   finalize?: () => void;
   setAudioChannelCount?: (count: number) => void;
   notifySpeechEnded?: () => void;
@@ -54,7 +57,12 @@ export function createSTTProvider(appState: AppState, speaker: 'interviewer' | '
 
   let stt: STTProvider;
 
-  if (sttProvider === 'deepgram') {
+  if (sttProvider === 'local') {
+    const modelId = SettingsManager.getInstance().get('localSpeechModel');
+    const store = getSpeechModelStore();
+    if (!modelId || !store.isInstalled(modelId)) throw new Error('The selected local recognition model is unavailable. Download it in Recognition settings.');
+    stt = new LocalSTT(modelId, store.directory(modelId));
+  } else if (sttProvider === 'deepgram') {
     const apiKey = CredentialsManager.getInstance().getDeepgramApiKey();
     if (apiKey) {
       console.log(`[Main] Using DeepgramStreamingSTT for ${speaker}`);
@@ -230,11 +238,13 @@ export function setupSystemAudioPipeline(appState: AppState): void {
     if (state._verboseLogging) console.log(`[Main] Configuring User STT to ${micRate}Hz`);
     state.googleSTT_User?.setSampleRate(micRate);
     state.googleSTT_User?.setAudioChannelCount?.(1);
+    state.lastAudioPipelineError = null;
 
     if (state._verboseLogging) console.log('[Main] Full Audio Pipeline (System + Mic) Initialized (Ready)');
 
   } catch (err) {
     console.error('[Main] Failed to setup System Audio Pipeline:', err);
+    state.lastAudioPipelineError = err instanceof Error ? err.message : String(err);
   }
 }
 

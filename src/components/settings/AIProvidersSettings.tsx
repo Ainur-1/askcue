@@ -1,3 +1,4 @@
+import { ModelSourceSwitch } from './ModelSourceSwitch';
 import { t } from '../../i18n';
 import React, { useState, useEffect } from 'react';
 import * as Select from '@radix-ui/react-select';
@@ -78,6 +79,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({ value, options, onChange, pla
 };
 
 export const AIProvidersSettings: React.FC = () => {
+    const [source, setSource] = useState<'local' | 'api'>('api');
     // --- Standard Providers ---
     const [apiKey, setApiKey] = useState('');
     const [groqApiKey, setGroqApiKey] = useState('');
@@ -168,6 +170,7 @@ export const AIProvidersSettings: React.FC = () => {
                 const result = await window.electronAPI?.getDefaultModel();
                 if (result && result.model) {
                     setDefaultModel(result.model);
+                    setSource(result.model.startsWith('ollama-') ? 'local' : 'api');
                 }
 
                 // Check Ollama
@@ -503,6 +506,7 @@ export const AIProvidersSettings: React.FC = () => {
 
     return (
         <div className="models-settings min-w-0 space-y-5 animated fadeIn pb-10">
+            <div className="settings-role-heading"><h2>{t('AI suggestions')}</h2><p>{t('Answers, notes and screen analysis.')}</p></div>
             {/* Default Model for Chat */}
             <div className="space-y-5">
                 <div>
@@ -581,6 +585,8 @@ export const AIProvidersSettings: React.FC = () => {
                 </div>
             </div>
 
+            <ModelSourceSwitch value={source} onChange={setSource} ai/>
+            <div hidden={source !== 'api'} className="space-y-5">
             <OpenCodeSettingsCard onModelsChanged={setOpenCodeModels} />
 
             {/* Cloud Providers */}
@@ -675,8 +681,9 @@ export const AIProvidersSettings: React.FC = () => {
                 </div>
             </div>
 
+            </div>
             {/* Local (Ollama) Providers */}
-            <div className="space-y-5">
+            <div hidden={source !== 'local'} className="space-y-5">
                 <div className="flex items-center justify-between mb-2">
                     <div>
                         <h3 className="text-sm font-bold text-text-primary mb-1">{t("Local Models (Ollama)")}</h3>
@@ -735,7 +742,7 @@ export const AIProvidersSettings: React.FC = () => {
                                 {ollamaModels.map(model => (
                                     <div key={model} className="flex items-center justify-between p-2 bg-bg-input rounded-lg border border-border-subtle">
                                         <span className="text-xs text-text-primary font-mono">{model}</span>
-                                        <span className="text-[10px] text-bg-elevated bg-text-secondary px-1.5 py-0.5 rounded-full font-bold">{t("LOCAL")}</span>
+                                        <button type="button" className="speech-button" disabled={defaultModel === `ollama-${model}`} onClick={async () => { const result = await window.electronAPI.setDefaultModel(`ollama-${model}`); if (result?.success === false) { alert(result.error || t('Operation failed')); return; } setDefaultModel(`ollama-${model}`); }}>{t(defaultModel === `ollama-${model}` ? 'Selected' : 'Use model')}</button>
                                     </div>
                                 ))}
                             </div>
@@ -747,6 +754,7 @@ export const AIProvidersSettings: React.FC = () => {
                 </div>
             </div>
 
+            <div hidden={source !== 'api'} className="space-y-5">
             {/* OpenAI-compatible endpoints */}
             <div className="space-y-5">
                 <div className="flex items-center justify-between mb-2">
@@ -1084,6 +1092,7 @@ export const AIProvidersSettings: React.FC = () => {
                         )}
                     </div>
                 )}
+            </div>
             </div>
         </div>
     );

@@ -11,6 +11,8 @@ export interface AppSettings {
     useSystemProxy?: boolean;
     actionButtonMode?: 'recap' | 'brainstorm';
     transcriptAssemblerProfile?: 'sentence_bias' | 'low_latency' | 'coherent';
+    localSpeechModel?: string;
+    systemAudioEnabled?: boolean;
 }
 
 export class SettingsManager {

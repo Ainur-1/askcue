@@ -5,19 +5,25 @@ import { DEFAULT_TRANSCRIPT_ASSEMBLER_PROFILE, isTranscriptAssemblerProfile } fr
 import { SettingsManager } from "../services/SettingsManager"
 import { safeHandle } from "./safeHandle"
 import { systemProxyAgent } from '../network/ProxyRouting';
+import { isLocalSpeechBusy } from '../services/localSpeech';
 
 export function registerSttHandlers(appState: AppState): void {
   // ==========================================
   // STT Provider Management Handlers
   // ==========================================
 
-  safeHandle("set-stt-provider", async (_, provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox') => {
+  safeHandle("set-stt-provider", async (_, provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local') => {
     try {
+      if (isLocalSpeechBusy()) throw new Error('Wait until the current recognition operation finishes');
+      if (!['google','groq','openai','deepgram','elevenlabs','azure','ibmwatson','soniox'].includes(provider)) throw new Error('Select a local model using Recognition settings');
       const { CredentialsManager } = require('../services/CredentialsManager');
+      const previous = CredentialsManager.getInstance().getSttProvider();
       CredentialsManager.getInstance().setSttProvider(provider);
 
       // Reconfigure the audio pipeline to use the new STT provider
-      await appState.reconfigureSttProvider();
+      try { await appState.reconfigureSttProvider(); }
+      catch (error) { CredentialsManager.getInstance().setSttProvider(previous); await appState.reconfigureSttProvider(); throw error; }
+      appState.broadcast('stt-provider-changed', provider);
 
       return { success: true };
     } catch (error: any) {

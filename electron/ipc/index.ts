@@ -2,6 +2,7 @@ import { AppState } from "../main"
 import { registerCoreHandlers } from "./core"
 import { registerModelDiscoveryHandlers } from "./model-discovery"
 import { registerSttHandlers } from "./stt"
+import { registerLocalSpeechHandlers } from './local-speech';
 import { registerMeetingHandlers } from "./meeting"
 import { registerIntelligenceHandlers } from "./intelligence"
 import { registerSystemHandlers } from "./system"
@@ -14,6 +15,7 @@ export function initializeIpcHandlers(appState: AppState): void {
   registerCoreHandlers(appState)
   registerModelDiscoveryHandlers(appState)
   registerSttHandlers(appState)
+  registerLocalSpeechHandlers(appState)
   registerMeetingHandlers(appState)
   registerIntelligenceHandlers(appState)
   registerSystemHandlers(appState)

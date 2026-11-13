@@ -66,6 +66,7 @@
     ],
     "asarUnpack": [
       "**/opencode-ai/bin/**",
+      "**/sherpa-onnx-*/**",
       "**/*.node",
       "**/*.dylib",
       "**/@img/**"
@@ -257,6 +258,7 @@
     "remark-math": "^6.0.0",
     "screenshot-desktop": "^1.15.0",
     "sharp": "^0.33.5",
+    "sherpa-onnx-node": "2.0.1",
     "socks-proxy-agent": "8.0.5",
     "sqlite-vec": "^0.1.7",
     "sqlite3": "^5.1.7",

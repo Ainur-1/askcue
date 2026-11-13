@@ -1,4 +1,5 @@
-export interface ElectronAPI {
+import type { LocalSpeechAPI } from '../../shared/localSpeech';
+export interface ElectronAPI extends LocalSpeechAPI {
   updateContentDimensions: (dimensions: {
     width: number
     height: number
@@ -86,13 +87,13 @@ export interface ElectronAPI {
   setGroqApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>
   setOpenaiApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>
   setClaudeApiKey: (apiKey: string) => Promise<{ success: boolean; error?: string }>
-  getStoredCredentials: () => Promise<{ hasGeminiKey: boolean; hasGroqKey: boolean; hasOpenaiKey: boolean; hasClaudeKey: boolean; googleServiceAccountPath: string | null; sttProvider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox'; hasSttGroqKey: boolean; hasSttOpenaiKey: boolean; hasDeepgramKey: boolean; hasElevenLabsKey: boolean; hasAzureKey: boolean; azureRegion: string; hasIbmWatsonKey: boolean; ibmWatsonRegion: string; groqSttModel?: string; hasSonioxKey?: boolean; hasTavilyKey?: boolean; transcriptTranslationEnabled?: boolean; transcriptTranslationProvider?: string; transcriptTranslationModel?: string; transcriptTranslationPrompt?: string; transcriptTranslationDisplayMode?: 'original' | 'translated' | 'both'; transcriptTranslationSourceLanguage?: string; transcriptTranslationTargetLanguage?: string; geminiPreferredModel?: string; groqPreferredModel?: string; openaiPreferredModel?: string; claudePreferredModel?: string }>
+  getStoredCredentials: () => Promise<{ hasGeminiKey: boolean; hasGroqKey: boolean; hasOpenaiKey: boolean; hasClaudeKey: boolean; googleServiceAccountPath: string | null; sttProvider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local'; hasSttGroqKey: boolean; hasSttOpenaiKey: boolean; hasDeepgramKey: boolean; hasElevenLabsKey: boolean; hasAzureKey: boolean; azureRegion: string; hasIbmWatsonKey: boolean; ibmWatsonRegion: string; groqSttModel?: string; hasSonioxKey?: boolean; hasTavilyKey?: boolean; transcriptTranslationEnabled?: boolean; transcriptTranslationProvider?: string; transcriptTranslationModel?: string; transcriptTranslationPrompt?: string; transcriptTranslationDisplayMode?: 'original' | 'translated' | 'both'; transcriptTranslationSourceLanguage?: string; transcriptTranslationTargetLanguage?: string; geminiPreferredModel?: string; groqPreferredModel?: string; openaiPreferredModel?: string; claudePreferredModel?: string }>
   getTranscriptTranslationSettings: () => Promise<{ enabled: boolean; provider: string; model: string; prompt: string; displayMode: 'original' | 'translated' | 'both'; sourceLanguage: string; targetLanguage: string }>
   setTranscriptTranslationSettings: (settings: { enabled?: boolean; provider?: string; model?: string; prompt?: string; displayMode?: 'original' | 'translated' | 'both'; sourceLanguage?: string; targetLanguage?: string }) => Promise<{ success: boolean }>
   translateTranscriptSegment: (segment: { segmentId: string; text: string; speaker?: 'interviewer' | 'user'; speakerLabel?: string; timestamp?: number }) => Promise<{ success: boolean; error?: string; translatedText?: string }>
 
   // STT Provider Management
-  setSttProvider: (provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox') => Promise<{ success: boolean; error?: string }>
+  setSttProvider: (provider: 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'local') => Promise<{ success: boolean; error?: string }>
   getSttProvider: () => Promise<string>
   getTranscriptAssemblerProfile: () => Promise<'sentence_bias' | 'low_latency' | 'coherent'>
   setTranscriptAssemblerProfile: (profile: 'sentence_bias' | 'low_latency' | 'coherent') => Promise<{ success: boolean; error?: string }>
