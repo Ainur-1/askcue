@@ -1,6 +1,6 @@
 {
   "name": "askcue",
-  "version": "0.0.1",
+  "version": "3.0.0",
   "main": "dist-electron/electron/bootstrap.js",
   "description": "Open-source desktop meeting assistant with live transcription, contextual AI answers, screenshot analysis, and OpenCode integration.",
   "homepage": "https://github.com/Ainur-1/askcue#readme",
